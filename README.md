@@ -127,6 +127,32 @@ de cada pessoa**, não compartilhados entre atendentes. Migrar isso para
 D1 também é o próximo passo natural (ver "Para produção" abaixo) — a API
 já teria onde crescer, já que o Worker e o banco já existem.
 
+**A base começa vazia de propósito** — sem leads, campanhas ou atividade
+fictícios. Só ficam a equipe (necessária pro login) e alguns **modelos de
+mensagem de exemplo**, já no formato novo (ver abaixo), como ponto de
+partida.
+
+### Configurador de modelos (e-mail e WhatsApp completos)
+
+Em `crm/admin/modelos.html`, cada modelo de e-mail é montado por **blocos**
+reordenáveis — Imagem (upload ou URL, com link e texto alternativo),
+Título, Texto, Botão (com link), Divisor e Espaço — renderizados como
+HTML de e-mail de verdade (`DB.renderEmailBlocks`, com estilo inline,
+compatível com a maioria dos clientes de e-mail). Os modelos de WhatsApp
+têm cabeçalho (nenhum / texto em negrito / imagem), corpo, rodapé e até
+3 botões (resposta rápida, link ou ligar) — a mesma estrutura que a
+WhatsApp Cloud API exige para aprovar um template; a pré-visualização
+(`DB.renderWhatsappBubble`) já mostra tudo isso na bolha do telefone. Um
+mesmo grupo de variáveis (`{{primeiro_nome}}`, `{{produto}}`, `{{tipo}}`,
+`{{consultor}}`, `{{nome_empresa}}`, `{{telefone_solua}}` e
+`{{telefone_solua_link}}` — este último só com números, pronto pra virar
+link `https://wa.me/...`) funciona nos dois canais.
+
+> O cadastro do template de WhatsApp aqui é a referência de conteúdo —
+> a Meta ainda exige que o mesmo texto seja submetido e aprovado no
+> WhatsApp Manager antes de valer pra disparo automático de verdade
+> (ver `WHATSAPP_TEMPLATE` mais abaixo).
+
 Um detalhe já conectado nas duas pontas: **toda cotação enviada pelo
 formulário do site** entra no CRM local (`SoluaDB.addLead`) **e** avisa a
 API (`POST /api/lead-notify`), que decide — com base no que está ligado

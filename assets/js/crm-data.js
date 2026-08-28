@@ -21,7 +21,11 @@
 (function(global){
   "use strict";
 
-  const KEY = "solua_crm_v1";
+  // v2: remove os leads/campanhas fictícios da demonstração inicial (o site
+  // tinha "contatos falsos" pré-carregados) e passa os modelos para o novo
+  // formato com blocos de e-mail (imagem, título, texto, botão) e estrutura
+  // completa de WhatsApp (cabeçalho, corpo, rodapé, botões).
+  const KEY = "solua_crm_v2";
 
   const PIPELINES = {
     seguro: [
@@ -79,94 +83,43 @@
     return d.toISOString();
   }
 
-  // -------------------- SEED (dados de demonstração) --------------------
+  // -------------------- SEED (estado inicial — sem contatos fictícios) --------------------
+  // Nenhum lead, campanha ou atividade de demonstração: a base começa vazia
+  // de verdade. Só a equipe (login) e alguns MODELOS de mensagem de exemplo
+  // continuam aqui, como ponto de partida para o configurador — modelo de
+  // mensagem não é dado de cliente, então não é "contato falso".
   function seedState(){
-    const nomes = [
-      ["Marcos Vinícius Pereira","Sumaré"],["Juliana Ferraz Bianchi","Campinas"],["Eduardo Castellani","Valinhos"],
-      ["Patrícia Nogueira","Campinas"],["Thiago Bordin Camargo","Hortolândia"],["Renata Salomão","Indaiatuba"],
-      ["Felipe Andrade Mesquita","Campinas"],["Luciana Prado Vieira","Vinhedo"],["Gustavo Henrique Rezende","Paulínia"],
-      ["Bianca Otoni Franco","Campinas"],["André Kobayashi","Americana"],["Vanessa Lacerda Ramos","Campinas"],
-      ["Rodrigo Sanches Melo","Sumaré"],["Fernanda Dutra Cintra","Campinas"],["Bruno Cavalcanti Alves","Valinhos"],
-      ["Larissa Monteiro Bicudo","Hortolândia"],["Caio César Villela","Campinas"],["Débora Ramalho Prado","Indaiatuba"],
-      ["Leandro Furtado Zanetti","Campinas"],["Priscila Andrade Godoy","Paulínia"],["Vitor Hugo Marchetti","Campinas"],
-      ["Simone Aparecida Reis","Vinhedo"],["Diego Fagundes Barreto","Americana"],["Aline Bortolozzo","Campinas"],
-      ["Marcelo Tadeu Grangeiro","Sumaré"],["Cristina Amaro Peixoto","Campinas"]
-    ];
-    const leads = nomes.map((n,i)=>{
-      const produto = i % 5 === 0 ? "consorcio" : (i % 2 === 0 ? "seguro" : (i % 3 === 0 ? "consorcio" : "seguro"));
-      const tiposP = TIPOS[produto];
-      const tipo = tiposP[i % tiposP.length];
-      const estagios = PIPELINES[produto];
-      // distribui os estágios dando peso maior às fases iniciais (funil realista)
-      const pesos = [26,22,20,16,10,6];
-      let acc = 0, r = (i*37)%100, estagio = estagios[0].id;
-      for(let k=0;k<estagios.length;k++){ acc += pesos[k]; if(r < acc){ estagio = estagios[k].id; break; } }
-      const criadoHaDias = 2 + (i*3)%58;
-      const consultor = produto === "seguro" ? (i%2===0?"u2":"u4") : "u3";
-      const valor = produto === "seguro"
-        ? [90,140,220,60,350,180,420,75][i%8] * (tipo==="Empresarial"||tipo==="Saúde / Odonto"?4:1)
-        : [180000,65000,320000,45000,95000,250000][i%6];
-      const notas = [];
-      if(i%3===0) notas.push({id:uid("nota"), data:daysAgoISO(criadoHaDias-1), autor:"Sistema", texto:"Lead recebido pelo formulário do site."});
-      if(estagio!=="novo") notas.push({id:uid("nota"), data:daysAgoISO(Math.max(0,criadoHaDias-2)), autor: produto==="seguro"?"Ana Beatriz Souza":"Rafael Lima", texto:"Primeiro contato realizado por WhatsApp, cliente confirmou interesse."});
-      return {
-        id: uid("lead"),
-        nome: n[0],
-        email: n[0].toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z ]/g,"").trim().replace(/\s+/g,".")+"@exemplo.com",
-        telefone: "19"+String(90000000+ (i*7919)%9999999).slice(0,9),
-        cidade: n[1],
-        produto, tipo, estagio,
-        origem: ORIGENS[i % ORIGENS.length],
-        consultorId: consultor,
-        valor,
-        tags: i%7===0 ? ["prioridade"] : (i%5===0 ? ["renovacao"] : []),
-        criadoEm: daysAgoISO(criadoHaDias, 9),
-        atualizadoEm: daysAgoISO(Math.max(0, criadoHaDias-1), 15),
-        notas
-      };
-    });
-
     const templates = [
-      {id:uid("tpl"), canal:"email", categoria:"seguro", nome:"Boas-vindas — cotação recebida", assunto:"Recebemos sua solicitação, {{primeiro_nome}}!",
-        corpo:"Olá {{primeiro_nome}},\n\nRecebemos sua solicitação de cotação de {{produto}} e já estamos comparando as melhores opções do mercado para você.\n\nEm breve, {{consultor}} entra em contato pelo WhatsApp {{telefone_solua}} com o comparativo pronto.\n\nAtè já,\nEquipe Solua"},
-      {id:uid("tpl"), canal:"email", categoria:"consorcio", nome:"Simulação de consórcio enviada", assunto:"Sua simulação de consórcio de {{tipo}} está pronta",
-        corpo:"Olá {{primeiro_nome}},\n\nPreparamos sua simulação de consórcio de {{tipo}} com parcelas que cabem no seu planejamento, sem juros.\n\nQualquer dúvida, é só responder este e-mail ou chamar no WhatsApp.\n\nAbraço,\n{{consultor}} — Solua"},
-      {id:uid("tpl"), canal:"email", categoria:"geral", nome:"Lembrete de renovação de apólice", assunto:"Sua apólice vence em breve — vamos revisar?",
-        corpo:"Olá {{primeiro_nome}},\n\nSua apólice está próxima do vencimento. Antes de renovar automaticamente, que tal revisarmos coberturas e recotarmos no mercado? Pode valer a pena.\n\nFico à disposição,\n{{consultor}}"},
-      {id:uid("tpl"), canal:"whatsapp", categoria:"seguro", nome:"Primeiro contato — seguro", assunto:"",
-        corpo:"Olá {{primeiro_nome}}! Aqui é {{consultor}}, da Solua 👋 Recebi seu pedido de cotação de {{produto}} ({{tipo}}). Posso te chamar por aqui mesmo para fechar alguns detalhes e já te enviar o comparativo?"},
-      {id:uid("tpl"), canal:"whatsapp", categoria:"consorcio", nome:"Primeiro contato — consórcio", assunto:"",
-        corpo:"Oi {{primeiro_nome}}, tudo bem? Aqui é {{consultor}} da Solua. Vi seu interesse em consórcio de {{tipo}} 🙂 Consigo te mandar agora uma simulação com valor de carta e parcela. Prefere que eu já mande por aqui?"},
-      {id:uid("tpl"), canal:"whatsapp", categoria:"geral", nome:"Reativação — sem resposta", assunto:"",
-        corpo:"Oi {{primeiro_nome}}! Passando para saber se ainda faz sentido pra você aquela cotação que conversamos. Se quiser, atualizo os valores e te mando de novo 🙂"}
+      {id:uid("tpl"), canal:"email", categoria:"seguro", nome:"Boas-vindas — cotação recebida",
+        assunto:"Recebemos sua solicitação, {{primeiro_nome}}!",
+        preheader:"Já estamos comparando as melhores opções do mercado para você.",
+        blocks:[
+          {tipo:"titulo", texto:"Recebemos sua solicitação, {{primeiro_nome}}!"},
+          {tipo:"texto", texto:"Já estamos comparando as melhores opções de {{produto}} do mercado para você.\n\nEm breve, {{consultor}} entra em contato pelo WhatsApp {{telefone_solua}} com o comparativo pronto."},
+          {tipo:"botao", texto:"Falar agora no WhatsApp", url:"https://wa.me/{{telefone_solua_link}}"},
+          {tipo:"divisor"},
+          {tipo:"texto", texto:"Até já,\nEquipe {{nome_empresa}}"}
+        ],
+        corpo:"Recebemos sua solicitação, {{primeiro_nome}}!\n\nJá estamos comparando as melhores opções de {{produto}} do mercado para você.\n\nEm breve, {{consultor}} entra em contato pelo WhatsApp {{telefone_solua}} com o comparativo pronto.\n\nAté já,\nEquipe {{nome_empresa}}"},
+      {id:uid("tpl"), canal:"email", categoria:"consorcio", nome:"Simulação de consórcio enviada",
+        assunto:"Sua simulação de consórcio de {{tipo}} está pronta",
+        preheader:"Parcelas que cabem no seu planejamento, sem juros.",
+        blocks:[
+          {tipo:"titulo", texto:"Sua simulação está pronta, {{primeiro_nome}}"},
+          {tipo:"texto", texto:"Preparamos sua simulação de consórcio de {{tipo}} com parcelas que cabem no seu planejamento, sem juros."},
+          {tipo:"botao", texto:"Ver simulação no WhatsApp", url:"https://wa.me/{{telefone_solua_link}}"},
+          {tipo:"texto", texto:"Abraço,\n{{consultor}} — {{nome_empresa}}"}
+        ],
+        corpo:"Sua simulação está pronta, {{primeiro_nome}}\n\nPreparamos sua simulação de consórcio de {{tipo}} com parcelas que cabem no seu planejamento, sem juros.\n\nAbraço,\n{{consultor}} — {{nome_empresa}}"},
+      {id:uid("tpl"), canal:"whatsapp", categoria:"seguro", nome:"Primeiro contato — seguro",
+        headerType:"nenhum", corpo:"Olá {{primeiro_nome}}! Aqui é {{consultor}}, da {{nome_empresa}} 👋 Recebi seu pedido de cotação de {{produto}} ({{tipo}}). Posso te chamar por aqui mesmo para fechar alguns detalhes e já te enviar o comparativo?",
+        rodape:"Resposta em até 1 dia útil", botoes:[{tipo:"resposta_rapida", texto:"Pode continuar"}]},
+      {id:uid("tpl"), canal:"whatsapp", categoria:"consorcio", nome:"Primeiro contato — consórcio",
+        headerType:"nenhum", corpo:"Oi {{primeiro_nome}}, tudo bem? Aqui é {{consultor}} da {{nome_empresa}}. Vi seu interesse em consórcio de {{tipo}} 🙂 Consigo te mandar agora uma simulação com valor de carta e parcela. Prefere que eu já mande por aqui?",
+        rodape:"Resposta em até 1 dia útil", botoes:[{tipo:"resposta_rapida", texto:"Pode mandar"}]}
     ];
 
-    const campaigns = [
-      {id:uid("camp"), canal:"email", nome:"Aquecimento — leads de seguro auto (30 dias)", segmento:"seguro", templateId: templates[0].id,
-        status:"enviado", criadoEm: daysAgoISO(9), enviadoEm: daysAgoISO(9,10),
-        metrics:{enviados:118, entregues:114, abertos:71, cliques:22, respostas:9}},
-      {id:uid("camp"), canal:"whatsapp", nome:"Reativação de simulações de consórcio", segmento:"consorcio", templateId: templates[4].id,
-        status:"enviado", criadoEm: daysAgoISO(4), enviadoEm: daysAgoISO(4,16),
-        metrics:{enviados:64, entregues:63, abertos:58, cliques:0, respostas:19}},
-      {id:uid("camp"), canal:"email", nome:"Lembrete de renovação — apólices do mês", segmento:"clientes", templateId: templates[2].id,
-        status:"agendado", criadoEm: daysAgoISO(1), agendadoPara: daysAgoISO(-2,9),
-        metrics:{enviados:0, entregues:0, abertos:0, cliques:0, respostas:0}},
-      {id:uid("camp"), canal:"whatsapp", nome:"Boas-vindas novos leads da semana", segmento:"todos", templateId: templates[3].id,
-        status:"rascunho", criadoEm: daysAgoISO(0),
-        metrics:{enviados:0, entregues:0, abertos:0, cliques:0, respostas:0}}
-    ];
-
-    const activity = [];
-    leads.forEach(l=>{
-      activity.push({id:uid("act"), data:l.criadoEm, tipo:"lead_criado", leadId:l.id, descricao:`Novo lead de ${l.produto==="seguro"?"seguro":"consórcio"}: ${l.nome}`});
-      if(l.estagio!=="novo") activity.push({id:uid("act"), data:l.atualizadoEm, tipo:"estagio_alterado", leadId:l.id, descricao:`${l.nome} avançou para "${labelEstagio(l.produto,l.estagio)}"`});
-    });
-    campaigns.filter(c=>c.status==="enviado").forEach(c=>{
-      activity.push({id:uid("act"), data:c.enviadoEm, tipo:"campanha_enviada", campanhaId:c.id, descricao:`Campanha "${c.nome}" enviada (${c.canal==="email"?"e-mail":"WhatsApp"})`});
-    });
-    activity.sort((a,b)=> new Date(b.data)-new Date(a.data));
-
-    return { leads, templates, campaigns, equipe: EQUIPE_SEED, activity, session:null };
+    return { leads:[], templates, campaigns:[], equipe: EQUIPE_SEED, activity:[], session:null };
   }
 
   function labelEstagio(produto, estagioId){
@@ -323,7 +276,10 @@
     const c = Object.assign({
       id: uid("camp"), canal:"email", nome:"", segmento:"todos", templateId:null,
       status:"rascunho", criadoEm: nowISO(), agendadoPara:null, enviadoEm:null,
-      templateSnapshot: tplOriginal ? {nome:tplOriginal.nome, assunto:tplOriginal.assunto, corpo:tplOriginal.corpo} : null,
+      // guarda tudo que o preview/renderização rica precisa (blocos de e-mail
+      // ou estrutura de WhatsApp) — não só nome/assunto/corpo — pra excluir ou
+      // editar o modelo depois não quebrar o histórico desta campanha.
+      templateSnapshot: tplOriginal ? JSON.parse(JSON.stringify(tplOriginal)) : null,
       metrics:{enviados:0, entregues:0, abertos:0, cliques:0, respostas:0}
     }, data);
     STATE.campaigns.unshift(c); save(STATE); return c;
@@ -453,6 +409,70 @@
     return String(s==null?"":s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
   }
 
+  // -------------------- MODELOS RICOS (e-mail em blocos / WhatsApp estruturado) --------------------
+  const BLOCO_LABELS = {imagem:"Imagem", titulo:"Título", texto:"Texto", botao:"Botão", divisor:"Divisor", espaco:"Espaço"};
+  function novoBloco(tipo){
+    switch(tipo){
+      case "imagem": return {tipo:"imagem", url:"", alt:"", link:""};
+      case "titulo": return {tipo:"titulo", texto:"Título"};
+      case "botao": return {tipo:"botao", texto:"Saiba mais", url:""};
+      case "divisor": return {tipo:"divisor"};
+      case "espaco": return {tipo:"espaco", altura:20};
+      default: return {tipo:"texto", texto:"Escreva aqui…"};
+    }
+  }
+  // Texto plano derivado dos blocos — usado como fallback (busca, snapshot de
+  // campanha antiga, clientes de e-mail que só leem texto).
+  function blocksParaTexto(blocks){
+    return (blocks||[]).map(b=>{
+      if(b.tipo==="titulo" || b.tipo==="texto") return b.texto||"";
+      if(b.tipo==="botao") return b.texto ? `${b.texto}${b.url?" → "+b.url:""}` : "";
+      return "";
+    }).filter(Boolean).join("\n\n");
+  }
+  // HTML de e-mail de verdade (estilo inline, compatível com a maioria dos
+  // clientes) a partir dos blocos configurados no modelo.
+  function renderEmailBlocks(blocks, vars, corPrimaria){
+    const cor = corPrimaria || "#004BA5";
+    const partes = (blocks||[]).map(b=>{
+      switch(b.tipo){
+        case "imagem": {
+          if(!b.url) return "";
+          const img = `<img src="${escapeHtml(b.url)}" alt="${escapeHtml(b.alt||"")}" style="max-width:100%;border-radius:8px;display:block;margin:0 auto 20px">`;
+          return b.link ? `<a href="${escapeHtml(fillTemplate(b.link,vars))}" style="text-decoration:none">${img}</a>` : img;
+        }
+        case "titulo":
+          return `<h2 style="font-size:22px;line-height:1.3;color:#15181C;margin:0 0 14px;font-family:Helvetica,Arial,sans-serif">${escapeHtml(fillTemplate(b.texto,vars))}</h2>`;
+        case "botao":
+          return `<div style="text-align:center;margin:26px 0"><a href="${escapeHtml(fillTemplate(b.url||"#",vars))}" style="background:${cor};color:#fff;padding:13px 30px;border-radius:100px;text-decoration:none;font-size:14px;font-weight:600;display:inline-block;font-family:Helvetica,Arial,sans-serif">${escapeHtml(fillTemplate(b.texto,vars))}</a></div>`;
+        case "divisor":
+          return `<hr style="border:none;border-top:1px solid #e6e6e6;margin:22px 0">`;
+        case "espaco":
+          return `<div style="height:${Number(b.altura)||20}px;line-height:1px">&nbsp;</div>`;
+        default: // "texto"
+          return `<p style="font-size:15px;line-height:1.65;color:#3a3a3a;margin:0 0 18px;white-space:pre-wrap;font-family:Helvetica,Arial,sans-serif">${escapeHtml(fillTemplate(b.texto,vars))}</p>`;
+      }
+    });
+    return `<div style="font-family:Helvetica,Arial,sans-serif;max-width:520px;margin:0 auto">${partes.join("")}</div>`;
+  }
+  // "Bolha" de WhatsApp (cabeçalho + corpo + rodapé + botões) a partir da
+  // estrutura do modelo — usada tanto na pré-visualização quanto, no futuro,
+  // como referência pra cadastrar o template de verdade no WhatsApp Manager.
+  function renderWhatsappBubble(t, vars){
+    let header = "";
+    if(t.headerType==="imagem" && t.headerImageUrl){
+      header = `<img src="${escapeHtml(t.headerImageUrl)}" style="width:100%;border-radius:6px;display:block;margin-bottom:8px">`;
+    } else if(t.headerType==="texto" && t.headerText){
+      header = `<b style="display:block;margin-bottom:4px">${escapeHtml(fillTemplate(t.headerText,vars))}</b>`;
+    }
+    const corpo = escapeHtml(fillTemplate(t.corpo||"",vars)).replace(/\n/g,"<br>");
+    const rodape = t.rodape ? `<div style="font-size:11px;color:#8a8f98;margin-top:6px">${escapeHtml(fillTemplate(t.rodape,vars))}</div>` : "";
+    const botoes = (t.botoes||[]).filter(b=>b.texto).map(b=>
+      `<div style="border-top:1px solid #e5ded3;margin-top:8px;padding-top:8px;text-align:center;color:#00a5f4;font-size:13px">${b.tipo==="resposta_rapida"?"↩ ":b.tipo==="telefone"?"📞 ":"🔗 "}${escapeHtml(b.texto)}</div>`
+    ).join("");
+    return `${header}${corpo}${rodape}${botoes}`;
+  }
+
   // -------------------- RESET (útil em demonstrações) --------------------
   function resetDemoData(){
     STATE = seedState();
@@ -469,6 +489,7 @@
     dashboardStats, getActivity, labelEstagio,
     formatBRL, formatDate, formatDateTime, formatPhone, iniciais, timeAgo, fillTemplate,
     escapeHtml, esc: escapeHtml,
+    BLOCO_LABELS, novoBloco, blocksParaTexto, renderEmailBlocks, renderWhatsappBubble,
     resetDemoData, uid
   };
 

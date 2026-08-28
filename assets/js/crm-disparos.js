@@ -12,7 +12,7 @@ const wizard = {step:1, canal:"email", segmento:"todos", templateId:null, nome:"
 const SAMPLE_VARS = {
   primeiro_nome:"Maria", produto:"seguro auto", tipo:"Auto",
   consultor: (UI.currentUser&&UI.currentUser.nome) || "sua consultora Solua",
-  telefone_solua:"(19) 99999-9999"
+  nome_empresa:"Solua", telefone_solua:"(19) 99999-9999", telefone_solua_link:"5519999999999"
 };
 
 // ---------------- HISTÓRICO ----------------
@@ -104,16 +104,16 @@ function openDetail(id){
 
 // ---------------- COMPOSER (nova campanha) ----------------
 function previewHtml(canal, t){
-  const assunto = DB.fillTemplate(t.assunto, SAMPLE_VARS);
-  const corpo = DB.fillTemplate(t.corpo, SAMPLE_VARS);
   if(canal==="whatsapp"){
     return `<div style="display:flex;justify-content:center;margin-top:6px">
-      <div class="preview-phone"><div class="screen"><div class="bubble">${corpo}</div></div></div>
+      <div class="preview-phone"><div class="screen"><div class="bubble">${DB.renderWhatsappBubble(t, SAMPLE_VARS)}</div></div></div>
     </div>`;
   }
+  const assunto = DB.esc(DB.fillTemplate(t.assunto, SAMPLE_VARS));
+  const blocks = t.blocks || (t.corpo ? [{tipo:"texto", texto:t.corpo}] : []); // compat com modelos antigos/snapshots
   return `<div class="preview-email" style="margin-top:6px">
     <div class="pe-hd"><b>Assunto:</b> ${assunto}</div>
-    <div class="pe-bd">${corpo}</div>
+    <div class="pe-bd">${DB.renderEmailBlocks(blocks, SAMPLE_VARS)}</div>
   </div>`;
 }
 
