@@ -12,8 +12,8 @@
   --sombra:0 1px 2px rgba(21,24,28,.04), 0 8px 24px -12px rgba(21,24,28,.12);
   --sombra-lg:0 20px 60px -20px rgba(21,24,28,.28);
   --raio:10px; --raio-sm:7px;
-  --font-display:'Bricolage Grotesque',-apple-system,BlinkMacSystemFont,sans-serif;
-  --font-body:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-display:'Nyata',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-body:'Satoshi',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   --sb-w:252px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -24,12 +24,12 @@ img{max-width:100%;display:block}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 ::selection{background:var(--azul);color:#fff}
-h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;letter-spacing:-.02em;line-height:1.1}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:400;letter-spacing:-.02em;line-height:1.1}
 
 /* ---------- LOGIN ---------- */
 .auth-shell{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
 .auth-visual{background:var(--azul);color:var(--creme);padding:56px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
-.auth-visual .mark{font-family:var(--font-display);font-weight:800;font-size:32px;letter-spacing:-.04em}
+.auth-visual .mark{font-family:var(--font-display);font-weight:400;font-size:32px;letter-spacing:-.04em}
 .auth-visual h2{font-size:clamp(28px,3vw,44px);max-width:12ch;letter-spacing:-.03em}
 .auth-visual p{opacity:.75;max-width:38ch;margin-top:14px;font-size:15px}
 .auth-visual .grid-dec{position:absolute;inset:0;background-image:linear-gradient(rgba(242,237,230,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(242,237,230,.08) 1px,transparent 1px);background-size:56px 56px;pointer-events:none}
@@ -62,7 +62,7 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;letter-spacing:-.02e
 .app{display:flex;min-height:100vh}
 .sidebar{width:var(--sb-w);flex:none;background:var(--tinta);color:var(--creme);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:40;transition:transform .3s}
 .sb-brand{padding:24px 22px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(242,237,230,.1)}
-.sb-brand .mark{font-family:var(--font-display);font-weight:800;font-size:21px;letter-spacing:-.03em}
+.sb-brand .mark{font-family:var(--font-display);font-weight:400;font-size:21px;letter-spacing:-.03em}
 .sb-brand .tag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;opacity:.45;margin-top:2px}
 .sb-nav{flex:1;overflow-y:auto;padding:16px 12px}
 .sb-group{margin-bottom:18px}
@@ -98,7 +98,7 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;letter-spacing:-.02e
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
 .kpi{background:#fff;border:1px solid var(--linha);border-radius:var(--raio);padding:18px 20px;box-shadow:var(--sombra)}
 .kpi .lbl{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-45);font-weight:600}
-.kpi b{display:block;font-family:var(--font-display);font-size:30px;letter-spacing:-.02em;margin-top:8px}
+.kpi b{display:block;font-family:var(--font-display);font-weight:400;font-size:30px;letter-spacing:-.02em;margin-top:8px}
 .kpi .delta{font-size:12px;margin-top:6px;color:var(--tinta-45)}
 .kpi .delta.up{color:var(--verde)}
 .card{background:#fff;border:1px solid var(--linha);border-radius:var(--raio);box-shadow:var(--sombra)}
@@ -214,7 +214,7 @@ table.tbl tbody tr:hover{background:var(--azul-fundo)}
 .preview-email .pe-bd{padding:20px;font-size:13.5px;line-height:1.7;white-space:pre-wrap}
 .metric-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;text-align:center}
 .metric-row div{background:var(--creme);border-radius:var(--raio-sm);padding:12px 8px}
-.metric-row b{display:block;font-family:var(--font-display);font-size:19px}
+.metric-row b{display:block;font-family:var(--font-display);font-weight:400;font-size:19px}
 .metric-row span{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--tinta-45)}
 
 .empty{text-align:center;padding:50px 20px;color:var(--tinta-45)}

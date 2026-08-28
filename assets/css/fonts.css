@@ -1,0 +1,20 @@
+/* ===========================================================
+   Solua — fontes da marca (arquivos reais, servidos localmente)
+   Nyata FTR Regular  → títulos e destaques (--font-display)
+   Satoshi Medium     → texto corrido e UI (--font-body)
+   Carregado uma única vez por todas as páginas do site e do CRM.
+   =========================================================== */
+@font-face{
+  font-family:'Nyata';
+  src:url('../fonts/Nyata-Regular.woff2') format('woff2');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face{
+  font-family:'Satoshi';
+  src:url('../fonts/Satoshi-Medium.woff2') format('woff2');
+  font-weight:400 700;
+  font-style:normal;
+  font-display:swap;
+}
