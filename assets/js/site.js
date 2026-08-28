@@ -162,8 +162,9 @@ if(cotacaoSec){
     const el=$(s), p=el.parentElement, good=fn(el.value); p.classList.toggle("err", !good); if(!good) ok=false; });
    return ok; };
   $("#n3").onclick = ()=>{ if(!val()) return;
-   const d = Object.entries(D.det).map(([k,v])=>`<b>${k}:</b> ${v}`).join("<br>");
-   $("#resumo").innerHTML = `<b>Interesse:</b> ${D.ramo==="seguro"?"Seguro":"Consórcio"} — ${D.tipo}<br>${d?d+"<br>":""}<b>Nome:</b> ${$("#nome").value}<br><b>WhatsApp:</b> ${$("#fone").value}<br><b>E-mail:</b> ${$("#email").value}${$("#cidade").value?"<br><b>Cidade:</b> "+$("#cidade").value:""}`;
+   const esc = window.SoluaDB.esc;
+   const d = Object.entries(D.det).map(([k,v])=>`<b>${esc(k)}:</b> ${esc(v)}`).join("<br>");
+   $("#resumo").innerHTML = `<b>Interesse:</b> ${D.ramo==="seguro"?"Seguro":"Consórcio"} — ${esc(D.tipo)}<br>${d?d+"<br>":""}<b>Nome:</b> ${esc($("#nome").value)}<br><b>WhatsApp:</b> ${esc($("#fone").value)}<br><b>E-mail:</b> ${esc($("#email").value)}${$("#cidade").value?"<br><b>Cidade:</b> "+esc($("#cidade").value):""}`;
    setStep(4);
   };
 
@@ -184,8 +185,15 @@ if(cotacaoSec){
        texto:`Lead recebido pelo formulário de cotação do site.${detalhesTxt?" Detalhes: "+detalhesTxt:""}${$("#obs").value.trim()?" Observação do cliente: "+$("#obs").value.trim():""}`}]
    });
 
-   const txt = `Olá! Solicitei uma cotação pelo site.%0A%0AInteresse: ${D.ramo} — ${D.tipo}%0ANome: ${$("#nome").value}%0A${Object.entries(D.det).map(([k,v])=>`${k}: ${v}`).join("%0A")}`;
-   $("#wppLink").href = `https://wa.me/${WPP}?text=${txt}`;
+   // monta a mensagem como texto puro e só codifica no final — nomes/valores com
+   // acentos, "&", "#" etc. não podem ir soltos numa query string
+   const linhasWpp = [
+     "Olá! Solicitei uma cotação pelo site.", "",
+     `Interesse: ${D.ramo==="seguro"?"Seguro":"Consórcio"} — ${D.tipo}`,
+     `Nome: ${$("#nome").value}`,
+     ...Object.entries(D.det).map(([k,v])=>`${k}: ${v}`)
+   ].join("\n");
+   $("#wppLink").href = `https://wa.me/${WPP}?text=${encodeURIComponent(linhasWpp)}`;
    $$(".stepv").forEach(v=>v.classList.remove("on"));
    $("#done").classList.add("on");
    $$("#prog div").forEach(d=>d.classList.add("done"));

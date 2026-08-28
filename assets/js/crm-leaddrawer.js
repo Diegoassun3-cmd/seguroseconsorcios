@@ -19,7 +19,12 @@ function ensureDom(){
 }
 
 function fieldsHtml(l){
-  const equipe = DB.getEquipe().filter(u=> u.papel!=="Administrador" && (u.produto===l.produto || u.produto==="ambos"));
+  // Mantém consultores inativos na lista (só marcados como "(inativo)") em vez de
+  // escondê-los: se sumissem da lista, salvar o formulário sem mexer nesse campo
+  // reatribuiria silenciosamente o lead para o primeiro nome da lista.
+  const equipe = DB.getEquipe()
+    .filter(u=> u.papel!=="Administrador" && (u.produto===l.produto || u.produto==="ambos"))
+    .sort((a,b)=> (b.ativo?1:0)-(a.ativo?1:0));
   const tipos = DB.TIPOS[l.produto] || [];
   return `
   <div class="grid2">
@@ -29,7 +34,7 @@ function fieldsHtml(l){
     <div class="field"><label>E-mail</label><input data-f="email" value="${esc(l.email||"")}"></div>
     <div class="field"><label>Tipo</label><select data-f="tipo">${tipos.map(t=>`<option ${t===l.tipo?"selected":""}>${t}</option>`).join("")}</select></div>
     <div class="field"><label>Origem</label><select data-f="origem">${DB.ORIGENS.map(o=>`<option ${o===l.origem?"selected":""}>${o}</option>`).join("")}</select></div>
-    <div class="field"><label>Consultor</label><select data-f="consultorId"><option value="">— sem atribuição —</option>${equipe.map(u=>`<option value="${u.id}" ${u.id===l.consultorId?"selected":""}>${u.nome}</option>`).join("")}</select></div>
+    <div class="field"><label>Consultor</label><select data-f="consultorId"><option value="">— sem atribuição —</option>${equipe.map(u=>`<option value="${u.id}" ${u.id===l.consultorId?"selected":""}>${esc(u.nome)}${u.ativo?"":" (inativo)"}</option>`).join("")}</select></div>
     <div class="field"><label>${l.produto==="seguro"?"Prêmio estimado (R$/ano)":"Valor da carta (R$)"}</label><input data-f="valor" type="number" value="${Number(l.valor)||0}"></div>
   </div>
   <div class="field">
@@ -64,7 +69,7 @@ function notesHtml(l){
   </div>`;
 }
 
-function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
+const esc = DB.esc;
 
 function render(l){
   const badgeClass = l.produto==="seguro" ? "seguro" : "consorcio";

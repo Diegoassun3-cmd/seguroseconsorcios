@@ -32,12 +32,12 @@ function cardHtml(l){
   const valorLabel = produto==="seguro" ? DB.formatBRL(l.valor)+"/ano" : DB.formatBRL(l.valor);
   return `
   <div class="kcard" draggable="true" data-id="${l.id}">
-    <b>${l.nome}</b>
-    <div class="sub">${l.tipo||"—"} · ${l.cidade||"—"}</div>
+    <b>${DB.esc(l.nome)}</b>
+    <div class="sub">${DB.esc(l.tipo)||"—"} · ${DB.esc(l.cidade)||"—"}</div>
     ${(l.tags||[]).length ? `<div style="margin-top:7px;display:flex;gap:5px">${(l.tags||[]).map(t=>`<span class="tagchip">${t==="prioridade"?"⭐ prioridade":"🔄 renovação"}</span>`).join("")}</div>` : ""}
     <div class="meta">
       <span class="val">${valorLabel}</span>
-      ${cons ? `<span class="who"><span class="miniav" style="background:${cons.avatarBg}">${DB.iniciais(cons.nome)}</span>${cons.nome.split(" ")[0]}</span>` : `<span class="who">sem consultor</span>`}
+      ${cons ? `<span class="who"><span class="miniav" style="background:${cons.avatarBg}">${DB.iniciais(cons.nome)}</span>${DB.esc(cons.nome.split(" ")[0])}</span>` : `<span class="who">sem consultor</span>`}
     </div>
   </div>`;
 }
@@ -91,7 +91,7 @@ function renderFilters(){
   const bar = document.getElementById("filterbar");
   bar.innerHTML = `
     <label class="tb-search" style="min-width:220px"><span>${window.SoluaUI.svg("search")}</span><input id="fq" placeholder="Buscar por nome, e-mail, telefone…"></label>
-    <select class="pill" id="fConsultor" style="border-radius:8px"><option value="">Todos os consultores</option>${equipe.map(u=>`<option value="${u.id}">${u.nome}</option>`).join("")}</select>
+    <select class="pill" id="fConsultor" style="border-radius:8px"><option value="">Todos os consultores</option>${equipe.map(u=>`<option value="${u.id}">${DB.esc(u.nome)}</option>`).join("")}</select>
     <select class="pill" id="fTipo" style="border-radius:8px"><option value="">Todos os tipos</option>${tipos.map(t=>`<option>${t}</option>`).join("")}</select>
     <span class="spacer"></span>
     <span id="fCount" style="font-size:12.5px;color:var(--tinta-45)"></span>`;

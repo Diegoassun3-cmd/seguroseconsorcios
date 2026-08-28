@@ -26,15 +26,15 @@ function render(){
   const tpls = DB.getTemplates(abaCanal);
   document.getElementById("grid").innerHTML = tpls.map(t=>`
     <div class="card" data-tpl="${t.id}" style="cursor:pointer">
-      <div class="card-hd"><h3 style="font-size:14px">${t.nome}</h3><span class="badge ${t.categoria==="seguro"?"seguro":t.categoria==="consorcio"?"consorcio":"neutro"}">${t.categoria==="seguro"?"Seguros":t.categoria==="consorcio"?"Consórcios":"Geral"}</span></div>
+      <div class="card-hd"><h3 style="font-size:14px">${esc(t.nome)}</h3><span class="badge ${t.categoria==="seguro"?"seguro":t.categoria==="consorcio"?"consorcio":"neutro"}">${t.categoria==="seguro"?"Seguros":t.categoria==="consorcio"?"Consórcios":"Geral"}</span></div>
       <div class="card-bd">
         ${t.assunto?`<p style="font-size:12.5px;color:var(--tinta-45);margin-bottom:6px"><b>Assunto:</b> ${esc(t.assunto)}</p>`:""}
-        <p style="font-size:12.5px;color:var(--tinta-60);max-height:54px;overflow:hidden">${esc(t.corpo).slice(0,140)}${t.corpo.length>140?"…":""}</p>
+        <p style="font-size:12.5px;color:var(--tinta-60);max-height:54px;overflow:hidden">${esc(t.corpo.slice(0,140))}${t.corpo.length>140?"…":""}</p>
       </div>
     </div>`).join("") || `<p class="empty" style="grid-column:1/-1">Nenhum modelo de ${abaCanal==="email"?"e-mail":"WhatsApp"} ainda.</p>`;
   document.querySelectorAll("[data-tpl]").forEach(c=> c.onclick = ()=> openEditor(c.dataset.tpl));
 }
-function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
+const esc = DB.esc;
 
 function varsHtml(){
   return VARS.map(([k,label])=>`<button type="button" class="pill" data-var="${k}" title="${label}" style="font-size:11.5px">{{${k}}}</button>`).join(" ");

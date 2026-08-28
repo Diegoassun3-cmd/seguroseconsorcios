@@ -291,9 +291,13 @@
   function getCampaign(id){ return STATE.campaigns.find(c=>c.id===id) || null; }
 
   function addCampaign(data){
+    // guarda uma cópia do modelo no momento da criação: se o modelo for editado
+    // ou excluído depois, o histórico desta campanha continua íntegro.
+    const tplOriginal = data.templateId ? getTemplate(data.templateId) : null;
     const c = Object.assign({
       id: uid("camp"), canal:"email", nome:"", segmento:"todos", templateId:null,
       status:"rascunho", criadoEm: nowISO(), agendadoPara:null, enviadoEm:null,
+      templateSnapshot: tplOriginal ? {nome:tplOriginal.nome, assunto:tplOriginal.assunto, corpo:tplOriginal.corpo} : null,
       metrics:{enviados:0, entregues:0, abertos:0, cliques:0, respostas:0}
     }, data);
     STATE.campaigns.unshift(c); save(STATE); return c;
@@ -310,7 +314,6 @@
   function sendCampaignNow(id){
     const c = getCampaign(id); if(!c) return null;
     const publico = getAudience(c.segmento);
-    const n = Math.max(publico.length, 1) * (publico.length ? 1 : 0);
     const taxaEntrega = c.canal==="whatsapp" ? 0.97 : 0.93;
     const taxaAbertura = c.canal==="whatsapp" ? 0.86 : (0.42+Math.random()*0.2);
     const taxaClique = c.canal==="whatsapp" ? 0 : (0.12+Math.random()*0.12);
@@ -339,6 +342,7 @@
   function login(email, senha){
     const u = STATE.equipe.find(x=>x.email.toLowerCase()===String(email||"").toLowerCase().trim());
     if(!u) return {ok:false, erro:"E-mail não encontrado na equipe Solua."};
+    if(!u.ativo) return {ok:false, erro:"Este usuário está inativo. Peça a um administrador para reativar seu acesso."};
     if(senha !== DEMO_SENHA) return {ok:false, erro:'Senha incorreta. (Ambiente de demonstração — senha: "'+DEMO_SENHA+'")'};
     STATE.session = {userId:u.id, entrouEm: nowISO()};
     logActivity("usuario_login", `${u.nome} entrou no CRM`, {usuarioId:u.id});
@@ -348,7 +352,10 @@
   function logout(){ STATE.session = null; save(STATE); }
   function currentUser(){
     if(!STATE.session) return null;
-    return getUsuario(STATE.session.userId);
+    const u = getUsuario(STATE.session.userId);
+    // se o usuário foi desativado ou removido depois do login, a sessão cai na hora
+    if(!u || !u.ativo){ STATE.session = null; save(STATE); return null; }
+    return u;
   }
   function requireAuth(){
     if(!currentUser()){
@@ -413,6 +420,12 @@
   function fillTemplate(str, vars){
     return String(str||"").replace(/\{\{\s*([\w]+)\s*\}\}/g, (m,k)=> (vars && vars[k]!=null) ? vars[k] : m);
   }
+  // Escapa texto que veio de um formulário (nome, cidade, observações...) antes de
+  // jogar em innerHTML — os leads podem ter sido cadastrados por qualquer visitante
+  // do site público, então esse texto nunca é confiável.
+  function escapeHtml(s){
+    return String(s==null?"":s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+  }
 
   // -------------------- RESET (útil em demonstrações) --------------------
   function resetDemoData(){
@@ -429,6 +442,7 @@
     login, logout, currentUser, requireAuth,
     dashboardStats, getActivity, labelEstagio,
     formatBRL, formatDate, formatDateTime, formatPhone, iniciais, timeAgo, fillTemplate,
+    escapeHtml, esc: escapeHtml,
     resetDemoData, uid
   };
 

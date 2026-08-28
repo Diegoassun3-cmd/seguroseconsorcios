@@ -58,30 +58,40 @@
 <script src="../assets/js/crm-ui.js"></script>
 <script>
 const DB = window.SoluaDB;
-const s = DB.dashboardStats();
-document.getElementById("kpis").innerHTML = `
-  <div class="kpi"><span class="lbl">Leads no funil</span><b>${s.abertos}</b><span class="delta">${s.novos7d} novos nos últimos 7 dias</span></div>
-  <div class="kpi"><span class="lbl">Fechados (apólice / contemplado)</span><b>${s.ganhos}</b><span class="delta up">${s.taxaConversao}% de conversão total</span></div>
-  <div class="kpi"><span class="lbl">Valor em negociação</span><b>${DB.formatBRL(s.valorEmAberto)}</b><span class="delta">soma dos leads em aberto</span></div>
-  <div class="kpi"><span class="lbl">Base total</span><b>${s.total}</b><span class="delta">${s.seguro} seguros · ${s.consorcio} consórcios</span></div>
-`;
-
-const max = Math.max(s.seguro, s.consorcio, 1);
-document.getElementById("splitBars").innerHTML = `
-  <div style="margin-bottom:14px">
-    <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px"><span>Seguros</span><b>${s.seguro}</b></div>
-    <div style="height:8px;border-radius:100px;background:var(--creme-2)"><div style="height:100%;border-radius:100px;width:${(s.seguro/max)*100}%;background:var(--azul)"></div></div>
-  </div>
-  <div>
-    <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px"><span>Consórcios</span><b>${s.consorcio}</b></div>
-    <div style="height:8px;border-radius:100px;background:var(--creme-2)"><div style="height:100%;border-radius:100px;width:${(s.consorcio/max)*100}%;background:var(--amarelo)"></div></div>
-  </div>`;
-
 const iconFor = t=>({lead_criado:"👤",estagio_alterado:"↗️",nota:"📝",campanha_enviada:"📣",usuario_login:"🔑"}[t]||"•");
-document.getElementById("feed").innerHTML = DB.getActivity(14).map(a=>`
-  <div class="feed-item"><span class="feed-dot"></span>
-    <div><p>${iconFor(a.tipo)} ${a.descricao}</p><time>${DB.timeAgo(a.data)}</time></div>
-  </div>`).join("") || `<div class="empty">Sem atividade ainda.</div>`;
+
+function renderDashboard(){
+  const s = DB.dashboardStats();
+  document.getElementById("kpis").innerHTML = `
+    <div class="kpi"><span class="lbl">Leads no funil</span><b>${s.abertos}</b><span class="delta">${s.novos7d} novos nos últimos 7 dias</span></div>
+    <div class="kpi"><span class="lbl">Fechados (apólice / contemplado)</span><b>${s.ganhos}</b><span class="delta up">${s.taxaConversao}% de conversão total</span></div>
+    <div class="kpi"><span class="lbl">Valor em negociação</span><b>${DB.formatBRL(s.valorEmAberto)}</b><span class="delta">soma dos leads em aberto</span></div>
+    <div class="kpi"><span class="lbl">Base total</span><b>${s.total}</b><span class="delta">${s.seguro} seguros · ${s.consorcio} consórcios</span></div>
+  `;
+
+  const max = Math.max(s.seguro, s.consorcio, 1);
+  document.getElementById("splitBars").innerHTML = `
+    <div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px"><span>Seguros</span><b>${s.seguro}</b></div>
+      <div style="height:8px;border-radius:100px;background:var(--creme-2)"><div style="height:100%;border-radius:100px;width:${(s.seguro/max)*100}%;background:var(--azul)"></div></div>
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px"><span>Consórcios</span><b>${s.consorcio}</b></div>
+      <div style="height:8px;border-radius:100px;background:var(--creme-2)"><div style="height:100%;border-radius:100px;width:${(s.consorcio/max)*100}%;background:var(--amarelo)"></div></div>
+    </div>`;
+
+  document.getElementById("feed").innerHTML = DB.getActivity(14).map(a=>`
+    <div class="feed-item"><span class="feed-dot"></span>
+      <div><p>${iconFor(a.tipo)} ${DB.esc(a.descricao)}</p><time>${DB.timeAgo(a.data)}</time></div>
+    </div>`).join("") || `<div class="empty">Sem atividade ainda.</div>`;
+}
+renderDashboard();
+
+// a topbar cria o botão "+ Novo lead" de forma genérica (crm-ui.js); aqui religamos
+// para que, depois de criar, os números e a atividade recente desta página se atualizem.
+const btnNovo = document.getElementById("btnNovoLead");
+if(btnNovo) btnNovo.onclick = ()=> window.SoluaNewLead.open({onCreated: renderDashboard});
 </script>
+<script src="../assets/js/crm-newlead.js"></script>
 </body>
 </html>

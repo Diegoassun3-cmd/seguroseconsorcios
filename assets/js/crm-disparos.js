@@ -31,7 +31,7 @@ function renderHistorico(){
     const publico = DB.getAudience(c.segmento).length;
     const seg = (DB.SEGMENTOS.find(s=>s.id===c.segmento)||{}).label || c.segmento;
     return `<tr data-id="${c.id}">
-      <td><b>${c.nome}</b><div style="font-size:11.5px;color:var(--tinta-45)">${seg}</div></td>
+      <td><b>${DB.esc(c.nome)}</b><div style="font-size:11.5px;color:var(--tinta-45)">${seg}</div></td>
       <td>${canalBadge(c)}</td>
       <td>${publico} contato${publico===1?"":"s"}</td>
       <td>${statusBadge(c)}</td>
@@ -82,11 +82,13 @@ function renderKpis(){
 
 function openDetail(id){
   const c = DB.getCampaign(id); if(!c) return;
-  const t = DB.getTemplate(c.templateId);
+  // usa a cópia salva no envio (templateSnapshot); só cai para o modelo "ao vivo"
+  // em campanhas antigas criadas antes dessa cópia existir.
+  const t = c.templateSnapshot || DB.getTemplate(c.templateId);
   const body = document.getElementById("detailBody");
   body.innerHTML = `
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px">${canalBadge(c)}${statusBadge(c)}</div>
-    <h3 style="font-size:19px;margin-bottom:4px">${c.nome}</h3>
+    <h3 style="font-size:19px;margin-bottom:4px">${DB.esc(c.nome)}</h3>
     <p style="font-size:13px;color:var(--tinta-45);margin-bottom:18px">Público: ${(DB.SEGMENTOS.find(s=>s.id===c.segmento)||{}).label} · ${DB.getAudience(c.segmento).length} contatos</p>
     ${c.status==="enviado" ? `<div class="metric-row" style="margin-bottom:20px">
       <div><b>${c.metrics.enviados}</b><span>Enviados</span></div>
@@ -138,7 +140,7 @@ function stepHtml(){
     return `<h3 style="font-size:17px;margin-bottom:14px">3. Escolha o modelo</h3>
     <div class="grid2" style="align-items:start">
       <div>
-        ${tpls.map(tp=>`<div class="tplcard ${tp.id===wizard.templateId?"sel":""}" data-tpl="${tp.id}"><b>${tp.nome}</b><span>${tp.categoria==="seguro"?"Seguros":tp.categoria==="consorcio"?"Consórcios":"Geral"}</span></div>`).join("") || `<p style="font-size:13px;color:var(--tinta-45)">Nenhum modelo para este canal ainda.</p>`}
+        ${tpls.map(tp=>`<div class="tplcard ${tp.id===wizard.templateId?"sel":""}" data-tpl="${tp.id}"><b>${DB.esc(tp.nome)}</b><span>${tp.categoria==="seguro"?"Seguros":tp.categoria==="consorcio"?"Consórcios":"Geral"}</span></div>`).join("") || `<p style="font-size:13px;color:var(--tinta-45)">Nenhum modelo para este canal ainda.</p>`}
         <a class="btn ghost sm block" href="modelos.html" style="margin-top:8px">+ Criar novo modelo</a>
       </div>
       <div>${t ? previewHtml(wizard.canal, t) : `<p style="font-size:13px;color:var(--tinta-45)">Selecione um modelo para pré-visualizar.</p>`}</div>
@@ -148,7 +150,7 @@ function stepHtml(){
   const t = DB.getTemplate(wizard.templateId);
   const seg = DB.SEGMENTOS.find(s=>s.id===wizard.segmento);
   return `<h3 style="font-size:17px;margin-bottom:14px">4. Revisar e enviar</h3>
-  <div class="field"><label>Nome da campanha</label><input id="wNome" value="${wizard.nome||sugerirNome()}"></div>
+  <div class="field"><label>Nome da campanha</label><input id="wNome" value="${DB.esc(wizard.nome||sugerirNome())}"></div>
   <div class="field">
     <label>Quando enviar</label>
     <div style="display:flex;gap:10px">
@@ -160,7 +162,7 @@ function stepHtml(){
   <div class="card" style="margin-top:6px"><div class="card-bd" style="font-size:13px;color:var(--tinta-60);display:flex;flex-direction:column;gap:6px">
     <div><b>Canal:</b> ${wizard.canal==="email"?"E-mail":"WhatsApp"}</div>
     <div><b>Público:</b> ${seg?seg.label:""} (${DB.getAudience(wizard.segmento).length} contatos)</div>
-    <div><b>Modelo:</b> ${t?t.nome:"—"}</div>
+    <div><b>Modelo:</b> ${t?DB.esc(t.nome):"—"}</div>
   </div></div>`;
 }
 function sugerirNome(){

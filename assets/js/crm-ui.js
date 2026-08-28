@@ -76,7 +76,7 @@ function renderSidebar(){
   <div class="sb-foot">
     <div class="sb-user">
       <span class="avatar" style="background:${ME.avatarBg||"#004BA5"}">${initials}</span>
-      <span class="who"><b>${ME.nome}</b><span>${ME.papel}</span></span>
+      <span class="who"><b>${DB.esc(ME.nome)}</b><span>${DB.esc(ME.papel)}</span></span>
     </div>
     <button class="sb-logout" id="btnLogout">${svg("logout")}Sair</button>
   </div>`;
