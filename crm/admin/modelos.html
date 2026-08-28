@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modelos de mensagem — CRM Solua</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23004BA5'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/crm.css">
+<style>#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}</style>
+</head>
+<body data-base="../" data-active="admin-modelos" data-title="Modelos de mensagem" data-crumbs="CRM Solua / Administração">
+
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar" id="topbar"></header>
+    <main class="content">
+
+      <div class="filterbar">
+        <div class="tabs" id="tabs"></div>
+        <span class="spacer"></span>
+        <button class="btn sm" id="btnNovoModelo">+ Novo modelo</button>
+      </div>
+
+      <div id="grid"></div>
+
+    </main>
+  </div>
+</div>
+
+<div class="overlay modal-center" id="editorOverlay">
+  <div class="modal" style="width:min(620px,94vw)">
+    <div class="modal-hd"><h3 style="font-size:16px" id="modalTitle">Novo modelo</h3><button class="x" data-close-overlay="editorOverlay"></button></div>
+    <div class="modal-bd" id="editorBody"></div>
+    <div class="modal-ft">
+      <button class="btn danger ghost sm" id="btnExcluirModelo" style="margin-right:auto">Excluir</button>
+      <button class="btn ghost sm" data-close-overlay="editorOverlay">Cancelar</button>
+      <button class="btn sm" id="btnSalvarModelo">Salvar modelo</button>
+    </div>
+  </div>
+</div>
+
+<script src="../../assets/js/crm-data.js"></script>
+<script src="../../assets/js/crm-ui.js"></script>
+<script>
+if(!window.SoluaUI.isAdmin){ window.SoluaUI.toast("Acesso restrito à administração.","err"); location.replace("../dashboard.html"); }
+</script>
+<script src="../../assets/js/crm-modelos.js"></script>
+</body>
+</html>

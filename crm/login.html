@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrar — CRM Solua</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23004BA5'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/crm.css">
+</head>
+<body>
+
+<div class="auth-shell">
+  <div class="auth-visual">
+    <div class="grid-dec"></div>
+    <span class="mark">solua</span>
+    <div style="position:relative;z-index:1">
+      <h2>Um CRM só para seguros e consórcios.</h2>
+      <p>Pipelines separados para cada produto, base de contatos unificada e uma central de disparos de e-mail e WhatsApp — tudo em um só lugar, feito para a operação da Solua.</p>
+    </div>
+    <div style="position:relative;z-index:1;font-size:12.5px;opacity:.6">© <span id="yr"></span> Solua Corretora — acesso restrito à equipe.</div>
+  </div>
+
+  <div class="auth-form">
+    <div class="auth-card">
+      <h1>Bem-vindo de volta</h1>
+      <p class="sub">Entre com o e-mail cadastrado na equipe Solua.</p>
+
+      <div class="autherr" id="err"></div>
+
+      <div class="field">
+        <label>E-mail</label>
+        <input id="email" type="email" placeholder="voce@solua.com.br" autocomplete="username">
+      </div>
+      <div class="field">
+        <label>Senha</label>
+        <input id="senha" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn block" id="btnEntrar">Entrar no CRM</button>
+
+      <div class="demo-hint">
+        <b>Ambiente de demonstração.</b> Use um dos e-mails da equipe (ex.: <b>diego.assun3@gmail.com</b> para acesso de Administrador, ou <b>ana.souza@solua.com.br</b> para Consultora de Seguros) com a senha <b>solua2026</b>. Em produção, isso seria trocado por um login real (com verificação de senha segura no servidor).
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/crm-data.js"></script>
+<script>
+document.getElementById("yr").textContent = new Date().getFullYear();
+// já logado? manda direto pro destino
+if(window.SoluaDB.currentUser()){
+  const next = new URLSearchParams(location.search).get("next");
+  location.replace(next || "dashboard.html");
+}
+const $ = s=>document.querySelector(s);
+function tryLogin(){
+  const r = window.SoluaDB.login($("#email").value, $("#senha").value);
+  const err = $("#err");
+  if(!r.ok){ err.textContent = r.erro; err.classList.add("on"); return; }
+  err.classList.remove("on");
+  const next = new URLSearchParams(location.search).get("next");
+  location.href = next || "dashboard.html";
+}
+$("#btnEntrar").onclick = tryLogin;
+[$("#email"), $("#senha")].forEach(i=> i.addEventListener("keydown", e=> e.key==="Enter" && tryLogin()));
+</script>
+</body>
+</html>

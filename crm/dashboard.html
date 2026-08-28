@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — CRM Solua</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23004BA5'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/crm.css">
+</head>
+<body data-base="./" data-active="dashboard" data-title="Dashboard" data-crumbs="CRM Solua">
+
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar" id="topbar"></header>
+    <main class="content">
+
+      <div class="kpis" id="kpis"></div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-hd">
+            <h3>Atividade recente</h3>
+            <span class="badge neutro">últimos eventos</span>
+          </div>
+          <div class="card-bd">
+            <div class="feed" id="feed"></div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card">
+            <div class="card-hd"><h3>Seguros × Consórcios</h3></div>
+            <div class="card-bd">
+              <div id="splitBars"></div>
+              <a class="btn sm ghost block" style="margin-top:14px" href="pipeline-seguros.html">Ver pipeline de Seguros →</a>
+              <a class="btn sm ghost block" style="margin-top:8px" href="pipeline-consorcios.html">Ver pipeline de Consórcios →</a>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><h3>Central de disparos</h3></div>
+            <div class="card-bd">
+              <p style="font-size:13px;color:var(--tinta-60);margin-bottom:14px">Envie campanhas de e-mail e WhatsApp segmentadas por produto direto da área administrativa.</p>
+              <a class="btn sm block" href="admin/disparos.html">Ir para Disparos →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="../assets/js/crm-data.js"></script>
+<script src="../assets/js/crm-ui.js"></script>
+<script>
+const DB = window.SoluaDB;
+const s = DB.dashboardStats();
+document.getElementById("kpis").innerHTML = `
+  <div class="kpi"><span class="lbl">Leads no funil</span><b>${s.abertos}</b><span class="delta">${s.novos7d} novos nos últimos 7 dias</span></div>
+  <div class="kpi"><span class="lbl">Fechados (apólice / contemplado)</span><b>${s.ganhos}</b><span class="delta up">${s.taxaConversao}% de conversão total</span></div>
+  <div class="kpi"><span class="lbl">Valor em negociação</span><b>${DB.formatBRL(s.valorEmAberto)}</b><span class="delta">soma dos leads em aberto</span></div>
+  <div class="kpi"><span class="lbl">Base total</span><b>${s.total}</b><span class="delta">${s.seguro} seguros · ${s.consorcio} consórcios</span></div>
+`;
+
+const max = Math.max(s.seguro, s.consorcio, 1);
+document.getElementById("splitBars").innerHTML = `
+  <div style="margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px"><span>Seguros</span><b>${s.seguro}</b></div>
+    <div style="height:8px;border-radius:100px;background:var(--creme-2)"><div style="height:100%;border-radius:100px;width:${(s.seguro/max)*100}%;background:var(--azul)"></div></div>
+  </div>
+  <div>
+    <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px"><span>Consórcios</span><b>${s.consorcio}</b></div>
+    <div style="height:8px;border-radius:100px;background:var(--creme-2)"><div style="height:100%;border-radius:100px;width:${(s.consorcio/max)*100}%;background:var(--amarelo)"></div></div>
+  </div>`;
+
+const iconFor = t=>({lead_criado:"👤",estagio_alterado:"↗️",nota:"📝",campanha_enviada:"📣",usuario_login:"🔑"}[t]||"•");
+document.getElementById("feed").innerHTML = DB.getActivity(14).map(a=>`
+  <div class="feed-item"><span class="feed-dot"></span>
+    <div><p>${iconFor(a.tipo)} ${a.descricao}</p><time>${DB.timeAgo(a.data)}</time></div>
+  </div>`).join("") || `<div class="empty">Sem atividade ainda.</div>`;
+</script>
+</body>
+</html>

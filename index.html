@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solua — Seguros e Consórcios | 25 anos ao seu lado</title>
+<meta name="description" content="Solua Corretora — seguros e consórcios em Campinas há 25 anos. Cotação comparativa entre as principais seguradoras e administradoras. Imóveis, seguros e consórcios para cada etapa da sua vida.">
+<meta property="og:title" content="Solua — Seguros e Consórcios">
+<meta property="og:description" content="25 anos ao seu lado. Cotação comparativa de seguros e consórcios.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23004BA5'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+
+<header id="hd">
+  <div class="wrap nav">
+    <a href="#topo" class="brand">
+      <span class="mark">solua</span>
+      <span class="desc">imóveis, seguros e consórcios.</span>
+    </a>
+    <nav class="menu">
+      <a href="#seguros">Seguros</a>
+      <a href="#consorcios">Consórcios</a>
+      <a href="#processo">Como funciona</a>
+      <a href="#blog">Blog</a>
+      <a href="#sobre">A Solua</a>
+    </nav>
+    <button class="btn hdr" onclick="goQuote()">Fazer cotação</button>
+    <button class="burger" id="bg" aria-label="Menu"><i></i><i></i></button>
+  </div>
+</header>
+
+<div class="mob" id="mob">
+  <nav>
+    <a href="#seguros" data-close>Seguros</a>
+    <a href="#consorcios" data-close>Consórcios</a>
+    <a href="#processo" data-close>Como funciona</a>
+    <a href="#blog" data-close>Blog</a>
+    <a href="#sobre" data-close>A Solua</a>
+  </nav>
+  <button class="btn lg" style="width:100%" onclick="goQuote();closeMob()">Fazer cotação</button>
+</div>
+
+<!-- HERO -->
+<section id="topo" class="hero">
+  <div class="wrap">
+    <div class="hero-top rule" style="border-bottom:1px solid var(--linha);border-top:none">
+      <span class="lbl">/ Corretora · Campinas · desde 2001</span>
+      <span class="lbl">/ 25 anos ao seu lado</span>
+    </div>
+    <h1>Seguros e<br>consórcios<br><em>sem enrolação.</em></h1>
+    <div class="hero-grid">
+      <div>
+        <p class="hero-lead">Somos uma corretora independente. Cotamos com as principais seguradoras e administradoras do mercado e entregamos a você a comparação pronta — com a proteção certa pelo preço justo.</p>
+        <div class="hero-cta">
+          <button class="btn lg" onclick="goQuote()">Solicitar cotação</button>
+          <a class="btn lg ghost" href="#seguros">Ver produtos</a>
+        </div>
+      </div>
+      <div class="hero-side">
+        <span class="lbl">/ Atendimento consultivo</span>
+        <p>Um consultor dedicado do primeiro contato à renovação. Sem robô, sem fila, sem letra miúda.</p>
+      </div>
+    </div>
+  </div>
+  <div class="marquee">
+    <div class="marquee-in" id="mq"></div>
+  </div>
+</section>
+
+<!-- NÚMEROS -->
+<section class="sec" style="padding-top:clamp(50px,6vw,80px)">
+  <div class="wrap rev">
+    <div class="stats">
+      <div class="stat"><b>25</b><span>anos de mercado, desde 2001</span></div>
+      <div class="stat"><b>3</b><span>frentes: imóveis, seguros e consórcios</span></div>
+      <div class="stat"><b>+15</b><span>seguradoras e administradoras cotadas</span></div>
+      <div class="stat"><b>1</b><span>consultor dedicado para você</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SEGUROS -->
+<section id="seguros" class="sec">
+  <div class="wrap rev">
+    <div class="sec-head">
+      <div>
+        <span class="num">/ 01 — Seguros</span>
+        <h2>Proteção para o que você levou anos construindo.</h2>
+      </div>
+      <p class="side">Trabalhamos com as maiores seguradoras do país. Você recebe um comparativo claro entre coberturas, franquias e preços — e decide com informação, não com pressão.</p>
+    </div>
+    <div class="list" id="segList"></div>
+    <div style="margin-top:40px"><button class="btn lg" onclick="goQuote('seguro')">Cotar meu seguro</button></div>
+  </div>
+</section>
+
+<!-- CONSÓRCIOS -->
+<section id="consorcios" class="sec blue">
+  <div class="wrap rev">
+    <div class="sec-head">
+      <div>
+        <span class="num">/ 02 — Consórcios</span>
+        <h2>A forma mais inteligente de comprar sem juros.</h2>
+      </div>
+      <p class="side">Operamos com Porto Bank e Ademicon. Consórcio é planejamento: você compra poder de compra, não dívida — sem juros, com parcela que cabe no seu mês.</p>
+    </div>
+    <div class="list" id="conList"></div>
+    <div style="margin-top:40px"><button class="btn lg" onclick="goQuote('consorcio')">Simular consórcio</button></div>
+  </div>
+</section>
+
+<!-- PROCESSO -->
+<section id="processo" class="sec">
+  <div class="wrap rev">
+    <div class="sec-head">
+      <div>
+        <span class="num">/ 03 — Como funciona</span>
+        <h2>Quatro passos. Nenhuma surpresa.</h2>
+      </div>
+      <p class="side">Do primeiro contato à apólice ou à contemplação, você acompanha cada etapa com a mesma pessoa.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="n">01</span><div><h4>Você conta o que precisa</h4><p>Preenche a cotação em dois minutos ou fala direto com um consultor.</p></div></div>
+      <div class="step"><span class="n">02</span><div><h4>Cotamos no mercado</h4><p>Consultamos as seguradoras e administradoras parceiras e montamos o comparativo.</p></div></div>
+      <div class="step"><span class="n">03</span><div><h4>Você compara e escolhe</h4><p>Explicamos cobertura por cobertura, em português. A decisão é sua.</p></div></div>
+      <div class="step"><span class="n">04</span><div><h4>Cuidamos do resto</h4><p>Contratação, documentação, sinistro e renovação — acompanhamos tudo com você.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- COTAÇÃO -->
+<section id="cotacao" class="sec quote">
+  <div class="wrap rev">
+    <div class="sec-head">
+      <div>
+        <span class="num">/ 04 — Cotação</span>
+        <h2>Sua cotação começa aqui.</h2>
+      </div>
+      <p class="side">Leva menos de dois minutos. Um consultor Solua retorna em até 1 dia útil com o comparativo pronto.</p>
+    </div>
+
+    <div class="form-shell">
+      <aside class="form-aside">
+        <div>
+          <span class="lbl">/ Cotação Solua</span>
+          <div class="prog" id="prog">
+            <div data-s="1"><i>01</i> O que você procura</div>
+            <div data-s="2"><i>02</i> Detalhes</div>
+            <div data-s="3"><i>03</i> Seus dados</div>
+            <div data-s="4"><i>04</i> Envio</div>
+          </div>
+        </div>
+        <p style="font-size:12.5px;color:var(--tinta-35);line-height:1.5">Seus dados são usados apenas para elaborar a cotação e o contato comercial. Nunca vendemos ou compartilhamos suas informações.</p>
+      </aside>
+
+      <div class="form-main">
+        <!-- STEP 1 -->
+        <div class="stepv on" data-step="1">
+          <h3>O que você procura hoje?</h3>
+          <p class="sub">Escolha uma opção para continuarmos.</p>
+          <div class="opts">
+            <button class="opt" data-ramo="seguro"><b>Seguro</b><span>Auto, residencial, vida, empresarial, saúde, viagem e mais.</span></button>
+            <button class="opt" data-ramo="consorcio"><b>Consórcio</b><span>Imóvel, automóvel, pesados e serviços — sem juros.</span></button>
+          </div>
+          <div class="form-nav"><span></span><button class="btn" id="n1" disabled style="opacity:.4;pointer-events:none">Continuar</button></div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="stepv" data-step="2">
+          <h3 id="t2">Sobre o que vamos cotar</h3>
+          <p class="sub" id="s2">Selecione o tipo e complete os detalhes.</p>
+          <div class="opts tri" id="tipos"></div>
+          <div class="fields" id="det" style="margin-top:30px"></div>
+          <div class="form-nav"><button class="back" data-back>← Voltar</button><button class="btn" id="n2">Continuar</button></div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="stepv" data-step="3">
+          <h3>Como falamos com você?</h3>
+          <p class="sub">Só usamos esses dados para enviar sua cotação.</p>
+          <div class="fields">
+            <div class="f full"><label>Nome completo *</label><input id="nome" placeholder="Seu nome"></div>
+            <div class="f"><label>WhatsApp *</label><input id="fone" placeholder="(19) 90000-0000" inputmode="tel"></div>
+            <div class="f"><label>E-mail *</label><input id="email" type="email" placeholder="voce@email.com"></div>
+            <div class="f"><label>Cidade</label><input id="cidade" placeholder="Campinas"></div>
+            <div class="f"><label>Melhor horário</label><select id="horario"><option value="">Indiferente</option><option>Manhã</option><option>Tarde</option><option>Noite</option></select></div>
+            <div class="f full"><label>Quer adiantar algo? (opcional)</label><textarea id="obs" placeholder="Conte o que for útil para a cotação."></textarea></div>
+          </div>
+          <div class="form-nav"><button class="back" data-back>← Voltar</button><button class="btn" id="n3">Continuar</button></div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="stepv" data-step="4">
+          <h3>Confirme e envie</h3>
+          <p class="sub">Revise o resumo abaixo. Se estiver certo, é só enviar.</p>
+          <div id="resumo" style="border:1px solid var(--linha);padding:22px;font-size:14.5px;line-height:1.9;background:var(--papel)"></div>
+          <label class="consent"><input type="checkbox" id="lgpd"><span>Autorizo a Solua a entrar em contato pelos canais informados e tratar meus dados para elaboração da cotação, conforme a Lei Geral de Proteção de Dados (LGPD).</span></label>
+          <label class="consent" style="margin-top:12px"><input type="checkbox" id="news"><span>Quero receber novidades, conteúdos e condições especiais da Solua.</span></label>
+          <div class="form-nav"><button class="back" data-back>← Voltar</button><button class="btn lg" id="send">Enviar cotação</button></div>
+        </div>
+
+        <!-- DONE -->
+        <div class="done-v" id="done">
+          <div class="ok"></div>
+          <h3>Recebemos sua solicitação.</h3>
+          <p>Um consultor Solua vai analisar e retornar em até 1 dia útil com o comparativo. Se preferir adiantar, chame no WhatsApp.</p>
+          <a class="btn lg" id="wppLink" target="_blank" rel="noopener">Falar no WhatsApp agora</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section id="blog" class="sec">
+  <div class="wrap rev">
+    <div class="sec-head">
+      <div>
+        <span class="num">/ 05 — Conteúdo</span>
+        <h2>Para decidir bem, é preciso entender.</h2>
+      </div>
+      <p class="side">Artigos práticos sobre seguros, consórcios e planejamento — escritos por quem faz isso há 25 anos.</p>
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="posts" id="posts"></div>
+  </div>
+</section>
+
+<!-- SOBRE -->
+<section id="sobre" class="sec blue">
+  <div class="wrap rev">
+    <div class="sec-head">
+      <div>
+        <span class="num">/ 06 — A Solua</span>
+        <h2>Uma corretora de bairro com estrutura de mercado.</h2>
+      </div>
+    </div>
+    <div class="about-grid">
+      <div>
+        <p style="color:rgba(242,237,230,.8)">A Solua nasceu em 2001, em Campinas, como corretora de seguros. Em 2010 abrimos a imobiliária e, mais recentemente, passamos a atuar também com consórcios. Vinte e cinco anos depois, seguimos com a mesma ideia: ficar do lado de quem contrata, não de quem vende.</p>
+        <p style="color:rgba(242,237,230,.8)">Ser independente significa que cotamos em várias seguradoras e administradoras — e recomendamos a que faz sentido para você, não a que paga melhor comissão.</p>
+        <div style="margin-top:30px"><button class="btn" onclick="goQuote()">Falar com um consultor</button></div>
+      </div>
+      <div class="time">
+        <div class="time-row"><b>2001</b><span>Fundação da corretora de seguros, em Campinas.</span></div>
+        <div class="time-row"><b>2010</b><span>Abertura da imobiliária — locação, venda e administração.</span></div>
+        <div class="time-row"><b>Hoje</b><span>Consórcios com Porto Bank e Ademicon, somados às três frentes.</span></div>
+        <div class="time-row"><b>25</b><span>anos ao seu lado — imóveis, seguros e consórcios para cada etapa da sua vida.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec faq">
+  <div class="wrap rev">
+    <div class="sec-head">
+      <div>
+        <span class="num">/ 07 — Dúvidas</span>
+        <h2>Perguntas frequentes.</h2>
+      </div>
+    </div>
+    <div class="list" id="faqList"></div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="sec" style="background:var(--papel);text-align:center;padding:clamp(70px,9vw,130px) 0">
+  <div class="wrap rev">
+    <span class="lbl">/ Vamos começar</span>
+    <h2 class="display" style="font-size:clamp(36px,7vw,90px);margin:22px auto 26px;max-width:14ch">Peça sua cotação hoje.</h2>
+    <p style="color:var(--tinta-60);max-width:46ch;margin:0 auto 34px">Dois minutos agora podem significar anos de tranquilidade — e uma parcela bem menor no fim do mês.</p>
+    <button class="btn lg" onclick="goQuote()">Solicitar cotação</button>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <div class="mark">solua</div>
+        <p>Imóveis, seguros e consórcios. 25 anos ao seu lado, em Campinas e região.</p>
+      </div>
+      <div class="fcol">
+        <h5>Produtos</h5>
+        <a href="#seguros">Seguros</a>
+        <a href="#consorcios">Consórcios</a>
+        <a href="#cotacao">Cotação</a>
+        <a href="#blog">Blog</a>
+      </div>
+      <div class="fcol">
+        <h5>Empresa</h5>
+        <a href="#sobre">Sobre a Solua</a>
+        <a href="#processo">Como funciona</a>
+        <a href="#">Trabalhe conosco</a>
+        <a href="#">Política de privacidade</a>
+      </div>
+      <div class="fcol">
+        <h5>Contato</h5>
+        <a href="#" id="wppFoot">WhatsApp</a>
+        <a href="mailto:contato@solua.com.br">contato@solua.com.br</a>
+        <span>Campinas — SP</span>
+        <span>Seg a sex, 9h às 18h</span>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span>© <span id="yr"></span> Solua Corretora de Seguros e Imobiliária Ltda. Todos os direitos reservados.</span>
+      <span class="staff">Corretora independente · SUSEP · <a href="crm/login.html">Acesso da equipe</a></span>
+    </div>
+  </div>
+</footer>
+
+<a class="wpp" id="wppFix" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.4-.2-.6.1s-.7.9-.9 1.1c-.2.2-.3.2-.6.1-1.7-.8-2.8-1.5-3.9-3.4-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5s-.6-1.5-.9-2.1c-.2-.5-.5-.4-.6-.4h-.5c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 1.9.8 2.6.9 3.5.7.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.9L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.6 0-3-.4-4.3-1.2l-.3-.2-3.1.8.8-3-.2-.3c-.8-1.3-1.3-2.8-1.3-4.4 0-4.5 3.7-8.2 8.2-8.2s8.2 3.7 8.2 8.2-3.6 8.3-8 8.3z"/></svg>
+</a>
+
+<!-- LEITOR DE ARTIGO -->
+<div class="reader" id="reader">
+  <div class="reader-bar"><div class="wrap in">
+    <span class="brand"><span class="mark">solua</span></span>
+    <button class="close-x" id="closeR" aria-label="Fechar"></button>
+  </div></div>
+  <article class="reader-body" id="rbody"></article>
+</div>
+
+<script src="assets/js/crm-data.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

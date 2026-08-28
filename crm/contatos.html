@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contatos — CRM Solua</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23004BA5'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/crm.css">
+</head>
+<body data-base="./" data-active="contatos" data-title="Contatos" data-crumbs="CRM Solua / Base unificada">
+
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar" id="topbar"></header>
+    <main class="content">
+
+      <div class="filterbar" id="filterbar"></div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr>
+            <th>Contato</th><th>Produto</th><th>Tipo</th><th>Estágio</th><th>Consultor</th><th>Valor</th><th>Atualizado</th><th></th>
+          </tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <p id="emptyMsg" class="empty" style="display:none">Nenhum contato encontrado com esse filtro.</p>
+
+    </main>
+  </div>
+</div>
+
+<script src="../assets/js/crm-data.js"></script>
+<script src="../assets/js/crm-ui.js"></script>
+<script src="../assets/js/crm-newlead.js"></script>
+<script src="../assets/js/crm-leaddrawer.js"></script>
+<script>
+const DB = window.SoluaDB;
+const filtro = {q: new URLSearchParams(location.search).get("q")||"", produto:"", estagio:"", consultor:""};
+
+function renderFilters(){
+  const equipe = DB.getEquipe();
+  const bar = document.getElementById("filterbar");
+  bar.innerHTML = `
+    <label class="tb-search" style="min-width:220px"><span>${window.SoluaUI.svg("search")}</span><input id="fq" placeholder="Buscar por nome, e-mail, telefone…" value="${filtro.q.replace(/"/g,"")}"></label>
+    <select class="pill" id="fProduto" style="border-radius:8px">
+      <option value="">Seguros e consórcios</option><option value="seguro">Só seguros</option><option value="consorcio">Só consórcios</option>
+    </select>
+    <select class="pill" id="fConsultor" style="border-radius:8px"><option value="">Todos os consultores</option>${equipe.map(u=>`<option value="${u.id}">${u.nome}</option>`).join("")}</select>
+    <span class="spacer"></span>
+    <span id="fCount" style="font-size:12.5px;color:var(--tinta-45)"></span>`;
+  document.getElementById("fq").oninput = e=>{ filtro.q=e.target.value; renderRows(); };
+  document.getElementById("fProduto").onchange = e=>{ filtro.produto=e.target.value; renderRows(); };
+  document.getElementById("fConsultor").onchange = e=>{ filtro.consultor=e.target.value; renderRows(); };
+}
+
+function leadsFiltrados(){
+  return DB.getLeads().filter(l=>{
+    if(filtro.q){
+      const q = filtro.q.toLowerCase();
+      if(!(l.nome.toLowerCase().includes(q) || (l.email||"").toLowerCase().includes(q) || (l.telefone||"").includes(q))) return false;
+    }
+    if(filtro.produto && l.produto!==filtro.produto) return false;
+    if(filtro.consultor && l.consultorId!==filtro.consultor) return false;
+    return true;
+  }).sort((a,b)=> new Date(b.atualizadoEm)-new Date(a.atualizadoEm));
+}
+
+function stageBadge(l){
+  const cor = (DB.PIPELINES[l.produto].find(s=>s.id===l.estagio)||{}).cor || "#8a8f98";
+  return `<span class="badge" style="background:${cor}22;color:${cor}">${DB.labelEstagio(l.produto,l.estagio)}</span>`;
+}
+
+function renderRows(){
+  const leads = leadsFiltrados();
+  const tbody = document.getElementById("rows");
+  tbody.innerHTML = leads.map(l=>{
+    const cons = DB.getUsuario(l.consultorId);
+    return `<tr data-id="${l.id}">
+      <td><div class="namecell"><span class="avatar" style="background:${l.produto==="seguro"?"#118ECC":"#B8862B"};width:32px;height:32px;font-size:11px">${DB.iniciais(l.nome)}</span>
+        <div><b>${l.nome}</b><span>${l.telefone?DB.formatPhone(l.telefone):(l.email||"—")}</span></div></div></td>
+      <td><span class="badge ${l.produto}">${l.produto==="seguro"?"Seguro":"Consórcio"}</span></td>
+      <td>${l.tipo||"—"}</td>
+      <td>${stageBadge(l)}</td>
+      <td>${cons?cons.nome:"—"}</td>
+      <td>${DB.formatBRL(l.valor)}</td>
+      <td>${DB.timeAgo(l.atualizadoEm)}</td>
+      <td class="rowactions"><button class="btn icon ghost sm" data-del="${l.id}" title="Excluir">✕</button></td>
+    </tr>`;
+  }).join("");
+  document.getElementById("emptyMsg").style.display = leads.length ? "none":"block";
+  document.getElementById("fCount").textContent = `${leads.length} contato${leads.length===1?"":"s"}`;
+  tbody.querySelectorAll("tr").forEach(tr=>{
+    tr.addEventListener("click", e=>{
+      if(e.target.closest("[data-del]")) return;
+      window.SoluaLead.open(tr.dataset.id, {onChange: renderRows});
+    });
+  });
+  tbody.querySelectorAll("[data-del]").forEach(btn=>{
+    btn.addEventListener("click", e=>{
+      e.stopPropagation();
+      const l = DB.getLead(btn.dataset.del);
+      window.SoluaUI.confirmAction(`Excluir "${l.nome}" definitivamente do CRM?`, ()=>{
+        DB.deleteLead(l.id); window.SoluaUI.toast("Lead excluído.","err"); renderRows();
+      });
+    });
+  });
+}
+
+renderFilters();
+renderRows();
+</script>
+</body>
+</html>
