@@ -1,0 +1,13 @@
+{
+  "$schema": "https://developers.cloudflare.com/workers/wrangler/config-schema.json",
+  // Nome do projeto/Worker no Cloudflare. Se ao criar o projeto no painel
+  // você já escolheu outro nome, ajuste este valor para ficar igual.
+  "name": "seguroseconsorcios",
+  "compatibility_date": "2026-08-28",
+  // Site 100% estático: sem "main" (nenhum código de Worker a rodar),
+  // o Cloudflare só serve os arquivos desta pasta diretamente.
+  "assets": {
+    "directory": "./",
+    "not_found_handling": "404-page"
+  }
+}
