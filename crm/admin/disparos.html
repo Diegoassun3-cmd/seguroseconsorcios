@@ -9,6 +9,7 @@
 <link rel="preload" href="../../assets/fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="../../assets/css/fonts.css">
 <link rel="stylesheet" href="../../assets/css/crm.css">
+<script defer src="../../assets/js/branding.js"></script>
 </head>
 <body data-base="../" data-active="admin-disparos" data-title="Central de Disparos" data-crumbs="CRM Solua / Administração">
 
@@ -21,9 +22,20 @@
       <div class="kpis" id="dispKpis"></div>
 
       <div class="card" style="margin-bottom:16px">
+        <div class="card-hd">
+          <h3>Automações (disparo automático por novo lead)</h3>
+          <a class="btn ghost sm" href="personalizacao.html">Configurar automações →</a>
+        </div>
+        <div class="card-bd">
+          <p style="font-size:13px;color:var(--tinta-60);margin-bottom:12px">Toda vez que alguém envia o formulário do site, o Worker decide na hora — com base no que está ligado em <b>Personalização</b> — se manda e-mail (Resend) e/ou WhatsApp (Cloud API) de boas-vindas de verdade. Isto aqui é o registro real desses envios, vindo direto do banco (D1) — não é simulado.</p>
+          <div id="automacaoLista"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
         <div class="card-bd" style="font-size:13px;color:var(--tinta-60);display:flex;align-items:center;gap:10px">
           <span style="font-size:18px">ℹ️</span>
-          <span>Os disparos abaixo rodam em modo de demonstração: o histórico, o público e as métricas são reais dentro do CRM, mas o envio de fato depende de conectar um provedor de e-mail e um provedor de WhatsApp. Veja o <b>README.md</b> do projeto, seção "Ligando os disparos", para o passo a passo.</span>
+          <span>As campanhas manuais abaixo (esta central de disparos) rodam em modo de demonstração: o histórico, o público e as métricas são reais dentro do CRM, mas o envio de e-mail em massa de verdade ainda depende de estender esta tela para chamar o Resend em lote (hoje só o disparo <b>automático</b> de boas-vindas, acima, já sai de verdade). Veja o <b>README.md</b>, seção "Ligando os disparos".</span>
         </div>
       </div>
 
@@ -75,6 +87,7 @@
 <script src="../../assets/js/crm-ui.js"></script>
 <script>
 if(!window.SoluaUI.isAdmin){ window.SoluaUI.toast("Acesso restrito à administração.","err"); location.replace("../dashboard.html"); }
+document.getElementById("campEmpty").innerHTML = window.SoluaUI.emptyState('Nenhuma campanha ainda. Clique em "+ Nova campanha" para começar.');
 </script>
 <script src="../../assets/js/crm-disparos.js"></script>
 </body>

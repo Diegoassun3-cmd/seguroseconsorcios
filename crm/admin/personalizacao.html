@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Personalização — CRM Solua</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23004BA5'/></svg>">
+<link rel="stylesheet" href="../../assets/css/fonts.css">
+<link rel="stylesheet" href="../../assets/css/crm.css">
+<script defer src="../../assets/js/branding.js"></script>
+</head>
+<body data-base="../" data-active="admin-personalizacao" data-title="Personalização" data-crumbs="CRM Solua / Administração">
+
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar" id="topbar"></header>
+    <main class="content content-narrow">
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-bd" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span style="font-size:13px;color:var(--tinta-60)">Estas configurações valem para <b>todo mundo</b> que acessa o site — não é algo salvo só no seu navegador.</span>
+          <span class="spacer"></span>
+          <span id="apiStatus"></span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-hd"><h3>Identidade visual</h3></div>
+        <div class="card-bd">
+          <div class="grid2">
+            <div class="field">
+              <label>Logo (opcional — sem logo, o site usa o texto "solua" na fonte da marca)</label>
+              <div id="logoPreview" style="margin-bottom:10px;min-height:48px;display:flex;align-items:center"></div>
+              <div style="display:flex;gap:8px">
+                <input type="file" id="fLogoFile" accept="image/png,image/svg+xml,image/jpeg,image/webp">
+                <button class="btn ghost sm" id="btnRemoverLogo" type="button">Remover</button>
+              </div>
+              <p style="font-size:12px;color:var(--tinta-45);margin-top:6px">PNG ou SVG com fundo transparente, até 250KB. Aparece no cabeçalho do site público.</p>
+            </div>
+            <div class="field">
+              <label>Cor principal da marca</label>
+              <div style="display:flex;gap:10px;align-items:center">
+                <input type="color" id="fCorPrimaria" value="#004BA5" style="width:48px;height:40px;padding:2px;border:1px solid var(--linha-forte);border-radius:8px">
+                <input type="text" id="fCorPrimariaHex" value="#004BA5" style="width:110px" placeholder="#004BA5">
+                <button type="button" id="corPreviewBtn" class="btn sm" style="pointer-events:none">Botão de exemplo</button>
+              </div>
+              <p style="font-size:12px;color:var(--tinta-45);margin-top:6px">Usada em botões, links e destaques no site e no CRM.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-hd"><h3>Contato e remetente</h3></div>
+        <div class="card-bd">
+          <div class="grid2">
+            <div class="field"><label>WhatsApp do site (com DDI+DDD, só números)</label><input id="fWhats" placeholder="5519999999999"></div>
+            <div class="field"><label>Nome do remetente (e-mails automáticos)</label><input id="fNomeRem" placeholder="Solua"></div>
+            <div class="field full"><label>E-mail remetente (precisa ser de um domínio verificado no Resend)</label><input id="fEmailRem" type="email" placeholder="contato@solua.com.br"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-hd"><h3>Automações de disparo</h3></div>
+        <div class="card-bd">
+          <label style="display:flex;gap:10px;align-items:flex-start;margin-bottom:16px;font-size:13.5px">
+            <input type="checkbox" id="fAutoEmail" style="width:16px;height:16px;margin-top:2px;accent-color:var(--azul)">
+            <span><b>E-mail automático de boas-vindas</b><br><span style="color:var(--tinta-45);font-size:12.5px">Assim que um lead chega pelo formulário do site, envia um e-mail de boas-vindas na hora, via Resend. Exige o segredo <code>RESEND_API_KEY</code> configurado no Worker.</span></span>
+          </label>
+          <label style="display:flex;gap:10px;align-items:flex-start;margin-bottom:6px;font-size:13.5px">
+            <input type="checkbox" id="fAutoWhats" style="width:16px;height:16px;margin-top:2px;accent-color:var(--azul)">
+            <span><b>WhatsApp automático de boas-vindas</b><br><span style="color:var(--tinta-45);font-size:12.5px">Envia uma mensagem de template aprovada via WhatsApp Cloud API (Meta). Exige os segredos <code>WHATSAPP_TOKEN</code>, <code>WHATSAPP_PHONE_ID</code> e <code>WHATSAPP_TEMPLATE</code> configurados no Worker, além do template já aprovado no WhatsApp Manager.</span></span>
+          </label>
+          <div class="demo-hint">Segredos ficam em <b>Settings → Variables and Secrets</b> do Worker no painel do Cloudflare — nunca aqui. Veja o README do projeto ("Ligando os disparos") para o passo a passo completo.</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-hd"><h3>Chave de administrador</h3></div>
+        <div class="card-bd">
+          <div class="field"><label>Admin key (a mesma que você configurou como segredo ADMIN_KEY no Worker)</label><input id="fAdminKey" type="password" placeholder="••••••••"></div>
+          <p style="font-size:12px;color:var(--tinta-45)">Protege quem pode alterar essas configurações pela API. Fica salva só neste navegador.</p>
+        </div>
+      </div>
+
+      <button class="btn lg" id="btnSalvar">Salvar personalização</button>
+
+    </main>
+  </div>
+</div>
+
+<script src="../../assets/js/crm-data.js"></script>
+<script src="../../assets/js/crm-ui.js"></script>
+<script>
+if(!window.SoluaUI.isAdmin){ window.SoluaUI.toast("Acesso restrito à administração.","err"); location.replace("../dashboard.html"); }
+</script>
+<script src="../../assets/js/crm-personalizacao.js"></script>
+</body>
+</html>

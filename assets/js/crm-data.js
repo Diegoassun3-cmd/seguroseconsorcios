@@ -201,7 +201,33 @@
     STATE.leads.unshift(lead);
     logActivity("lead_criado", `Novo lead de ${lead.produto==="seguro"?"seguro":"consórcio"}: ${lead.nome}`, {leadId:lead.id});
     save(STATE);
+    dispararAutomacaoBoasVindas(lead);
     return lead;
+  }
+
+  // Notifica o Worker (API real, D1) que um lead chegou, pra ele decidir — com
+  // base nas automações ligadas em Personalização — se dispara e-mail (Resend)
+  // e/ou WhatsApp (Cloud API) de boas-vindas de verdade. Nunca trava a criação
+  // do lead: roda em segundo plano e só registra o resultado quando volta.
+  function dispararAutomacaoBoasVindas(lead){
+    if(typeof fetch !== "function") return;
+    fetch("/api/lead-notify", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ nome: lead.nome, email: lead.email, telefone: lead.telefone, produto: lead.produto, tipo: lead.tipo })
+    }).then(r => r.ok ? r.json() : null).then(data => {
+      if(!data || !data.resultados) return;
+      const { email, whatsapp } = data.resultados;
+      const partes = [];
+      if(email === "enviado") partes.push("e-mail de boas-vindas enviado");
+      if(whatsapp === "enviado") partes.push("WhatsApp de boas-vindas enviado");
+      if(partes.length){
+        logActivity("automacao", `Automação para ${lead.nome}: ${partes.join(" e ")}.`, {leadId:lead.id});
+        save(STATE);
+      }
+      // "pulado"/"desativado"/"falhou" não vira ruído no feed do dashboard —
+      // fica só no log da API (GET /api/dispatch-log), consultado em Disparos.
+    }).catch(()=>{ /* API ainda não publicada — captura silenciosa, não é um erro do lead */ });
   }
 
   function updateLead(id, patch){

@@ -2,43 +2,50 @@
 
 Site institucional da Solua e um CRM completo para as duas frentes do
 negócio — **Seguros** e **Consórcios** — com uma área administrativa que
-inclui uma **Central de Disparos** de e-mail e WhatsApp.
+inclui uma **Central de Disparos** de e-mail e WhatsApp, **automações**
+de boas-vindas de verdade (Resend + WhatsApp Cloud API) e uma tela de
+**Personalização** (logo, cor da marca, WhatsApp, remetente).
 
-É um projeto 100% estático (HTML/CSS/JS puro, sem build), pronto para
-publicar em qualquer hospedagem de arquivos estáticos (Netlify, Vercel,
-Cloudflare Pages, GitHub Pages, um servidor Apache/Nginx comum etc.) e
-apontar o domínio **soluaseguroseconsorcios.com.br**.
+Roda como um **Cloudflare Worker**: os arquivos estáticos (site + CRM)
+são servidos direto, e uma API mínima em `/api/*` (implementada em
+`worker.js`, com banco **D1**) guarda a personalização e dispara os
+e-mails/WhatsApps automáticos. Não precisa de build (`npm run build`) —
+é HTML/CSS/JS puro mais um único arquivo de Worker.
 
 ## Estrutura
 
 ```
 index.html                     → site público (institucional + cotação)
+worker.js                      → Worker: API /api/* + serve os arquivos estáticos
+wrangler.jsonc                 → config do Worker (D1, assets)
+assets/css/fonts.css           → @font-face das fontes reais da marca
+assets/fonts/                  → Nyata-Regular.woff2, Satoshi-Medium.woff2
 assets/css/site.css            → design do site público
 assets/css/crm.css             → design do CRM (sidebar, kanban, tabelas, modais…)
 assets/js/site.js              → interações do site público
+assets/js/branding.js          → aplica a personalização (logo/cor) vinda de /api/settings
 assets/js/crm-data.js          → "banco de dados" do CRM (localStorage) + regras de negócio
 assets/js/crm-ui.js            → sidebar/topbar/toasts/modais compartilhados do CRM
 assets/js/crm-newlead.js       → modal "novo lead"
 assets/js/crm-leaddrawer.js    → painel de detalhe do lead (notas, estágio, edição)
 assets/js/crm-pipeline.js      → lógica do quadro Kanban (seguros/consórcios)
-assets/js/crm-disparos.js      → lógica da Central de Disparos
+assets/js/crm-disparos.js      → Central de Disparos + painel de Automações (real, via API)
 assets/js/crm-modelos.js       → lógica da biblioteca de modelos de mensagem
 assets/js/crm-equipe.js        → lógica de gestão de equipe/usuários
+assets/js/crm-personalizacao.js→ lógica da tela de Personalização
 
 crm/login.html                 → tela de login do CRM
 crm/dashboard.html             → visão geral (KPIs, atividade recente)
 crm/pipeline-seguros.html      → funil Kanban de Seguros
 crm/pipeline-consorcios.html   → funil Kanban de Consórcios
 crm/contatos.html              → base unificada de leads/clientes (ambos produtos)
-crm/admin/disparos.html        → Central de Disparos (e-mail + WhatsApp)
+crm/admin/disparos.html        → Central de Disparos + Automações
 crm/admin/modelos.html         → modelos/templates de e-mail e WhatsApp
 crm/admin/equipe.html          → gestão de usuários do CRM
+crm/admin/personalizacao.html  → logo, cor da marca, WhatsApp, remetente, automações
 ```
 
 ## Rodando localmente
-
-Não precisa de `npm install` nem de build. Basta servir a pasta como
-arquivos estáticos, por exemplo:
 
 ```bash
 cd seguroseconsorcios
@@ -46,8 +53,44 @@ python3 -m http.server 8080
 # depois abra http://localhost:8080
 ```
 
-(Abrir os arquivos com `file://` direto também funciona na maior parte dos
-navegadores, exceto restrições de alguns navegadores para `localStorage`.)
+Assim (sem `wrangler dev`), a rota `/api/*` não existe — tudo que depende
+dela (Personalização, Automações, o e-mail automático) degrada com
+elegância: mostra "API não respondeu" e o site/CRM continuam funcionando
+com os valores padrão. Para testar a API de verdade localmente, use
+`npx wrangler dev` (exige Node) — nesta sandbox de desenvolvimento em
+específico o `wrangler dev` local se mostrou instável; a lógica do
+`worker.js` foi validada com um teste isolado em Node puro em vez disso.
+
+## Publicando no Cloudflare
+
+Este projeto já está publicado via **Workers Builds** (painel do
+Cloudflare → conectar o repositório GitHub, sem build command). A cada
+push na branch conectada, o Cloudflare publica sozinho.
+
+O `wrangler.jsonc` já aponta para um banco D1 (`seguroseconsorcios-db`)
+criado para este projeto. Se você recriar o projeto do zero:
+
+```bash
+npx wrangler d1 create seguroseconsorcios-db   # anote o database_id
+# cole o database_id em wrangler.jsonc, em d1_databases
+npx wrangler d1 execute seguroseconsorcios-db --remote --command "
+  CREATE TABLE settings (...)   -- ver worker.js para o schema completo
+"
+```
+
+### Segredos do Worker (Settings → Variables and Secrets, no painel)
+
+| Segredo | Para quê | Onde conseguir |
+|---|---|---|
+| `ADMIN_KEY` | Protege o `PUT /api/settings` (tela de Personalização) | Você escolhe uma senha e cola na própria tela de Personalização |
+| `RESEND_API_KEY` | Envia o e-mail automático de boas-vindas | resend.com → API Keys (exige domínio de envio verificado) |
+| `WHATSAPP_TOKEN` | Envia o WhatsApp automático de boas-vindas | developers.facebook.com → WhatsApp → API Setup (token permanente) |
+| `WHATSAPP_PHONE_ID` | Idem | Mesmo painel, "Phone Number ID" |
+| `WHATSAPP_TEMPLATE` | Nome do template aprovado para o 1º contato | WhatsApp Manager → Message Templates (a Meta exige template aprovado para iniciar conversa) |
+
+Sem `RESEND_API_KEY`/`WHATSAPP_*`, a automação liga normalmente na tela
+de Personalização, mas cada tentativa fica registrada como "pulada" (não
+falha, não trava o cadastro do lead) — dá pra ativar aos poucos.
 
 ## Acessando o CRM (ambiente de demonstração)
 
@@ -68,83 +111,72 @@ com a senha **`solua2026`**:
 > reais de clientes, troque por autenticação de verdade (ver seção
 > "Para produção" abaixo).
 
-## Como os dados funcionam hoje
+## Como os dados funcionam hoje (duas camadas diferentes)
 
-Todo o CRM (leads, pipelines, contatos, modelos de mensagem, campanhas e
-equipe) é guardado em `localStorage`, no arquivo `assets/js/crm-data.js`
-(objeto global `window.SoluaDB`). Isso tem uma vantagem enorme para
-demonstração: **tudo funciona de verdade** — criar lead, arrastar no
-Kanban, mandar campanha, editar modelo — sem precisar de servidor.
+**Personalização (logo, cor, automações ligadas/desligadas)** já é real:
+fica no banco **D1**, servido pela API do Worker. Isso vale para
+**qualquer visitante do site**, não só para quem configurou.
 
-A limitação: os dados ficam **no navegador de cada pessoa**, não são
-compartilhados entre computadores/atendentes. Para virar uma ferramenta
-de uso diário por várias pessoas ao mesmo tempo, o próximo passo é trocar
-a camada de persistência por uma API de verdade.
+**O resto do CRM** (leads, pipelines, contatos, modelos, campanhas
+manuais, equipe) ainda vive em `localStorage`, no arquivo
+`assets/js/crm-data.js` (objeto global `window.SoluaDB`). Isso tem uma
+vantagem enorme para demonstração: **tudo funciona de verdade** — criar
+lead, arrastar no Kanban, mandar campanha, editar modelo — sem precisar
+de mais nenhum servidor. A limitação: esses dados ficam **no navegador
+de cada pessoa**, não compartilhados entre atendentes. Migrar isso para
+D1 também é o próximo passo natural (ver "Para produção" abaixo) — a API
+já teria onde crescer, já que o Worker e o banco já existem.
 
-Um detalhe já pensado para essa migração: **toda cotação enviada pelo
-formulário do site público já entra automaticamente no CRM como lead**
-(mesma função `SoluaDB.addLead`, chamada em `assets/js/site.js`). Ou seja,
-o funil de vendas já nasce conectado à captação do site.
+Um detalhe já conectado nas duas pontas: **toda cotação enviada pelo
+formulário do site** entra no CRM local (`SoluaDB.addLead`) **e** avisa a
+API (`POST /api/lead-notify`), que decide — com base no que está ligado
+em Personalização — se dispara e-mail/WhatsApp automático de verdade.
 
-## Para produção (multiusuário e com envio de verdade)
+## Para produção (multiusuário completo)
 
-O CRM foi estruturado para que trocar a "camada de dados" não exija
-reescrever as telas. Três frentes, em ordem de prioridade:
+### 1. Migrar leads/equipe/templates/campanhas para D1
+Mesma ideia da Personalização: trocar as funções de `crm-data.js`
+(`getLeads`, `addLead`, `login`...) por `fetch()` para novas rotas em
+`worker.js`, mantendo a mesma assinatura de função — as telas não
+precisam mudar. Nessa migração, troque também o login de demonstração
+por sessão real (cookie assinado, verificado no Worker).
 
-### 1. Backend + autenticação real
-Troque as funções de `assets/js/crm-data.js` (`getLeads`, `addLead`,
-`login` etc.) por chamadas `fetch()` a uma API sua — Node/Express,
-Laravel, Supabase, Firebase ou similar — mantendo a mesma assinatura de
-função. Use autenticação de verdade (Supabase Auth, Firebase Auth,
-NextAuth, Clerk...) no lugar do `login()` de demonstração.
+### 2. Campanhas manuais em massa de verdade
+A Central de Disparos já resolve produto inteiro: segmentar público,
+escolher modelo, pré-visualizar, agendar, histórico com métricas. Hoje só
+o disparo **automático** de boas-vindas (1 lead por vez) chama o Resend
+de verdade; falta estender `sendCampaignNow` para, no envio de uma
+campanha manual, chamar `/api/lead-notify` (ou uma rota de lote nova) uma
+vez por destinatário.
 
-### 2. Ligando os disparos de e-mail
-A Central de Disparos (`crm/admin/disparos.html`) já resolve toda a parte
-de produto: segmentar público, escolher modelo, pré-visualizar, agendar e
-guardar histórico com métricas. Falta plugar um provedor de envio de
-verdade no momento do "Enviar agora" (função `sendCampaignNow` em
-`crm-data.js`):
+### 3. WhatsApp além do template de boas-vindas
+A Cloud API exige template aprovado para qualquer 1º contato dentro da
+janela de 24h; para conversas em massa continuadas, vale olhar filas
+(evitar rate limit da Meta) e webhooks de status de entrega.
 
-- **Resend** ou **SendGrid**: enviam e-mail transacional/marketing via
-  API REST simples. Você criaria uma função de servidor (serverless
-  function, endpoint da sua API) que recebe `{destinatarios, assunto,
-  corpo}` e chama a API do provedor com sua chave secreta (nunca exponha
-  a chave no front-end).
-- Troque a simulação de métricas por leitura real via webhook do provedor
-  (aberturas, cliques, bounces).
-
-### 3. Ligando os disparos de WhatsApp
-Duas rotas comuns:
-
-- **WhatsApp Cloud API (Meta oficial)** — indicada para volume e
-  conformidade; exige conta comercial verificada e templates aprovados
-  pela Meta para o primeiro contato.
-- **Twilio para WhatsApp** ou provedores similares (Zenvia, Take Blip) —
-  mais simples de integrar rapidamente, camada por cima da API da Meta.
-
-Em ambos os casos, o fluxo é o mesmo: um endpoint de servidor recebe a
-lista de destinatários + o texto já resolvido (`SoluaDB.fillTemplate`) e
-chama a API do provedor com as credenciais guardadas em variáveis de
-ambiente no servidor — nunca no código do site.
-
-> Enquanto esses provedores não estão plugados, o botão "Falar no
-> WhatsApp" no drawer de cada lead já funciona de verdade hoje, abrindo o
-> `wa.me` com o número do cliente — ótimo para o dia a dia manual do
-> consultor mesmo antes de automatizar os disparos em massa.
+> Enquanto isso, o botão "Falar no WhatsApp" no drawer de cada lead já
+> funciona de verdade hoje, abrindo o `wa.me` com o número do cliente —
+> ótimo pro dia a dia manual do consultor.
 
 ## Marca e tipografia
 
-O site referência enviado usava fontes customizadas (Nyata/Satoshi)
-incorporadas em base64. Para manter a mesma linguagem visual (editorial,
-minimalista, com números grandes e muito respiro) sem inflar o peso de
-cada página, o projeto usa duas fontes do Google Fonts com a mesma
-personalidade: **Bricolage Grotesque** (títulos/destaques) e **Inter**
-(texto). Trocar por fontes proprietárias da marca, se houver, é só
-atualizar o `<link>` do Google Fonts e a variável `--font-display` /
-`--font-body` em `assets/css/site.css` e `assets/css/crm.css`.
+As fontes reais da marca — **Nyata FTR Regular** (títulos/destaques) e
+**Satoshi Medium** (texto/UI) — estão em `assets/fonts/*.woff2` e
+carregadas via `assets/css/fonts.css` em todas as páginas. Como só há uma
+variação de peso de cada uma, os títulos usam `font-weight:400`
+(a Nyata não tem versão bold — negrito ali seria falsificado pelo
+navegador e ficaria ruim).
+
+A cor principal da marca (`--azul`) é customizável ao vivo pela tela
+**Personalização** do CRM (grava em D1, aplica no site pra todo mundo via
+`assets/js/branding.js`). As poucas variações de tom usam `color-mix()`
+em cima dela, então tudo (botões, badges, hover) acompanha a cor nova
+automaticamente.
 
 Antes de publicar, troque também:
-- o número de WhatsApp em `assets/js/site.js` (constante `WPP`);
 - o e-mail de contato no rodapé do site (`index.html`);
 - os e-mails/telefones da equipe de demonstração em `crm-data.js`, pelos
-  reais.
+  reais;
+- o número de WhatsApp padrão (constante `WPP` em `assets/js/site.js`) —
+  ou simplesmente configure o real na tela de Personalização, que
+  sobrescreve isso para todo mundo sem precisar editar código.

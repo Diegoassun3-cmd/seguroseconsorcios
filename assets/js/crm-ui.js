@@ -21,10 +21,12 @@ const ICO = {
   disparos:'<path d="M2 10l16-7-6 16-3-6-6-3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
   modelos:'<rect x="3" y="3" width="14" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6.5 7.5h7M6.5 10.5h7M6.5 13.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>',
   equipe:'<circle cx="7" cy="7" r="2.6" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="14" cy="8" r="2.1" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 17c.5-3 2.5-5 4.5-5s4 2 4.5 5M12 17c.4-2.4 1.8-4 3.7-4s3.3 1.6 3.7 4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>',
+  personalizar:'<path d="M10 2a8 8 0 100 16c1.1 0 1.7-.6 1.7-1.4 0-.4-.15-.7-.4-1-.25-.3-.4-.6-.4-1 0-.8.65-1.4 1.4-1.4h1.6a3.1 3.1 0 003.1-3.1C17 5.6 13.9 2 10 2z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="6.3" cy="9" r=".9" fill="currentColor" stroke="none"/><circle cx="9" cy="6" r=".9" fill="currentColor" stroke="none"/><circle cx="12.5" cy="6.7" r=".9" fill="currentColor" stroke="none"/>',
   site:'<circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 10h15M10 2.5c2.2 2 3.2 5 3.2 7.5s-1 5.5-3.2 7.5c-2.2-2-3.2-5-3.2-7.5S7.8 4.5 10 2.5z" fill="none" stroke="currentColor" stroke-width="1.4"/>',
   logout:'<path d="M8 3H4.5A1.5 1.5 0 003 4.5v11A1.5 1.5 0 004.5 17H8M13 14l4-4-4-4M7 10h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
   search:'<circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M17 17l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
-  menu:'<path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'
+  menu:'<path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+  empty:'<path d="M3 8l2.5-4h9L17 8M3 8v8a1 1 0 001 1h12a1 1 0 001-1V8M3 8h4.2c.3 1.2 1.4 2 2.8 2s2.5-.8 2.8-2H17" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>'
 };
 function svg(name){ return `<svg viewBox="0 0 20 20">${ICO[name]||""}</svg>`; }
 
@@ -44,7 +46,8 @@ const NAV = [
 const NAV_ADMIN = {group:"Administração", items:[
   {href:"admin/disparos.html", key:"admin-disparos", label:"Disparos", ico:"disparos"},
   {href:"admin/modelos.html", key:"admin-modelos", label:"Modelos", ico:"modelos"},
-  {href:"admin/equipe.html", key:"admin-equipe", label:"Equipe", ico:"equipe"}
+  {href:"admin/equipe.html", key:"admin-equipe", label:"Equipe", ico:"equipe"},
+  {href:"admin/personalizacao.html", key:"admin-personalizacao", label:"Personalização", ico:"personalizar"}
 ]};
 if(isAdmin) NAV.push(NAV_ADMIN);
 
@@ -181,5 +184,7 @@ function confirmAction(msg, onYes){
   openOverlay("confirmOverlay");
 }
 
-window.SoluaUI = { toast, openOverlay, closeOverlay, confirmAction, currentUser: ME, isAdmin, svg };
+function emptyState(text){ return `${svg("empty")}<span>${text}</span>`; }
+
+window.SoluaUI = { toast, openOverlay, closeOverlay, confirmAction, currentUser: ME, isAdmin, svg, emptyState };
 })();

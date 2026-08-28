@@ -220,6 +220,31 @@ document.querySelectorAll("[data-canalfiltro]").forEach(p=> p.onclick = ()=>{
   renderHistorico();
 });
 
+// ---------------- AUTOMAÇÕES (histórico real, vindo do Worker/D1) ----------------
+function statusAutomacaoBadge(status){
+  const map = {enviado:["ganho","Enviado"], falhou:["perdido","Falhou"], pulado:["neutro","Pulado"]};
+  const [cls,label] = map[status]||["neutro",status];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+async function renderAutomacoes(){
+  const el = document.getElementById("automacaoLista");
+  try{
+    const r = await fetch("/api/dispatch-log?limit=20");
+    if(!r.ok) throw new Error("offline");
+    const data = await r.json();
+    const itens = data.itens || [];
+    if(!itens.length){ el.innerHTML = `<div class="empty" style="padding:20px 0">${UI.emptyState("Nenhum disparo automático registrado ainda.")}</div>`; return; }
+    el.innerHTML = `<div class="feed">${itens.map(i=>`
+      <div class="feed-item"><span class="feed-dot"></span>
+        <div><p>${i.canal==="email"?"✉️":"💬"} <b>${DB.esc(i.destinatario_nome||"—")}</b> — ${statusAutomacaoBadge(i.status)} ${i.detalhe?`<span style="color:var(--tinta-45);font-size:12px">(${DB.esc(i.detalhe)})</span>`:""}</p>
+        <time>${DB.formatDateTime(i.criado_em)}</time></div>
+      </div>`).join("")}</div>`;
+  }catch(e){
+    el.innerHTML = `<p class="empty" style="padding:20px 0">Sem conexão com a API (<code>/api/dispatch-log</code>) — normal antes do primeiro deploy do Worker com D1.</p>`;
+  }
+}
+
 renderKpis();
 renderHistorico();
+renderAutomacoes();
 })();

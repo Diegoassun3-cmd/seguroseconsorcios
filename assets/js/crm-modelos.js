@@ -31,7 +31,7 @@ function render(){
         ${t.assunto?`<p style="font-size:12.5px;color:var(--tinta-45);margin-bottom:6px"><b>Assunto:</b> ${esc(t.assunto)}</p>`:""}
         <p style="font-size:12.5px;color:var(--tinta-60);max-height:54px;overflow:hidden">${esc(t.corpo.slice(0,140))}${t.corpo.length>140?"…":""}</p>
       </div>
-    </div>`).join("") || `<p class="empty" style="grid-column:1/-1">Nenhum modelo de ${abaCanal==="email"?"e-mail":"WhatsApp"} ainda.</p>`;
+    </div>`).join("") || `<div class="empty" style="grid-column:1/-1">${UI.emptyState(`Nenhum modelo de ${abaCanal==="email"?"e-mail":"WhatsApp"} ainda.`)}</div>`;
   document.querySelectorAll("[data-tpl]").forEach(c=> c.onclick = ()=> openEditor(c.dataset.tpl));
 }
 const esc = DB.esc;

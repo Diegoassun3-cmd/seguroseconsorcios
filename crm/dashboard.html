@@ -9,6 +9,7 @@
 <link rel="preload" href="../assets/fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="../assets/css/fonts.css">
 <link rel="stylesheet" href="../assets/css/crm.css">
+<script defer src="../assets/js/branding.js"></script>
 </head>
 <body data-base="./" data-active="dashboard" data-title="Dashboard" data-crumbs="CRM Solua">
 
@@ -58,7 +59,7 @@
 <script src="../assets/js/crm-ui.js"></script>
 <script>
 const DB = window.SoluaDB;
-const iconFor = t=>({lead_criado:"👤",estagio_alterado:"↗️",nota:"📝",campanha_enviada:"📣",usuario_login:"🔑"}[t]||"•");
+const iconFor = t=>({lead_criado:"👤",estagio_alterado:"↗️",nota:"📝",campanha_enviada:"📣",usuario_login:"🔑",automacao:"🤖"}[t]||"•");
 
 function renderDashboard(){
   const s = DB.dashboardStats();
@@ -83,7 +84,7 @@ function renderDashboard(){
   document.getElementById("feed").innerHTML = DB.getActivity(14).map(a=>`
     <div class="feed-item"><span class="feed-dot"></span>
       <div><p>${iconFor(a.tipo)} ${DB.esc(a.descricao)}</p><time>${DB.timeAgo(a.data)}</time></div>
-    </div>`).join("") || `<div class="empty">Sem atividade ainda.</div>`;
+    </div>`).join("") || `<div class="empty">${window.SoluaUI.emptyState("Sem atividade ainda.")}</div>`;
 }
 renderDashboard();
 

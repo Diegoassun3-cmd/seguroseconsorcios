@@ -13,13 +13,14 @@
 <link rel="preload" href="assets/fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/fonts.css">
 <link rel="stylesheet" href="assets/css/site.css">
+<script defer src="assets/js/branding.js"></script>
 </head>
 <body>
 
 <header id="hd">
   <div class="wrap nav">
     <a href="#topo" class="brand">
-      <span class="mark">solua</span>
+      <span class="mark" data-brand-logo>solua</span>
       <span class="desc">imóveis, seguros e consórcios.</span>
     </a>
     <nav class="menu">
@@ -62,6 +63,15 @@
         </div>
       </div>
       <div class="hero-side">
+        <svg class="hero-orbit" viewBox="0 0 160 160" width="120" height="120" aria-hidden="true">
+          <circle cx="80" cy="80" r="70" fill="none" stroke="var(--linha)" stroke-width="1"/>
+          <circle cx="80" cy="80" r="52" fill="none" stroke="var(--azul)" stroke-width="1" stroke-dasharray="2 6" opacity=".5"/>
+          <path d="M80 28 A52 52 0 0 1 132 80" fill="none" stroke="var(--azul)" stroke-width="1.5"/>
+          <circle cx="132" cy="80" r="4" fill="var(--azul)"/>
+          <path d="M80 132 A52 52 0 0 1 28 80" fill="none" stroke="var(--azul)" stroke-width="1.5" opacity=".4"/>
+          <circle cx="28" cy="80" r="3" fill="var(--azul)" opacity=".4"/>
+          <circle cx="80" cy="80" r="6" fill="var(--azul)"/>
+        </svg>
         <span class="lbl">/ Atendimento consultivo</span>
         <p>Um consultor dedicado do primeiro contato à renovação. Sem robô, sem fila, sem letra miúda.</p>
       </div>
@@ -94,6 +104,7 @@
       </div>
       <p class="side">Trabalhamos com as maiores seguradoras do país. Você recebe um comparativo claro entre coberturas, franquias e preços — e decide com informação, não com pressão.</p>
     </div>
+    <div class="filters" id="segTabs"></div>
     <div class="list" id="segList"></div>
     <div style="margin-top:40px"><button class="btn lg" onclick="goQuote('seguro')">Cotar meu seguro</button></div>
   </div>
@@ -109,6 +120,7 @@
       </div>
       <p class="side">Operamos com Porto Bank e Ademicon. Consórcio é planejamento: você compra poder de compra, não dívida — sem juros, com parcela que cabe no seu mês.</p>
     </div>
+    <div class="filters" id="conTabs"></div>
     <div class="list" id="conList"></div>
     <div style="margin-top:40px"><button class="btn lg" onclick="goQuote('consorcio')">Simular consórcio</button></div>
   </div>

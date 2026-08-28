@@ -4,10 +4,22 @@
   // você já escolheu outro nome, ajuste este valor para ficar igual.
   "name": "seguroseconsorcios",
   "compatibility_date": "2026-08-28",
-  // Site 100% estático: sem "main" (nenhum código de Worker a rodar),
-  // o Cloudflare só serve os arquivos desta pasta diretamente.
+  // main = código do Worker (API em /api/* + serve os arquivos estáticos
+  // via env.ASSETS para tudo que não é /api/*).
+  "main": "worker.js",
   "assets": {
     "directory": "./",
+    "binding": "ASSETS",
     "not_found_handling": "404-page"
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "seguroseconsorcios-db",
+      "database_id": "f890a50a-6ba8-47f2-b612-f24714bf376b"
+    }
+  ]
+  // Segredos (NÃO vão aqui — configure em Settings → Variables and Secrets
+  // do Worker, no painel do Cloudflare):
+  //   RESEND_API_KEY, WHATSAPP_TOKEN, WHATSAPP_PHONE_ID, WHATSAPP_TEMPLATE, ADMIN_KEY
 }

@@ -3,9 +3,12 @@
    e passa a aparecer imediatamente no funil do CRM (/crm/). */
 (function(){
 "use strict";
-const WPP = "5519999999999"; // TODO: trocar pelo número real de WhatsApp da Solua
+let WPP = "5519999999999"; // valor padrão — a Central de Personalização (CRM) sobrescreve isso via /api/settings
 const wppMsg = t => `https://wa.me/${WPP}?text=${encodeURIComponent(t||"Olá! Vim pelo site e gostaria de uma cotação.")}`;
-["wppFix","wppFoot"].forEach(id=>{ const el=document.getElementById(id); if(el) el.href = wppMsg(); });
+const refreshWppLinks = ()=> ["wppFix","wppFoot"].forEach(id=>{ const el=document.getElementById(id); if(el) el.href = wppMsg(); });
+refreshWppLinks();
+// permite que assets/js/branding.js atualize o número assim que /api/settings responder
+window.SoluaSite = { setWhatsapp(numero){ if(numero){ WPP = numero; refreshWppLinks(); } } };
 const yr = document.getElementById("yr"); if(yr) yr.textContent = new Date().getFullYear();
 
 /* NAV */
@@ -25,27 +28,45 @@ if(mq) mq.innerHTML = [...marcas,...marcas].map(m=>`<span>${m}</span>`).join("<s
 
 /* PRODUTOS */
 const seguros = [
- ["Seguro Auto","Cobertura para colisão, roubo, furto, incêndio e terceiros — com assistência 24h, carro reserva e vidros. Comparamos franquia, cobertura e preço entre as principais seguradoras.",["Assistência 24h","Carro reserva","Vidros","Terceiros"]],
- ["Seguro Residencial","Protege sua casa contra incêndio, roubo, danos elétricos e vendaval, com assistência para chaveiro, encanador e eletricista. Custa menos do que a maioria imagina.",["Incêndio","Roubo","Danos elétricos","Assistência lar"]],
- ["Seguro de Vida","Tranquilidade para quem fica e cobertura para você em caso de invalidez ou doenças graves. Capital ajustável ao seu momento de vida.",["Morte","Invalidez","Doenças graves","Funeral"]],
- ["Seguro Empresarial","Patrimônio, estoque, lucros cessantes e responsabilidade civil. Montamos a apólice conforme o risco real da sua operação.",["Patrimônio","Lucros cessantes","RC","Equipamentos"]],
- ["Plano de Saúde e Odonto","Individual, familiar ou empresarial. Comparamos rede credenciada, coparticipação e reajuste antes de você assinar.",["Individual","Familiar","PME","Odonto"]],
- ["Seguro Viagem","Cobertura médica, bagagem, cancelamento e assistência internacional — incluindo apólices que atendem à exigência do Tratado de Schengen.",["Médico","Bagagem","Cancelamento","Schengen"]],
- ["Garantia Locatícia e Fiança","Alternativa ao fiador e ao depósito caução, para locatário e proprietário. Aprovação rápida e sem imobilizar capital.",["Sem fiador","Aprovação rápida","Proprietário","Locatário"]],
- ["Condomínio e Frota","Apólices coletivas para condomínios e gestão de frota para empresas, com controle centralizado de sinistros e renovações.",["Obrigatório por lei","Frota","Gestão de sinistros"]]
+ ["Seguro Auto","Cobertura para colisão, roubo, furto, incêndio e terceiros — com assistência 24h, carro reserva e vidros. Comparamos franquia, cobertura e preço entre as principais seguradoras.",["Assistência 24h","Carro reserva","Vidros","Terceiros"],"Pessoa física"],
+ ["Seguro Residencial","Protege sua casa contra incêndio, roubo, danos elétricos e vendaval, com assistência para chaveiro, encanador e eletricista. Custa menos do que a maioria imagina.",["Incêndio","Roubo","Danos elétricos","Assistência lar"],"Pessoa física"],
+ ["Seguro de Vida","Tranquilidade para quem fica e cobertura para você em caso de invalidez ou doenças graves. Capital ajustável ao seu momento de vida.",["Morte","Invalidez","Doenças graves","Funeral"],"Pessoa física"],
+ ["Seguro Viagem","Cobertura médica, bagagem, cancelamento e assistência internacional — incluindo apólices que atendem à exigência do Tratado de Schengen.",["Médico","Bagagem","Cancelamento","Schengen"],"Pessoa física"],
+ ["Garantia Locatícia e Fiança","Alternativa ao fiador e ao depósito caução, para locatário e proprietário. Aprovação rápida e sem imobilizar capital.",["Sem fiador","Aprovação rápida","Proprietário","Locatário"],"Pessoa física"],
+ ["Seguro Empresarial","Patrimônio, estoque, lucros cessantes e responsabilidade civil. Montamos a apólice conforme o risco real da sua operação.",["Patrimônio","Lucros cessantes","RC","Equipamentos"],"Empresas"],
+ ["Plano de Saúde e Odonto","Individual, familiar ou empresarial. Comparamos rede credenciada, coparticipação e reajuste antes de você assinar.",["Individual","Familiar","PME","Odonto"],"Empresas"],
+ ["Condomínio e Frota","Apólices coletivas para condomínios e gestão de frota para empresas, com controle centralizado de sinistros e renovações.",["Obrigatório por lei","Frota","Gestão de sinistros"],"Empresas"]
 ];
 const consorcios = [
- ["Consórcio de Imóvel","Para comprar, construir, reformar ou quitar financiamento. Cartas de crédito flexíveis, sem juros e com parcelas que cabem no orçamento.",["Compra","Construção","Reforma","Quitação"]],
- ["Consórcio de Automóvel","Carro novo ou seminovo, nacional ou importado. Use o crédito como poder de compra à vista e negocie melhor na concessionária.",["Novo","Seminovo","Crédito à vista"]],
- ["Consórcio de Pesados","Caminhões, máquinas agrícolas e equipamentos — planejamento de frota sem comprometer o capital de giro da empresa.",["Caminhões","Máquinas","Frota","PJ"]],
- ["Consórcio de Serviços","Reforma, casamento, intercâmbio, cirurgias e estudos. Planejamento para o que não cabe em uma parcela de cartão.",["Reforma","Viagem","Estudos","Saúde"]]
+ ["Consórcio de Imóvel","Para comprar, construir, reformar ou quitar financiamento. Cartas de crédito flexíveis, sem juros e com parcelas que cabem no orçamento.",["Compra","Construção","Reforma","Quitação"],"Pessoa física"],
+ ["Consórcio de Automóvel","Carro novo ou seminovo, nacional ou importado. Use o crédito como poder de compra à vista e negocie melhor na concessionária.",["Novo","Seminovo","Crédito à vista"],"Pessoa física"],
+ ["Consórcio de Pesados","Caminhões, máquinas agrícolas e equipamentos — planejamento de frota sem comprometer o capital de giro da empresa.",["Caminhões","Máquinas","Frota","PJ"],"Empresas"],
+ ["Consórcio de Serviços","Reforma, casamento, intercâmbio, cirurgias e estudos. Planejamento para o que não cabe em uma parcela de cartão.",["Reforma","Viagem","Estudos","Saúde"],"Pessoa física"]
 ];
-const render = (arr, el) => { const target = document.getElementById(el); if(!target) return; target.innerHTML = arr.map((p,i)=>`
+// renderiza uma lista com uma "aba dentro da aba": categoria (Pessoa física /
+// Empresas) por cima, acordeão de produtos daquela categoria por baixo.
+function renderTabbed(arr, listElId, tabsElId){
+  const target = document.getElementById(listElId);
+  const tabsEl = document.getElementById(tabsElId);
+  if(!target || !tabsEl) return;
+  const categorias = ["Todos", ...new Set(arr.map(p=>p[3]))];
+  let ativa = "Todos";
+  tabsEl.innerHTML = categorias.map((c,i)=>`<button class="filt${i?"":" on"}" data-subtab="${c}">${c}</button>`).join("");
+  const desenhar = ()=>{
+    const filtrados = arr.filter(p=> ativa==="Todos" || p[3]===ativa);
+    target.innerHTML = filtrados.map((p,i)=>`
 <div class="item">
   <div class="item-hd"><span class="n">${String(i+1).padStart(2,"0")}</span><h3>${p[0]}</h3><span class="plus"></span></div>
   <div class="item-bd"><div class="in"><span></span><p>${p[1]}</p><div class="chips">${p[2].map(c=>`<span class="chip">${c}</span>`).join("")}</div></div></div>
-</div>`).join(""); };
-render(seguros,"segList"); render(consorcios,"conList");
+</div>`).join("");
+  };
+  tabsEl.querySelectorAll("[data-subtab]").forEach(b=> b.onclick = ()=>{
+    tabsEl.querySelectorAll("[data-subtab]").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on"); ativa = b.dataset.subtab; desenhar();
+  });
+  desenhar();
+}
+renderTabbed(seguros,"segList","segTabs"); renderTabbed(consorcios,"conList","conTabs");
 
 const faqs = [
  ["Vocês cobram alguma taxa pela cotação?","Não. A cotação e a consultoria são gratuitas. A corretora é remunerada pela seguradora ou administradora quando você contrata — e isso não encarece sua apólice."],
@@ -79,8 +100,15 @@ const posts = [
 const cats = ["Todos", ...new Set(posts.map(p=>p.c))];
 const filtersEl = document.getElementById("filters");
 if(filtersEl) filtersEl.innerHTML = cats.map((c,i)=>`<button class="filt${i?"":" on"}" data-c="${c}">${c}</button>`).join("");
+const CAT_ICONS = {
+  "Seguros": '<path d="M14 4l9 4v6c0 6.5-4 11-9 13-5-2-9-6.5-9-13V8l9-4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
+  "Consórcio": '<circle cx="14" cy="14" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14 9v5l3.5 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
+  "Planejamento": '<rect x="5" y="6" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 11h18M9 4v4M19 4v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M9.5 16.5l2.5 2.5 5.5-5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'
+};
+const catIcon = c => `<svg class="post-ico" viewBox="0 0 28 28" aria-hidden="true">${CAT_ICONS[c]||CAT_ICONS["Planejamento"]}</svg>`;
 const drawPosts = f => { const el = document.getElementById("posts"); if(!el) return; el.innerHTML = posts.filter(p=>f==="Todos"||p.c===f).map(p=>`
 <article class="post" data-i="${posts.indexOf(p)}">
+  ${catIcon(p.c)}
   <span class="cat">${p.c}</span><h3>${p.t}</h3><p>${p.r}</p>
   <div class="meta"><span>${p.dt}</span><span>${p.d} de leitura</span></div>
 </article>`).join(""); };
