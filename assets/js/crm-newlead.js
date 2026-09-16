@@ -25,7 +25,7 @@ function bodyHtml(produtoFixo){
   const produtoSelect = produtoFixo
     ? `<input type="hidden" data-f="produto" value="${produtoFixo}">`
     : `<div class="field"><label>Produto</label><select id="nlProduto" data-f="produto">
-         <option value="seguro">Seguro</option><option value="consorcio">Consórcio</option>
+         <option value="imovel">Imóvel</option><option value="seguro">Seguro</option><option value="consorcio">Consórcio</option>
        </select></div>`;
   return `
   <div class="grid2">
@@ -52,8 +52,8 @@ function open(opts){
   ensureDom();
   const body = document.getElementById("newLeadBody");
   body.innerHTML = bodyHtml(opts.produto || null);
-  refreshTipos(opts.produto || "seguro");
   const prodSel = document.getElementById("nlProduto");
+  refreshTipos(opts.produto || (prodSel ? prodSel.value : "imovel"));
   if(prodSel) prodSel.onchange = ()=> refreshTipos(prodSel.value);
   document.getElementById("btnCriarLead").onclick = ()=>{
     const data = {};

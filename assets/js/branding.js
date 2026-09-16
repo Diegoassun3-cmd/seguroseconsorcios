@@ -47,6 +47,24 @@ function aplicar(s){
   if(s.whatsappNumero && window.SoluaSite && typeof window.SoluaSite.setWhatsapp === "function"){
     window.SoluaSite.setWhatsapp(s.whatsappNumero);
   }
+
+  // Painel de Design: título/subtítulo do hero da Home, visibilidade de seções
+  // e banner de campanha — tudo opcional, com o conteúdo padrão do HTML como fallback.
+  if(s.heroTitulo){
+    document.querySelectorAll("[data-brand-hero-titulo]").forEach(el=> el.textContent = s.heroTitulo);
+  }
+  if(s.heroSubtitulo){
+    document.querySelectorAll("[data-brand-hero-subtitulo]").forEach(el=> el.textContent = s.heroSubtitulo);
+  }
+  if(s.mostrarBlogHome === false){
+    document.querySelectorAll('[data-brand-toggle="blog"]').forEach(el=> el.style.display = "none");
+  }
+  if(s.mostrarImoveisHome === false){
+    document.querySelectorAll('[data-brand-toggle="imoveis-home"]').forEach(el=> el.style.display = "none");
+  }
+  if(s.bannerConsorcioTexto){
+    document.querySelectorAll("[data-brand-campanha]").forEach(el=>{ el.textContent = s.bannerConsorcioTexto; el.style.display = "block"; });
+  }
 }
 
 window.SoluaBrandingReady = carregar();

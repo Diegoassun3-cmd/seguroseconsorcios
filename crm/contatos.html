@@ -48,7 +48,7 @@ function renderFilters(){
   bar.innerHTML = `
     <label class="tb-search" style="min-width:220px"><span>${window.SoluaUI.svg("search")}</span><input id="fq" placeholder="Buscar por nome, e-mail, telefone…" value="${DB.esc(filtro.q)}"></label>
     <select class="pill" id="fProduto" style="border-radius:8px">
-      <option value="">Seguros e consórcios</option><option value="seguro">Só seguros</option><option value="consorcio">Só consórcios</option>
+      <option value="">Todos os produtos</option><option value="imovel">Só imóveis</option><option value="seguro">Só seguros</option><option value="consorcio">Só consórcios</option>
     </select>
     <select class="pill" id="fConsultor" style="border-radius:8px"><option value="">Todos os consultores</option>${equipe.map(u=>`<option value="${u.id}">${DB.esc(u.nome)}</option>`).join("")}</select>
     <span class="spacer"></span>
@@ -80,10 +80,12 @@ function renderRows(){
   const tbody = document.getElementById("rows");
   tbody.innerHTML = leads.map(l=>{
     const cons = DB.getUsuario(l.consultorId);
+    const corProduto = {seguro:"#118ECC", consorcio:"#B8862B", imovel:"#7A4FB5"}[l.produto] || "#8a8f98";
+    const labelProduto = {seguro:"Seguro", consorcio:"Consórcio", imovel:"Imóvel"}[l.produto] || l.produto;
     return `<tr data-id="${l.id}">
-      <td><div class="namecell"><span class="avatar" style="background:${l.produto==="seguro"?"#118ECC":"#B8862B"};width:32px;height:32px;font-size:11px">${DB.iniciais(l.nome)}</span>
+      <td><div class="namecell"><span class="avatar" style="background:${corProduto};width:32px;height:32px;font-size:11px">${DB.iniciais(l.nome)}</span>
         <div><b>${DB.esc(l.nome)}</b><span>${l.telefone?DB.esc(DB.formatPhone(l.telefone)):DB.esc(l.email)||"—"}</span></div></div></td>
-      <td><span class="badge ${l.produto}">${l.produto==="seguro"?"Seguro":"Consórcio"}</span></td>
+      <td><span class="badge ${l.produto}">${labelProduto}</span></td>
       <td>${DB.esc(l.tipo)||"—"}</td>
       <td>${stageBadge(l)}</td>
       <td>${cons?DB.esc(cons.nome):"—"}</td>

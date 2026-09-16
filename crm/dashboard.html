@@ -34,10 +34,11 @@
 
         <div style="display:flex;flex-direction:column;gap:16px">
           <div class="card">
-            <div class="card-hd"><h3>Seguros × Consórcios</h3></div>
+            <div class="card-hd"><h3>Imóveis × Seguros × Consórcios</h3></div>
             <div class="card-bd">
               <div id="splitBars"></div>
-              <a class="btn sm ghost block" style="margin-top:14px" href="pipeline-seguros.html">Ver pipeline de Seguros →</a>
+              <a class="btn sm ghost block" style="margin-top:14px" href="pipeline-imoveis.html">Ver pipeline de Imóveis →</a>
+              <a class="btn sm ghost block" style="margin-top:8px" href="pipeline-seguros.html">Ver pipeline de Seguros →</a>
               <a class="btn sm ghost block" style="margin-top:8px" href="pipeline-consorcios.html">Ver pipeline de Consórcios →</a>
             </div>
           </div>
@@ -67,19 +68,17 @@ function renderDashboard(){
     <div class="kpi"><span class="lbl">Leads no funil</span><b>${s.abertos}</b><span class="delta">${s.novos7d} novos nos últimos 7 dias</span></div>
     <div class="kpi"><span class="lbl">Fechados (apólice / contemplado)</span><b>${s.ganhos}</b><span class="delta up">${s.taxaConversao}% de conversão total</span></div>
     <div class="kpi"><span class="lbl">Valor em negociação</span><b>${DB.formatBRL(s.valorEmAberto)}</b><span class="delta">soma dos leads em aberto</span></div>
-    <div class="kpi"><span class="lbl">Base total</span><b>${s.total}</b><span class="delta">${s.seguro} seguros · ${s.consorcio} consórcios</span></div>
+    <div class="kpi"><span class="lbl">Base total</span><b>${s.total}</b><span class="delta">${s.imovel} imóveis · ${s.seguro} seguros · ${s.consorcio} consórcios</span></div>
   `;
 
-  const max = Math.max(s.seguro, s.consorcio, 1);
-  document.getElementById("splitBars").innerHTML = `
+  const max = Math.max(s.imovel, s.seguro, s.consorcio, 1);
+  const barra = (label, valor, cor)=>`
     <div style="margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px"><span>Seguros</span><b>${s.seguro}</b></div>
-      <div style="height:8px;border-radius:100px;background:var(--creme-2)"><div style="height:100%;border-radius:100px;width:${(s.seguro/max)*100}%;background:var(--azul)"></div></div>
-    </div>
-    <div>
-      <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px"><span>Consórcios</span><b>${s.consorcio}</b></div>
-      <div style="height:8px;border-radius:100px;background:var(--creme-2)"><div style="height:100%;border-radius:100px;width:${(s.consorcio/max)*100}%;background:var(--amarelo)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px"><span>${label}</span><b>${valor}</b></div>
+      <div style="height:8px;border-radius:100px;background:var(--creme-2)"><div style="height:100%;border-radius:100px;width:${(valor/max)*100}%;background:${cor}"></div></div>
     </div>`;
+  document.getElementById("splitBars").innerHTML =
+    barra("Imóveis", s.imovel, "#7A4FB5") + barra("Seguros", s.seguro, "var(--azul)") + barra("Consórcios", s.consorcio, "var(--amarelo)").replace('margin-bottom:14px','margin-bottom:0');
 
   document.getElementById("feed").innerHTML = DB.getActivity(14).map(a=>`
     <div class="feed-item"><span class="feed-dot"></span>

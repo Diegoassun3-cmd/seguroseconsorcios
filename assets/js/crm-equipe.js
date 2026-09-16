@@ -9,7 +9,8 @@ const UI = window.SoluaUI;
 let editId = null;
 const CORES = ["#004BA5","#118ECC","#B8862B","#1E8E5A","#B0453D","#6E56CF"];
 
-function produtoLabel(p){ return p==="ambos" ? "Seguros + Consórcios" : p==="seguro" ? "Seguros" : "Consórcios"; }
+const PRODUTO_LABEL = {ambos:"Todos os produtos", seguro:"Seguros", consorcio:"Consórcios", imovel:"Imóveis"};
+function produtoLabel(p){ return PRODUTO_LABEL[p] || p; }
 
 function render(){
   const eq = DB.getEquipe();
@@ -56,9 +57,10 @@ function openEditor(id){
         <option ${u.papel==="Consultora"?"selected":""}>Consultora</option>
       </select></div>
       <div class="field"><label>Atua em</label><select id="fProduto">
+        <option value="imovel" ${u.produto==="imovel"?"selected":""}>Imóveis</option>
         <option value="seguro" ${u.produto==="seguro"?"selected":""}>Seguros</option>
         <option value="consorcio" ${u.produto==="consorcio"?"selected":""}>Consórcios</option>
-        <option value="ambos" ${u.produto==="ambos"?"selected":""}>Ambos</option>
+        <option value="ambos" ${u.produto==="ambos"?"selected":""}>Todos os produtos</option>
       </select></div>
     </div>
     <div class="field"><label>Cor do avatar</label><div style="display:flex;gap:8px">

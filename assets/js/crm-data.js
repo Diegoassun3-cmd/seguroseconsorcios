@@ -21,11 +21,9 @@
 (function(global){
   "use strict";
 
-  // v2: remove os leads/campanhas fictícios da demonstração inicial (o site
-  // tinha "contatos falsos" pré-carregados) e passa os modelos para o novo
-  // formato com blocos de e-mail (imagem, título, texto, botão) e estrutura
-  // completa de WhatsApp (cabeçalho, corpo, rodapé, botões).
-  const KEY = "solua_crm_v2";
+  // v3: acrescenta a linha de negócio de Imóveis (pipeline, tipos, catálogo de
+  // imóveis) junto de Seguros e Consórcios — mantém o mesmo desenho de dados.
+  const KEY = "solua_crm_v3";
 
   const PIPELINES = {
     seguro: [
@@ -43,12 +41,21 @@
       {id:"proposta",    label:"Proposta / Adesão", cor:"#B8862B"},
       {id:"contemplado", label:"Contemplado",       cor:"#1E8E5A"},
       {id:"perdido",     label:"Perdido",           cor:"#B0453D"}
+    ],
+    imovel: [
+      {id:"novo",        label:"Novo lead",        cor:"#8a8f98"},
+      {id:"qualificacao",label:"Qualificação",      cor:"#118ECC"},
+      {id:"visita",      label:"Visita agendada",   cor:"#004BA5"},
+      {id:"proposta",    label:"Proposta",          cor:"#B8862B"},
+      {id:"fechado",     label:"Negócio fechado",   cor:"#1E8E5A"},
+      {id:"perdido",     label:"Perdido",           cor:"#B0453D"}
     ]
   };
 
   const TIPOS = {
     seguro: ["Auto","Residencial","Vida","Empresarial","Saúde / Odonto","Viagem","Garantia locatícia","Condomínio","Outro"],
-    consorcio: ["Imóvel","Automóvel","Pesados / Máquinas","Serviços"]
+    consorcio: ["Imóvel","Automóvel","Pesados / Máquinas","Serviços"],
+    imovel: ["Apartamento","Casa","Casa em condomínio","Cobertura","Terreno","Sala comercial","Rural"]
   };
 
   const ORIGENS = ["Site","Indicação","WhatsApp","Instagram","Anúncio","Telefone","Balcão"];
@@ -57,7 +64,57 @@
     {id:"u1", nome:"Diego Assunção",     email:"diego.assun3@gmail.com", papel:"Administrador", produto:"ambos",     ativo:true, avatarBg:"#004BA5"},
     {id:"u2", nome:"Ana Beatriz Souza",  email:"ana.souza@solua.com.br", papel:"Consultora",     produto:"seguro",    ativo:true, avatarBg:"#118ECC"},
     {id:"u3", nome:"Rafael Lima",        email:"rafael.lima@solua.com.br", papel:"Consultor",    produto:"consorcio", ativo:true, avatarBg:"#B8862B"},
-    {id:"u4", nome:"Camila Torres",      email:"camila.torres@solua.com.br", papel:"Consultora", produto:"seguro",    ativo:true, avatarBg:"#1E8E5A"}
+    {id:"u4", nome:"Camila Torres",      email:"camila.torres@solua.com.br", papel:"Consultora", produto:"seguro",    ativo:true, avatarBg:"#1E8E5A"},
+    {id:"u5", nome:"Bruno Amaral",       email:"bruno.amaral@solua.com.br", papel:"Consultor de Imóveis", produto:"imovel", ativo:true, avatarBg:"#7A4FB5"}
+  ];
+
+  // -------------------- CATÁLOGO DE IMÓVEIS --------------------
+  // Estes são produtos do portfólio (como um cardápio), não dados de cliente —
+  // por isso entram no seed junto com equipe/modelos, e não como "contato falso".
+  // Fotos são placeholders (picsum.photos, com seed fixa por imóvel) até a Solua
+  // subir as fotos reais pela tela de Personalização/Design.
+  function fotoImovel(seed, i){ return `https://picsum.photos/seed/solua-imovel-${seed}-${i}/1200/800`; }
+  const IMOVEIS_SEED = [
+    {id:"imv1", titulo:"Apartamento 3 dorm. no Cambuí", finalidade:"venda", tipo:"Apartamento",
+      bairro:"Cambuí", cidade:"Campinas", valor:980000, quartos:3, suites:1, vagas:2, areaM2:112,
+      status:"pronto", destaque:true,
+      descricao:"Apartamento reformado a poucos quarteirões da Rua Coronel Quirino, com sacada gourmet, living amplo e vista aberta. Prédio com piscina, academia e portaria 24h.",
+      fotos:[fotoImovel(1,1),fotoImovel(1,2),fotoImovel(1,3),fotoImovel(1,4)]},
+    {id:"imv2", titulo:"Casa em condomínio no Swiss Park", finalidade:"venda", tipo:"Casa em condomínio",
+      bairro:"Swiss Park", cidade:"Campinas", valor:1650000, quartos:4, suites:2, vagas:4, areaM2:280,
+      status:"pronto", destaque:true,
+      descricao:"Casa térrea em condomínio fechado com segurança 24h, quintal amplo, área gourmet completa e escritório. Condomínio com clube, quadras e trilha.",
+      fotos:[fotoImovel(2,1),fotoImovel(2,2),fotoImovel(2,3),fotoImovel(2,4)]},
+    {id:"imv3", titulo:"Cobertura duplex em Cambuí", finalidade:"venda", tipo:"Cobertura",
+      bairro:"Cambuí", cidade:"Campinas", valor:2200000, quartos:3, suites:3, vagas:3, areaM2:230,
+      status:"lancamento", destaque:true,
+      descricao:"Cobertura duplex com terraço privativo, piscina própria e churrasqueira. Entrega prevista para 2027, com condições especiais para quem compra na planta.",
+      fotos:[fotoImovel(3,1),fotoImovel(3,2),fotoImovel(3,3)]},
+    {id:"imv4", titulo:"Apartamento 2 dorm. no Taquaral", finalidade:"locacao", tipo:"Apartamento",
+      bairro:"Taquaral", cidade:"Campinas", valor:2800, quartos:2, suites:0, vagas:1, areaM2:68,
+      status:"pronto", destaque:false,
+      descricao:"Apartamento de frente para o Lagoa do Taquaral, andar alto, sol da manhã. Prédio com salão de festas e playground. Aceita pet.",
+      fotos:[fotoImovel(4,1),fotoImovel(4,2),fotoImovel(4,3)]},
+    {id:"imv5", titulo:"Casa térrea no Jardim Chapadão", finalidade:"venda", tipo:"Casa",
+      bairro:"Jardim Chapadão", cidade:"Campinas", valor:620000, quartos:3, suites:1, vagas:2, areaM2:150,
+      status:"pronto", destaque:false,
+      descricao:"Casa térrea de rua, bem localizada, com quintal e edícula nos fundos que pode virar renda extra. Próxima a escolas e comércio.",
+      fotos:[fotoImovel(5,1),fotoImovel(5,2),fotoImovel(5,3)]},
+    {id:"imv6", titulo:"Sala comercial no centro", finalidade:"locacao", tipo:"Sala comercial",
+      bairro:"Centro", cidade:"Campinas", valor:1900, quartos:0, suites:0, vagas:0, areaM2:45,
+      status:"pronto", destaque:false,
+      descricao:"Sala comercial em prédio com portaria, próxima ao terminal central. Ideal para escritório ou consultório.",
+      fotos:[fotoImovel(6,1),fotoImovel(6,2)]},
+    {id:"imv7", titulo:"Terreno em condomínio no Sousas", finalidade:"venda", tipo:"Terreno",
+      bairro:"Sousas", cidade:"Campinas", valor:480000, quartos:0, suites:0, vagas:0, areaM2:500,
+      status:"pronto", destaque:false,
+      descricao:"Terreno plano de 500m² em condomínio fechado de alto padrão, pronto para construir. Infraestrutura completa e área verde preservada.",
+      fotos:[fotoImovel(7,1),fotoImovel(7,2)]},
+    {id:"imv8", titulo:"Apartamento 4 dorm. no Nova Campinas", finalidade:"venda", tipo:"Apartamento",
+      bairro:"Nova Campinas", cidade:"Campinas", valor:1450000, quartos:4, suites:2, vagas:3, areaM2:165,
+      status:"em_construcao", destaque:true,
+      descricao:"Lançamento de alto padrão com plantas de 165m², varanda gourmet integrada e lazer completo. Previsão de entrega em 2027.",
+      fotos:[fotoImovel(8,1),fotoImovel(8,2),fotoImovel(8,3),fotoImovel(8,4)]}
   ];
 
   // -------------------- PERSISTÊNCIA --------------------
@@ -73,6 +130,9 @@
   }
   let STATE = load();
   if(!STATE){ STATE = seedState(); save(STATE); }
+  // migração leve: quem já tinha um estado salvo (v2) antes da linha de Imóveis
+  // existir ganha o catálogo de exemplo na primeira carga, sem perder leads/equipe/modelos reais.
+  if(!Array.isArray(STATE.imoveis)){ STATE.imoveis = IMOVEIS_SEED.map(i=>Object.assign({},i)); save(STATE); }
 
   function uid(prefix){ return (prefix||"id")+"_"+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4); }
   function nowISO(){ return new Date().toISOString(); }
@@ -111,6 +171,20 @@
           {tipo:"texto", texto:"Abraço,\n{{consultor}} — {{nome_empresa}}"}
         ],
         corpo:"Sua simulação está pronta, {{primeiro_nome}}\n\nPreparamos sua simulação de consórcio de {{tipo}} com parcelas que cabem no seu planejamento, sem juros.\n\nAbraço,\n{{consultor}} — {{nome_empresa}}"},
+      {id:uid("tpl"), canal:"email", categoria:"imovel", nome:"Boas-vindas — interesse em imóvel",
+        assunto:"Recebemos seu interesse, {{primeiro_nome}}!",
+        preheader:"Vamos agendar uma visita ou tirar suas dúvidas sobre o imóvel.",
+        blocks:[
+          {tipo:"titulo", texto:"Recebemos seu interesse, {{primeiro_nome}}!"},
+          {tipo:"texto", texto:"Obrigado pelo contato sobre o imóvel. Em breve {{consultor}} fala com você pelo WhatsApp {{telefone_solua}} para agendar uma visita ou tirar dúvidas."},
+          {tipo:"botao", texto:"Falar agora no WhatsApp", url:"https://wa.me/{{telefone_solua_link}}"},
+          {tipo:"divisor"},
+          {tipo:"texto", texto:"Até já,\nEquipe {{nome_empresa}}"}
+        ],
+        corpo:"Recebemos seu interesse, {{primeiro_nome}}!\n\nEm breve {{consultor}} fala com você pelo WhatsApp {{telefone_solua}} para agendar uma visita ou tirar dúvidas.\n\nAté já,\nEquipe {{nome_empresa}}"},
+      {id:uid("tpl"), canal:"whatsapp", categoria:"imovel", nome:"Primeiro contato — imóvel",
+        headerType:"nenhum", corpo:"Olá {{primeiro_nome}}! Aqui é {{consultor}}, da {{nome_empresa}} 👋 Recebi seu interesse em um dos nossos imóveis ({{tipo}}). Posso te ajudar a agendar uma visita ou tirar alguma dúvida agora mesmo?",
+        rodape:"Resposta em até 1 dia útil", botoes:[{tipo:"resposta_rapida", texto:"Quero agendar"}]},
       {id:uid("tpl"), canal:"whatsapp", categoria:"seguro", nome:"Primeiro contato — seguro",
         headerType:"nenhum", corpo:"Olá {{primeiro_nome}}! Aqui é {{consultor}}, da {{nome_empresa}} 👋 Recebi seu pedido de cotação de {{produto}} ({{tipo}}). Posso te chamar por aqui mesmo para fechar alguns detalhes e já te enviar o comparativo?",
         rodape:"Resposta em até 1 dia útil", botoes:[{tipo:"resposta_rapida", texto:"Pode continuar"}]},
@@ -119,7 +193,7 @@
         rodape:"Resposta em até 1 dia útil", botoes:[{tipo:"resposta_rapida", texto:"Pode mandar"}]}
     ];
 
-    return { leads:[], templates, campaigns:[], equipe: EQUIPE_SEED, activity:[], session:null };
+    return { leads:[], templates, campaigns:[], equipe: EQUIPE_SEED, imoveis: IMOVEIS_SEED.map(i=>Object.assign({},i)), activity:[], session:null };
   }
 
   function labelEstagio(produto, estagioId){
@@ -224,6 +298,36 @@
     STATE.equipe = STATE.equipe.filter(u=>u.id!==id); save(STATE);
   }
 
+  // -------------------- CATÁLOGO DE IMÓVEIS (produto, não contato) --------------------
+  function getImoveis(){ return STATE.imoveis.slice(); }
+  function getImovel(id){ return STATE.imoveis.find(i=>i.id===id) || null; }
+  function addImovel(data){
+    const i = Object.assign({id:uid("imv"), titulo:"", finalidade:"venda", tipo:"Apartamento",
+      bairro:"", cidade:"Campinas", valor:0, quartos:0, suites:0, vagas:0, areaM2:0,
+      status:"pronto", destaque:false, descricao:"", fotos:[]}, data);
+    STATE.imoveis.unshift(i); save(STATE); return i;
+  }
+  function updateImovel(id, patch){
+    const i = getImovel(id); if(!i) return null;
+    Object.assign(i, patch); save(STATE); return i;
+  }
+  function deleteImovel(id){
+    STATE.imoveis = STATE.imoveis.filter(i=>i.id!==id); save(STATE);
+  }
+  // filtros do catálogo público: tipo, finalidade, faixa de preço, quartos mínimos, status
+  function filterImoveis(f){
+    f = f || {};
+    return STATE.imoveis.filter(i=>{
+      if(f.finalidade && f.finalidade!=="todos" && i.finalidade!==f.finalidade) return false;
+      if(f.tipo && f.tipo!=="Todos" && i.tipo!==f.tipo) return false;
+      if(f.status && f.status!=="todos" && i.status!==f.status) return false;
+      if(f.quartos && i.quartos < Number(f.quartos)) return false;
+      if(f.precoMin!=null && i.valor < Number(f.precoMin)) return false;
+      if(f.precoMax!=null && i.valor > Number(f.precoMax)) return false;
+      return true;
+    });
+  }
+
   // -------------------- TEMPLATES --------------------
   function getTemplates(canal){
     return canal ? STATE.templates.filter(t=>t.canal===canal) : STATE.templates.slice();
@@ -246,7 +350,8 @@
     {id:"todos",       label:"Todos os leads e clientes"},
     {id:"seguro",      label:"Interessados em seguro"},
     {id:"consorcio",   label:"Interessados em consórcio"},
-    {id:"clientes",    label:"Clientes (apólice emitida / contemplados)"},
+    {id:"imovel",      label:"Interessados em imóvel"},
+    {id:"clientes",    label:"Clientes (apólice / contemplados / negócio fechado)"},
     {id:"sem_contato_7d", label:"Sem interação há 7+ dias"},
     {id:"prioridade",  label:"Marcados como prioridade"}
   ];
@@ -255,7 +360,8 @@
     switch(segmentoId){
       case "seguro": return all.filter(l=>l.produto==="seguro");
       case "consorcio": return all.filter(l=>l.produto==="consorcio");
-      case "clientes": return all.filter(l=>l.estagio==="apolice"||l.estagio==="contemplado");
+      case "imovel": return all.filter(l=>l.produto==="imovel");
+      case "clientes": return all.filter(l=>ESTAGIOS_GANHOS.has(l.estagio));
       case "sem_contato_7d": {
         const limite = Date.now()-7*24*60*60*1000;
         return all.filter(l=> new Date(l.atualizadoEm).getTime() < limite && l.estagio!=="perdido");
@@ -353,18 +459,20 @@
   }
 
   // -------------------- ESTATÍSTICAS --------------------
+  const ESTAGIOS_GANHOS = new Set(["apolice","contemplado","fechado"]);
   function dashboardStats(){
     const leads = STATE.leads;
-    const abertos = leads.filter(l=>l.estagio!=="perdido" && l.estagio!=="apolice" && l.estagio!=="contemplado");
-    const ganhos = leads.filter(l=>l.estagio==="apolice"||l.estagio==="contemplado");
+    const abertos = leads.filter(l=>l.estagio!=="perdido" && !ESTAGIOS_GANHOS.has(l.estagio));
+    const ganhos = leads.filter(l=>ESTAGIOS_GANHOS.has(l.estagio));
     const perdidos = leads.filter(l=>l.estagio==="perdido");
     const seguro = leads.filter(l=>l.produto==="seguro");
     const consorcio = leads.filter(l=>l.produto==="consorcio");
+    const imovel = leads.filter(l=>l.produto==="imovel");
     const novos7d = leads.filter(l=> (Date.now()-new Date(l.criadoEm).getTime()) < 7*24*3600*1000).length;
     const valorEmAberto = abertos.reduce((s,l)=>s+(Number(l.valor)||0),0);
     const taxaConversao = leads.length ? Math.round((ganhos.length/leads.length)*100) : 0;
     return { total:leads.length, abertos:abertos.length, ganhos:ganhos.length, perdidos:perdidos.length,
-      seguro:seguro.length, consorcio:consorcio.length, novos7d, valorEmAberto, taxaConversao };
+      seguro:seguro.length, consorcio:consorcio.length, imovel:imovel.length, novos7d, valorEmAberto, taxaConversao };
   }
   function getActivity(limit){ return STATE.activity.slice(0, limit||30); }
 
@@ -480,9 +588,10 @@
   }
 
   global.SoluaDB = {
-    PIPELINES, TIPOS, ORIGENS, SEGMENTOS,
+    PIPELINES, TIPOS, ORIGENS, SEGMENTOS, ESTAGIOS_GANHOS,
     getLeads, getLead, getLeadsByProduto, addLead, updateLead, deleteLead, addNota,
     getEquipe, getUsuario, addUsuario, updateUsuario, deleteUsuario,
+    getImoveis, getImovel, addImovel, updateImovel, deleteImovel, filterImoveis,
     getTemplates, getTemplate, addTemplate, updateTemplate, deleteTemplate,
     getAudience, getCampaigns, getCampaign, addCampaign, updateCampaign, deleteCampaign, sendCampaignNow,
     login, logout, currentUser, requireAuth,

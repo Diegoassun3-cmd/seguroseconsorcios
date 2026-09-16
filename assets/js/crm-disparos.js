@@ -140,7 +140,7 @@ function stepHtml(){
     return `<h3 style="font-size:17px;margin-bottom:14px">3. Escolha o modelo</h3>
     <div class="grid2" style="align-items:start">
       <div>
-        ${tpls.map(tp=>`<div class="tplcard ${tp.id===wizard.templateId?"sel":""}" data-tpl="${tp.id}"><b>${DB.esc(tp.nome)}</b><span>${tp.categoria==="seguro"?"Seguros":tp.categoria==="consorcio"?"Consórcios":"Geral"}</span></div>`).join("") || `<p style="font-size:13px;color:var(--tinta-45)">Nenhum modelo para este canal ainda.</p>`}
+        ${tpls.map(tp=>`<div class="tplcard ${tp.id===wizard.templateId?"sel":""}" data-tpl="${tp.id}"><b>${DB.esc(tp.nome)}</b><span>${({seguro:"Seguros",consorcio:"Consórcios",imovel:"Imóveis"})[tp.categoria]||"Geral"}</span></div>`).join("") || `<p style="font-size:13px;color:var(--tinta-45)">Nenhum modelo para este canal ainda.</p>`}
         <a class="btn ghost sm block" href="modelos.html" style="margin-top:8px">+ Criar novo modelo</a>
       </div>
       <div>${t ? previewHtml(wizard.canal, t) : `<p style="font-size:13px;color:var(--tinta-45)">Selecione um modelo para pré-visualizar.</p>`}</div>

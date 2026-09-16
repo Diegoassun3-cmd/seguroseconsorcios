@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Financeiro — CRM Solua</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23004BA5'/></svg>">
+<link rel="preload" href="../../assets/fonts/Nyata-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/css/fonts.css">
+<link rel="stylesheet" href="../../assets/css/crm.css">
+<script defer src="../../assets/js/branding.js"></script>
+</head>
+<body data-base="../" data-active="admin-financeiro" data-title="Financeiro" data-crumbs="CRM Solua / Administração">
+
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar" id="topbar"></header>
+    <main class="content">
+
+      <div class="demo-hint" style="margin-bottom:16px">Calculado a partir dos negócios fechados no CRM (campo "valor" de cada lead) e de uma comissão estimada por produto. Ajuste os percentuais conforme sua realidade — ver comentário no topo de <code>assets/js/crm-financeiro.js</code>.</div>
+
+      <div class="kpis" id="finKpis"></div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-hd"><h3>Vendas por produto</h3></div>
+          <div class="card-bd"><div id="finProdutoBars"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><h3>Últimos 6 meses</h3></div>
+          <div class="card-bd"><div id="finMesesBars"></div></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="card-hd">
+          <h3>Ranking por consultor</h3>
+          <button class="btn ghost sm" id="btnExportarCsv">Exportar CSV</button>
+        </div>
+        <div class="card-bd" style="padding:0">
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Consultor</th><th>Produto(s)</th><th>Negócios fechados</th><th>Total vendido</th><th>Comissão estimada</th></tr></thead>
+              <tbody id="finRanking"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="../../assets/js/crm-data.js"></script>
+<script src="../../assets/js/crm-ui.js"></script>
+<script>
+if(!window.SoluaUI.isAdmin){ window.SoluaUI.toast("Acesso restrito à administração.","err"); location.replace("../dashboard.html"); }
+</script>
+<script src="../../assets/js/crm-financeiro.js"></script>
+</body>
+</html>

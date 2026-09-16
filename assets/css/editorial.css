@@ -1,0 +1,108 @@
+/* ===========================================================
+   Solua — componentes editoriais compartilhados entre as páginas
+   públicas novas (Home, Imóveis, Seguros, Consórcios, Sobre,
+   Contato). Carregado depois de site.css, reaproveita os mesmos
+   tokens (--azul, --creme, --font-display etc.).
+   =========================================================== */
+
+/* ---------- hero com carrossel de fotos ---------- */
+.hero-photo{position:relative;min-height:78vh;display:flex;align-items:flex-end;overflow:hidden;background:var(--tinta)}
+.hero-photo .slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.4s ease}
+.hero-photo .slide.on{opacity:1}
+.hero-photo .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,24,28,.15) 0%,rgba(21,24,28,.65) 100%)}
+.hero-photo .in{position:relative;z-index:1;color:var(--creme);padding:60px var(--pad) 56px;width:100%}
+.hero-photo .lbl{color:rgba(242,237,230,.72)}
+.hero-photo h1{font-size:clamp(42px,8vw,104px);letter-spacing:-.04em;color:var(--creme);margin:14px 0 18px}
+.hero-photo p{font-size:clamp(15px,1.5vw,18px);color:rgba(242,237,230,.82);max-width:52ch;margin-bottom:26px}
+.hero-dots{position:absolute;right:var(--pad);bottom:26px;z-index:1;display:flex;gap:8px}
+.hero-dots button{width:26px;height:3px;border:none;background:rgba(242,237,230,.35);cursor:pointer;padding:0;transition:.3s}
+.hero-dots button.on{background:var(--creme)}
+
+/* ---------- 3 frentes de negócio ---------- */
+.bizline-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--linha);border:1px solid var(--linha)}
+.bizline{background:var(--creme);padding:38px 30px 34px;transition:background .35s;display:flex;flex-direction:column;min-height:260px}
+.bizline:hover{background:var(--papel)}
+.bizline .ico{width:44px;height:44px;color:var(--azul);margin-bottom:22px}
+.bizline h3{font-size:26px;letter-spacing:-.025em;margin-bottom:10px}
+.bizline p{font-size:14.5px;color:var(--tinta-60);flex:1;margin-bottom:20px}
+.bizline .go{font-size:13px;color:var(--azul);display:inline-flex;align-items:center;gap:6px}
+.bizline .go svg{width:14px;height:14px;transition:transform .3s}
+.bizline:hover .go svg{transform:translateX(4px)}
+
+/* ---------- grade de catálogo (imóveis) ---------- */
+.prop-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:20px 0;border-top:1px solid var(--linha);border-bottom:1px solid var(--linha);margin-bottom:34px}
+.prop-toolbar select,.prop-toolbar input{font-size:13px;padding:9px 14px;border:1px solid var(--linha);border-radius:100px;background:var(--creme);color:var(--tinta);cursor:pointer}
+.prop-toolbar .spacer{flex:1}
+.prop-toolbar .cnt{font-size:12.5px;color:var(--tinta-35)}
+.prop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.prop-grid.wide{grid-template-columns:repeat(2,1fr)}
+.prop-card{cursor:pointer;transition:transform .3s}
+.prop-card .ph{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--creme-2);border-radius:2px}
+.prop-card .ph img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.3,1)}
+.prop-card:hover .ph img{transform:scale(1.08)}
+.prop-card .tag{position:absolute;top:12px;left:12px;font-size:11px;letter-spacing:.05em;padding:6px 12px;border-radius:100px;background:var(--creme);color:var(--tinta)}
+.prop-card .tag.destaque{background:var(--azul);color:var(--creme)}
+.prop-card .bd{padding:16px 2px 0}
+.prop-card .valor{font-family:var(--font-display);font-weight:400;font-size:22px;letter-spacing:-.02em;color:var(--azul)}
+.prop-card h3{font-size:17px;margin:6px 0 4px;letter-spacing:-.01em}
+.prop-card .loc{font-size:13px;color:var(--tinta-60)}
+.prop-card .specs{display:flex;gap:14px;font-size:12.5px;color:var(--tinta-35);margin-top:10px;padding-top:10px;border-top:1px solid var(--linha)}
+.prop-empty{padding:60px 0;text-align:center;color:var(--tinta-35)}
+
+/* ---------- página de detalhe do imóvel ---------- */
+.prop-gallery{display:grid;grid-template-columns:1.6fr 1fr;grid-template-rows:1fr 1fr;gap:8px;height:min(560px,60vh)}
+.prop-gallery .main{grid-row:1/3;overflow:hidden;border-radius:2px}
+.prop-gallery img{width:100%;height:100%;object-fit:cover;border-radius:2px}
+.prop-detail-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:60px;align-items:start;margin-top:44px}
+.prop-ficha{border:1px solid var(--linha);padding:26px}
+.prop-ficha .row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--linha);font-size:14px}
+.prop-ficha .row:last-child{border-bottom:none}
+.prop-ficha .row span:first-child{color:var(--tinta-60)}
+.prop-ficha .row b{font-weight:600}
+@media(max-width:960px){
+  .prop-gallery{grid-template-columns:1fr;grid-template-rows:auto;height:auto}
+  .prop-gallery .main{grid-row:auto;aspect-ratio:4/3}
+  .prop-gallery .thumb{aspect-ratio:4/3}
+  .prop-detail-grid{grid-template-columns:1fr;gap:32px}
+  .prop-grid,.prop-grid.wide{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){ .prop-grid,.prop-grid.wide{grid-template-columns:1fr} }
+
+/* ---------- bloco editorial alternado (texto/foto) ---------- */
+.ed-block{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,6vw,80px);align-items:center;padding:clamp(50px,7vw,90px) 0;border-top:1px solid var(--linha)}
+.ed-block.rev-order .ph{order:2}
+.ed-block .ph{aspect-ratio:5/4;overflow:hidden;border-radius:2px}
+.ed-block .ph img{width:100%;height:100%;object-fit:cover}
+.ed-block h3{font-size:clamp(28px,3.6vw,44px);letter-spacing:-.035em;margin-bottom:16px;max-width:14ch}
+.ed-block p{font-size:15.5px;color:var(--tinta-60);max-width:46ch;margin-bottom:22px}
+@media(max-width:860px){ .ed-block,.ed-block.rev-order{grid-template-columns:1fr}.ed-block.rev-order .ph{order:0} }
+
+/* ---------- linha do tempo com foto (Sobre) ---------- */
+.time2{border-top:1px solid var(--linha)}
+.time2-row{display:grid;grid-template-columns:110px 1fr 220px;gap:26px;padding:28px 0;border-bottom:1px solid var(--linha);align-items:center}
+.time2-row b{font-family:var(--font-display);font-weight:400;font-size:30px;letter-spacing:-.03em;color:var(--azul)}
+.time2-row p{font-size:14.5px;color:var(--tinta-60)}
+.time2-row .ph{aspect-ratio:4/3;border-radius:2px;overflow:hidden}
+.time2-row .ph img{width:100%;height:100%;object-fit:cover}
+@media(max-width:760px){ .time2-row{grid-template-columns:1fr}.time2-row .ph{order:-1} }
+
+/* ---------- equipe ---------- */
+.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.team-card .ph{aspect-ratio:1;border-radius:2px;overflow:hidden;background:var(--creme-2);margin-bottom:14px}
+.team-card .ph img{width:100%;height:100%;object-fit:cover}
+.team-card h4{font-size:17px;letter-spacing:-.01em;margin-bottom:2px}
+.team-card span{font-size:13px;color:var(--tinta-60)}
+@media(max-width:860px){ .team-grid{grid-template-columns:repeat(2,1fr)} }
+
+/* ---------- contato ---------- */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+.contact-info .row{display:flex;gap:16px;padding:18px 0;border-top:1px solid var(--linha)}
+.contact-info .row:last-child{border-bottom:1px solid var(--linha)}
+.contact-info .row svg{width:20px;height:20px;color:var(--azul);flex:none;margin-top:2px}
+.contact-info .row b{display:block;font-size:14.5px;margin-bottom:2px}
+.contact-info .row span{font-size:13.5px;color:var(--tinta-60)}
+.map-ph{aspect-ratio:16/9;border-radius:2px;background:var(--creme-2) center/cover;margin-top:26px;position:relative;overflow:hidden}
+.map-ph .pin{position:absolute;left:50%;top:46%;transform:translate(-50%,-100%);width:30px;height:30px;color:var(--azul)}
+
+@media(max-width:860px){ .contact-grid{grid-template-columns:1fr} }
+@media(max-width:1080px){ .bizline-grid{grid-template-columns:1fr} .team-grid{grid-template-columns:repeat(2,1fr)} }

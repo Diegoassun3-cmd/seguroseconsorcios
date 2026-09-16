@@ -16,6 +16,9 @@ const ICO = {
   dash:'<path d="M3 13h6V3H3v10zm0 8h6v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
   seguro:'<path d="M10 2l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V5l7-3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
   consorcio:'<path d="M3 17V9l7-5 7 5v8M3 17h14M8 17v-5h4v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
+  imovel:'<path d="M2.5 9.5L10 3l7.5 6.5M4.5 8.5v8.5h11V8.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7.8 17v-5h4.4v5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>',
+  documentos:'<path d="M6 2.5h6l3.5 3.5V17a1 1 0 01-1 1H6a1 1 0 01-1-1V3.5a1 1 0 011-1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 2.5V6h3.5M7 10h6M7 13h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
+  financeiro:'<path d="M3 16.5V9M8 16.5V5M13 16.5v-8M17 16.5V3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
   contatos:'<circle cx="10" cy="7" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 18c.6-3.6 3.4-6 6.5-6s5.9 2.4 6.5 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
   admin:'<path d="M10 2l1.6 3.3 3.6.5-2.6 2.6.6 3.6L10 10.3 6.8 12l.6-3.6L4.8 5.8l3.6-.5L10 2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>',
   disparos:'<path d="M2 10l16-7-6 16-3-6-6-3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
@@ -36,6 +39,7 @@ const NAV = [
     {href:"dashboard.html", key:"dashboard", label:"Dashboard", ico:"dash"}
   ]},
   {group:"Pipelines", items:[
+    {href:"pipeline-imoveis.html", key:"pipeline-imoveis", label:"Imóveis", ico:"imovel", count:()=>DB.getLeadsByProduto("imovel").filter(l=>l.estagio!=="perdido"&&l.estagio!=="fechado").length},
     {href:"pipeline-seguros.html", key:"pipeline-seguros", label:"Seguros", ico:"seguro", count:()=>DB.getLeadsByProduto("seguro").filter(l=>l.estagio!=="perdido"&&l.estagio!=="apolice").length},
     {href:"pipeline-consorcios.html", key:"pipeline-consorcios", label:"Consórcios", ico:"consorcio", count:()=>DB.getLeadsByProduto("consorcio").filter(l=>l.estagio!=="perdido"&&l.estagio!=="contemplado").length}
   ]},
@@ -47,6 +51,9 @@ const NAV_ADMIN = {group:"Administração", items:[
   {href:"admin/disparos.html", key:"admin-disparos", label:"Disparos", ico:"disparos"},
   {href:"admin/modelos.html", key:"admin-modelos", label:"Modelos", ico:"modelos"},
   {href:"admin/equipe.html", key:"admin-equipe", label:"Equipe", ico:"equipe"},
+  {href:"admin/design.html", key:"admin-design", label:"Design", ico:"site"},
+  {href:"admin/documentos.html", key:"admin-documentos", label:"Documentos", ico:"documentos"},
+  {href:"admin/financeiro.html", key:"admin-financeiro", label:"Financeiro", ico:"financeiro"},
   {href:"admin/personalizacao.html", key:"admin-personalizacao", label:"Personalização", ico:"personalizar"}
 ]};
 if(isAdmin) NAV.push(NAV_ADMIN);

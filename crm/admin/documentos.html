@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documentos — CRM Solua</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23004BA5'/></svg>">
+<link rel="preload" href="../../assets/fonts/Nyata-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/css/fonts.css">
+<link rel="stylesheet" href="../../assets/css/crm.css">
+<script defer src="../../assets/js/branding.js"></script>
+</head>
+<body data-base="../" data-active="admin-documentos" data-title="Documentos" data-crumbs="CRM Solua / Administração">
+
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar" id="topbar"></header>
+    <main class="content">
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-bd" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span style="font-size:13px;color:var(--tinta-60)">Repositório central de documentos internos — contratos padrão, propostas, manuais e apólices modelo. Guardado no banco real (D1), visível para toda a equipe conforme a permissão de cada documento.</span>
+          <span class="spacer"></span>
+          <span id="docApiStatus"></span>
+        </div>
+      </div>
+
+      <div class="filterbar">
+        <div class="tabs" id="catTabs"></div>
+        <span class="spacer"></span>
+        <button class="btn sm" id="btnNovoDoc">+ Enviar documento</button>
+      </div>
+
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Documento</th><th>Categoria</th><th>Versão</th><th>Acesso</th><th>Enviado por</th><th>Data</th><th></th></tr></thead>
+          <tbody id="docRows"></tbody>
+        </table>
+      </div>
+      <p id="docEmpty" class="empty" style="display:none">Nenhum documento nesta categoria ainda.</p>
+
+    </main>
+  </div>
+</div>
+
+<div class="overlay modal-center" id="docOverlay">
+  <div class="modal" style="width:min(520px,94vw)">
+    <div class="modal-hd"><h3 style="font-size:16px">Enviar documento</h3><button class="x" data-close-overlay="docOverlay"></button></div>
+    <div class="modal-bd">
+      <div class="field" style="margin-bottom:14px"><label>Nome do documento *</label><input id="dNome" placeholder="Contrato padrão de locação"></div>
+      <div class="grid2" style="margin-bottom:14px">
+        <div class="field"><label>Categoria</label><select id="dCategoria">
+          <option>Contratos padrão</option><option>Propostas</option><option>Manuais internos</option>
+          <option>Materiais de treinamento</option><option>Apólices modelo</option><option>Outro</option>
+        </select></div>
+        <div class="field"><label>Versão</label><input id="dVersao" value="1.0"></div>
+      </div>
+      <div class="field" style="margin-bottom:14px">
+        <label>Quem pode ver</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <label class="pill on" data-papelpill="Todos" style="cursor:pointer">Todos</label>
+          <label class="pill" data-papelpill="Administrador" style="cursor:pointer">Administrador</label>
+          <label class="pill" data-papelpill="Consultor" style="cursor:pointer">Consultores(as)</label>
+          <label class="pill" data-papelpill="Consultor de Imóveis" style="cursor:pointer">Consultor de Imóveis</label>
+        </div>
+      </div>
+      <div class="field"><label>Arquivo * (até ~500KB)</label><input type="file" id="dArquivo"></div>
+      <p id="dArquivoInfo" style="font-size:12px;color:var(--tinta-45);margin-top:6px"></p>
+    </div>
+    <div class="modal-ft">
+      <button class="btn ghost sm" data-close-overlay="docOverlay">Cancelar</button>
+      <button class="btn sm" id="btnEnviarDoc">Enviar</button>
+    </div>
+  </div>
+</div>
+
+<script src="../../assets/js/crm-data.js"></script>
+<script src="../../assets/js/crm-ui.js"></script>
+<script>
+if(!window.SoluaUI.isAdmin){ window.SoluaUI.toast("Acesso restrito à administração.","err"); location.replace("../dashboard.html"); }
+document.getElementById("docEmpty").innerHTML = window.SoluaUI.emptyState("Nenhum documento nesta categoria ainda.");
+</script>
+<script src="../../assets/js/crm-documentos.js"></script>
+</body>
+</html>

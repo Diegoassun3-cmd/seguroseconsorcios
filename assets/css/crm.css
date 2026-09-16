@@ -9,6 +9,7 @@
   --tinta:#15181C; --tinta-60:rgba(21,24,28,.62); --tinta-45:rgba(21,24,28,.45); --tinta-35:rgba(21,24,28,.35);
   --linha:rgba(21,24,28,.12); --linha-forte:rgba(21,24,28,.2);
   --verde:#1E8E5A; --verde-fundo:#E7F5EE; --amarelo:#B8862B; --amarelo-fundo:#FBF1E1; --vermelho:#B0453D; --vermelho-fundo:#FBEAE8;
+  --roxo:#7A4FB5; --roxo-fundo:color-mix(in srgb, #7A4FB5 12%, white);
   --sombra:0 1px 2px rgba(21,24,28,.04), 0 8px 24px -12px rgba(21,24,28,.12);
   --sombra-lg:0 20px 60px -20px rgba(21,24,28,.28);
   --raio:10px; --raio-sm:7px;
@@ -120,6 +121,7 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:400;letter-spacing:-.02e
 .badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:100px;white-space:nowrap}
 .badge.seguro{background:var(--azul-fundo);color:var(--azul)}
 .badge.consorcio{background:var(--amarelo-fundo);color:var(--amarelo)}
+.badge.imovel{background:var(--roxo-fundo);color:var(--roxo)}
 .badge.ganho{background:var(--verde-fundo);color:var(--verde)}
 .badge.perdido{background:var(--vermelho-fundo);color:var(--vermelho)}
 .badge.neutro{background:var(--creme-2);color:var(--tinta-60)}

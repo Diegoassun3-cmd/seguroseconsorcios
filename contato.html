@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contato — Solua</title>
+<meta name="description" content="Fale com a Solua: imóveis, seguros ou consórcios. Endereço, telefone, WhatsApp e formulário de contato.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23004BA5'/></svg>">
+<link rel="preload" href="assets/fonts/Nyata-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/editorial.css">
+<script defer src="assets/js/branding.js"></script>
+</head>
+<body data-page="contato">
+
+<header id="hd"></header>
+<div class="mob" id="mob"></div>
+
+<section class="hero" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="hero-top rule" style="border-bottom:1px solid var(--linha);border-top:none">
+      <span class="lbl">/ Contato</span>
+      <span class="lbl">/ Resposta em até 1 dia útil</span>
+    </div>
+    <h1 style="font-size:clamp(40px,8vw,100px)">Vamos<br><em style="color:var(--azul);font-style:normal">conversar.</em></h1>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap rev">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s7-6.5 7-12a7 7 0 10-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></svg>
+          <div><b>Endereço</b><span>Campinas — SP</span></div>
+        </div>
+        <div class="row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5h16v14H4z"/><path d="M4 6l8 7 8-7"/></svg>
+          <div><b>E-mail</b><span id="ciEmail">contato@solua.com.br</span></div>
+        </div>
+        <div class="row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h4l2 5-2.5 1.5a11 11 0 005 5L16 12l5 2v4a2 2 0 01-2 2C10.5 20 4 13.5 4 5a2 2 0 012-2z"/></svg>
+          <div><b>WhatsApp</b><span><a href="#" id="wppContato" target="_blank" rel="noopener" style="color:var(--azul)">Falar agora</a></span></div>
+        </div>
+        <div class="row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+          <div><b>Horário</b><span>Segunda a sexta, 9h às 18h</span></div>
+        </div>
+        <div class="map-ph" style="background-image:url('https://picsum.photos/seed/solua-mapa/900/500')">
+          <svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 00-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 00-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg>
+        </div>
+      </div>
+
+      <div>
+        <div class="fields" id="contatoFields" style="grid-template-columns:1fr 1fr">
+          <div class="f full"><label>Nome completo *</label><input id="ctNome" placeholder="Seu nome"></div>
+          <div class="f"><label>WhatsApp *</label><input id="ctFone" placeholder="(19) 90000-0000" inputmode="tel"></div>
+          <div class="f"><label>E-mail *</label><input id="ctEmail" type="email" placeholder="voce@email.com"></div>
+          <div class="f full"><label>Assunto</label>
+            <select id="ctAssunto">
+              <option value="imovel">Imóveis</option>
+              <option value="seguro">Seguros</option>
+              <option value="consorcio">Consórcios</option>
+              <option value="outro">Outro assunto</option>
+            </select>
+          </div>
+          <div class="f full"><label>Mensagem</label><textarea id="ctMsg" rows="4" placeholder="Como podemos ajudar?"></textarea></div>
+        </div>
+        <label class="consent"><input type="checkbox" id="ctLgpd"><span>Autorizo a Solua a entrar em contato pelos canais informados e tratar meus dados, conforme a Lei Geral de Proteção de Dados (LGPD).</span></label>
+        <button class="btn lg block" id="ctSend" style="margin-top:22px">Enviar mensagem</button>
+        <div class="done-v" id="ctDone" style="text-align:left;padding:26px 0 0">
+          <p style="color:var(--azul);font-size:15px">Recebemos sua mensagem! Um consultor Solua retorna em até 1 dia útil. <a id="ctWppLink" target="_blank" rel="noopener" style="color:var(--azul);text-decoration:underline">Ou fale agora no WhatsApp.</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="ft"></footer>
+<div id="wppFloat"></div>
+
+<script src="assets/js/crm-data.js"></script>
+<script src="assets/js/site-chrome.js"></script>
+<script src="assets/js/contato.js"></script>
+</body>
+</html>

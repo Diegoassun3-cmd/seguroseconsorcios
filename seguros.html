@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seguros — Solua</title>
+<meta name="description" content="Seguro auto, residencial, vida, empresarial e mais. Cotação comparativa entre as principais seguradoras do Brasil, com um consultor Solua dedicado.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23004BA5'/></svg>">
+<link rel="preload" href="assets/fonts/Nyata-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/editorial.css">
+<script defer src="assets/js/branding.js"></script>
+</head>
+<body data-page="seguros">
+
+<header id="hd"></header>
+<div class="mob" id="mob"></div>
+
+<section class="hero-photo" style="min-height:56vh">
+  <div class="slide on" style="background-image:url('https://picsum.photos/seed/solua-seguros-hero/1800/1000')"></div>
+  <div class="scrim"></div>
+  <div class="in">
+    <span class="lbl">/ Seguros · pessoa física e empresas</span>
+    <h1 style="font-size:clamp(38px,7vw,90px)">Proteção sem<br>enrolação.</h1>
+    <p>Cotamos com as principais seguradoras do país e entregamos o comparativo pronto — coberturas, franquias e preços lado a lado.</p>
+    <div class="hero-cta"><a class="btn lg" href="#simulador">Simular meu seguro</a></div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap rev">
+    <div class="sec-head">
+      <div><span class="num">/ Linhas de seguro</span><h2>Para cada risco, uma cobertura.</h2></div>
+      <p class="side">Trabalhamos com as maiores seguradoras do país. Você recebe um comparativo claro entre coberturas, franquias e preços — e decide com informação, não com pressão.</p>
+    </div>
+    <div class="filters" id="segTabs"></div>
+    <div class="list" id="segList"></div>
+  </div>
+</section>
+
+<section class="sec" style="background:var(--papel);padding-top:0">
+  <div class="wrap rev">
+    <div class="ed-block" style="border-top:1px solid var(--linha)">
+      <div class="ph"><img src="https://picsum.photos/seed/solua-seguros-processo/900/720" alt="Consultor Solua explicando apólice" loading="lazy"></div>
+      <div>
+        <span class="num">/ Como funciona</span>
+        <h3>Quatro passos. Nenhuma surpresa.</h3>
+        <p>Você conta o que precisa, cotamos no mercado com as seguradoras parceiras, explicamos cobertura por cobertura em português e cuidamos da contratação, do sinistro e da renovação junto com você.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIMULADOR -->
+<section id="simulador" class="sec quote">
+  <div class="wrap rev">
+    <div class="sec-head">
+      <div><span class="num">/ Simulador</span><h2>Sua cotação começa aqui.</h2></div>
+      <p class="side">Leva menos de dois minutos. Um consultor Solua retorna em até 1 dia útil com o comparativo pronto.</p>
+    </div>
+    <div id="quoteMount"></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec faq">
+  <div class="wrap rev">
+    <div class="sec-head"><div><span class="num">/ Dúvidas</span><h2>Perguntas sobre seguro.</h2></div></div>
+    <div class="list" id="faqList"></div>
+  </div>
+</section>
+
+<footer id="ft"></footer>
+<div id="wppFloat"></div>
+
+<script src="assets/js/crm-data.js"></script>
+<script src="assets/js/site-chrome.js"></script>
+<script src="assets/js/product-list.js"></script>
+<script src="assets/js/quote-flow.js"></script>
+<script src="assets/js/seguros.js"></script>
+</body>
+</html>

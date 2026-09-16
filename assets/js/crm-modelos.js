@@ -71,7 +71,7 @@ function cardHtml(t){
   }
   return `
     <div class="card" data-tpl="${t.id}" style="cursor:pointer">
-      <div class="card-hd"><h3 style="font-size:14px">${esc(t.nome)}</h3><span class="badge ${t.categoria==="seguro"?"seguro":t.categoria==="consorcio"?"consorcio":"neutro"}">${t.categoria==="seguro"?"Seguros":t.categoria==="consorcio"?"Consórcios":"Geral"}</span></div>
+      <div class="card-hd"><h3 style="font-size:14px">${esc(t.nome)}</h3><span class="badge ${["seguro","consorcio","imovel"].includes(t.categoria)?t.categoria:"neutro"}">${({seguro:"Seguros",consorcio:"Consórcios",imovel:"Imóveis"})[t.categoria]||"Geral"}</span></div>
       <div class="card-bd">
         <p style="font-size:12.5px;color:var(--tinta-60);margin-bottom:8px;min-height:32px">${esc(resumo.slice(0,120))}${resumo.length>120?"…":""}</p>
         ${badges.length?`<div style="display:flex;gap:6px;flex-wrap:wrap">${badges.map(b=>`<span class="tagchip">${b}</span>`).join("")}</div>`:""}
@@ -117,7 +117,8 @@ function desenharEditor(){
         <option value="whatsapp" ${editando.canal==="whatsapp"?"selected":""}>WhatsApp</option>
       </select></div>
       <div class="field full"><label>Categoria</label><select id="fCategoria">
-        <option value="geral" ${editando.categoria==="geral"?"selected":""}>Geral (ambos produtos)</option>
+        <option value="geral" ${editando.categoria==="geral"?"selected":""}>Geral (todos os produtos)</option>
+        <option value="imovel" ${editando.categoria==="imovel"?"selected":""}>Imóveis</option>
         <option value="seguro" ${editando.categoria==="seguro"?"selected":""}>Seguros</option>
         <option value="consorcio" ${editando.categoria==="consorcio"?"selected":""}>Consórcios</option>
       </select></div>

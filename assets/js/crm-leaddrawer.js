@@ -35,7 +35,7 @@ function fieldsHtml(l){
     <div class="field"><label>Tipo</label><select data-f="tipo">${tipos.map(t=>`<option ${t===l.tipo?"selected":""}>${t}</option>`).join("")}</select></div>
     <div class="field"><label>Origem</label><select data-f="origem">${DB.ORIGENS.map(o=>`<option ${o===l.origem?"selected":""}>${o}</option>`).join("")}</select></div>
     <div class="field"><label>Consultor</label><select data-f="consultorId"><option value="">— sem atribuição —</option>${equipe.map(u=>`<option value="${u.id}" ${u.id===l.consultorId?"selected":""}>${esc(u.nome)}${u.ativo?"":" (inativo)"}</option>`).join("")}</select></div>
-    <div class="field"><label>${l.produto==="seguro"?"Prêmio estimado (R$/ano)":"Valor da carta (R$)"}</label><input data-f="valor" type="number" value="${Number(l.valor)||0}"></div>
+    <div class="field"><label>${l.produto==="seguro"?"Prêmio estimado (R$/ano)":l.produto==="imovel"?"Valor do negócio (R$)":"Valor da carta (R$)"}</label><input data-f="valor" type="number" value="${Number(l.valor)||0}"></div>
   </div>
   <div class="field">
     <label>Etiquetas</label>
@@ -71,12 +71,12 @@ function notesHtml(l){
 
 const esc = DB.esc;
 
+const PRODUTO_LABEL = {seguro:"Seguro", consorcio:"Consórcio", imovel:"Imóvel"};
 function render(l){
-  const badgeClass = l.produto==="seguro" ? "seguro" : "consorcio";
   return `
   <div class="drawer-hd">
     <div>
-      <span class="badge ${badgeClass}">${l.produto==="seguro"?"Seguro":"Consórcio"}</span>
+      <span class="badge ${l.produto}">${PRODUTO_LABEL[l.produto]||l.produto}</span>
       <h2 style="margin-top:8px;font-size:22px">${esc(l.nome)}</h2>
       <span style="font-size:12px;color:var(--tinta-45)">Lead desde ${DB.formatDate(l.criadoEm)} · atualizado ${DB.timeAgo(l.atualizadoEm)}</span>
     </div>

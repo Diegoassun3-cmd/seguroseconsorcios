@@ -36,6 +36,48 @@ function json(data, status) {
 function uid() {
   return Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 9);
 }
+
+// ---------------------------------------------------------------
+// Auto-migração do esquema do D1. Roda uma vez por isolate "quente"
+// do Worker (cache em memória — schemaReady) e é idempotente: cria
+// tabelas que não existirem e tenta acrescentar colunas novas, mas
+// ignora o erro "duplicate column" quando a coluna já existe. Assim
+// o projeto funciona tanto num D1 recém-criado do zero quanto num
+// banco já em produção que ganhou colunas novas neste código.
+// ---------------------------------------------------------------
+let schemaReady = null;
+function ensureSchema(env) {
+  if (!schemaReady) schemaReady = migrate(env).catch(e => { schemaReady = null; throw e; });
+  return schemaReady;
+}
+async function migrate(env) {
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS settings (
+    id INTEGER PRIMARY KEY, logo_url TEXT, hero_image_url TEXT, cor_primaria TEXT, cor_texto TEXT,
+    whatsapp_numero TEXT, email_remetente TEXT, nome_remetente TEXT,
+    automacao_email_ativa INTEGER, automacao_whatsapp_ativa INTEGER, atualizado_em TEXT
+  )`).run();
+  await env.DB.prepare(`INSERT OR IGNORE INTO settings (id, cor_primaria, whatsapp_numero, email_remetente, nome_remetente) VALUES (1, '#004BA5', '5519999999999', 'contato@solua.com.br', 'Solua')`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS dispatch_log (
+    id TEXT PRIMARY KEY, criado_em TEXT, canal TEXT, destinatario_nome TEXT, destinatario_email TEXT,
+    destinatario_telefone TEXT, produto TEXT, assunto TEXT, status TEXT, detalhe TEXT
+  )`).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS documentos (
+    id TEXT PRIMARY KEY, criado_em TEXT, categoria TEXT, nome TEXT, versao TEXT,
+    papeis_permitidos TEXT, tipo_arquivo TEXT, tamanho INTEGER, conteudo_base64 TEXT, enviado_por TEXT
+  )`).run();
+  // colunas do Painel de Design, acrescentadas depois da criação original da tabela settings
+  const novasColunas = [
+    "ALTER TABLE settings ADD COLUMN hero_titulo TEXT",
+    "ALTER TABLE settings ADD COLUMN hero_subtitulo TEXT",
+    "ALTER TABLE settings ADD COLUMN mostrar_blog_home INTEGER DEFAULT 1",
+    "ALTER TABLE settings ADD COLUMN mostrar_imoveis_home INTEGER DEFAULT 1",
+    "ALTER TABLE settings ADD COLUMN banner_consorcio_texto TEXT"
+  ];
+  for (const sql of novasColunas) {
+    try { await env.DB.prepare(sql).run(); } catch (e) { /* coluna já existe — ok */ }
+  }
+}
+
 function rowToSettings(row) {
   if (!row) return null;
   return {
@@ -48,16 +90,23 @@ function rowToSettings(row) {
     nomeRemetente: row.nome_remetente || "Solua",
     automacaoEmailAtiva: !!row.automacao_email_ativa,
     automacaoWhatsappAtiva: !!row.automacao_whatsapp_ativa,
+    heroTitulo: row.hero_titulo || null,
+    heroSubtitulo: row.hero_subtitulo || null,
+    mostrarBlogHome: row.mostrar_blog_home == null ? true : !!row.mostrar_blog_home,
+    mostrarImoveisHome: row.mostrar_imoveis_home == null ? true : !!row.mostrar_imoveis_home,
+    bannerConsorcioTexto: row.banner_consorcio_texto || null,
     atualizadoEm: row.atualizado_em || null
   };
 }
 
 async function handleGetSettings(env) {
+  await ensureSchema(env);
   const row = await env.DB.prepare("SELECT * FROM settings WHERE id = 1").first();
   return json(rowToSettings(row) || {});
 }
 
 async function handlePutSettings(request, env) {
+  await ensureSchema(env);
   if (!env.ADMIN_KEY) {
     return json({ ok: false, erro: "PUT /api/settings desabilitado: configure o segredo ADMIN_KEY no Worker antes de usar a Personalização." }, 501);
   }
@@ -68,16 +117,27 @@ async function handlePutSettings(request, env) {
   let body;
   try { body = await request.json(); } catch (e) { return json({ ok: false, erro: "JSON inválido." }, 400); }
 
+  // Atualização parcial de verdade: cada tela (Personalização, Design) manda só os
+  // campos que edita. Uma chave AUSENTE no corpo mantém o valor já salvo no banco;
+  // só uma chave enviada como null/"" explicitamente é que limpa aquele campo.
+  const atualRow = await env.DB.prepare("SELECT * FROM settings WHERE id = 1").first() || {};
+  const atual = rowToSettings(atualRow) || {};
+  const has = k => Object.prototype.hasOwnProperty.call(body, k);
   const fields = {
-    logo_url: body.logoUrl ?? null,
-    hero_image_url: body.heroImageUrl ?? null,
-    cor_primaria: body.corPrimaria || "#004BA5",
-    cor_texto: body.corTexto || "#15181C",
-    whatsapp_numero: body.whatsappNumero || "5519999999999",
-    email_remetente: body.emailRemetente || "contato@solua.com.br",
-    nome_remetente: body.nomeRemetente || "Solua",
-    automacao_email_ativa: body.automacaoEmailAtiva ? 1 : 0,
-    automacao_whatsapp_ativa: body.automacaoWhatsappAtiva ? 1 : 0
+    logo_url: has("logoUrl") ? (body.logoUrl ?? null) : atual.logoUrl,
+    hero_image_url: has("heroImageUrl") ? (body.heroImageUrl ?? null) : atual.heroImageUrl,
+    cor_primaria: has("corPrimaria") ? (body.corPrimaria || "#004BA5") : atual.corPrimaria,
+    cor_texto: has("corTexto") ? (body.corTexto || "#15181C") : atual.corTexto,
+    whatsapp_numero: has("whatsappNumero") ? (body.whatsappNumero || "5519999999999") : atual.whatsappNumero,
+    email_remetente: has("emailRemetente") ? (body.emailRemetente || "contato@solua.com.br") : atual.emailRemetente,
+    nome_remetente: has("nomeRemetente") ? (body.nomeRemetente || "Solua") : atual.nomeRemetente,
+    automacao_email_ativa: has("automacaoEmailAtiva") ? (body.automacaoEmailAtiva ? 1 : 0) : (atual.automacaoEmailAtiva ? 1 : 0),
+    automacao_whatsapp_ativa: has("automacaoWhatsappAtiva") ? (body.automacaoWhatsappAtiva ? 1 : 0) : (atual.automacaoWhatsappAtiva ? 1 : 0),
+    hero_titulo: has("heroTitulo") ? ((body.heroTitulo || "").slice(0, 120) || null) : atual.heroTitulo,
+    hero_subtitulo: has("heroSubtitulo") ? ((body.heroSubtitulo || "").slice(0, 280) || null) : atual.heroSubtitulo,
+    mostrar_blog_home: has("mostrarBlogHome") ? (body.mostrarBlogHome === false ? 0 : 1) : (atual.mostrarBlogHome === false ? 0 : 1),
+    mostrar_imoveis_home: has("mostrarImoveisHome") ? (body.mostrarImoveisHome === false ? 0 : 1) : (atual.mostrarImoveisHome === false ? 0 : 1),
+    banner_consorcio_texto: has("bannerConsorcioTexto") ? ((body.bannerConsorcioTexto || "").slice(0, 300) || null) : atual.bannerConsorcioTexto
   };
   // proteção simples contra logo/imagem gigante (D1 tem limite de linha ~1MB;
   // aqui limitamos bem mais baixo pra manter a resposta rápida em qualquer plano)
@@ -90,15 +150,91 @@ async function handlePutSettings(request, env) {
   await env.DB.prepare(`UPDATE settings SET
       logo_url=?, hero_image_url=?, cor_primaria=?, cor_texto=?, whatsapp_numero=?,
       email_remetente=?, nome_remetente=?, automacao_email_ativa=?, automacao_whatsapp_ativa=?,
+      hero_titulo=?, hero_subtitulo=?, mostrar_blog_home=?, mostrar_imoveis_home=?, banner_consorcio_texto=?,
       atualizado_em=datetime('now')
     WHERE id = 1`)
     .bind(fields.logo_url, fields.hero_image_url, fields.cor_primaria, fields.cor_texto,
       fields.whatsapp_numero, fields.email_remetente, fields.nome_remetente,
-      fields.automacao_email_ativa, fields.automacao_whatsapp_ativa)
+      fields.automacao_email_ativa, fields.automacao_whatsapp_ativa,
+      fields.hero_titulo, fields.hero_subtitulo, fields.mostrar_blog_home, fields.mostrar_imoveis_home, fields.banner_consorcio_texto)
     .run();
 
   const row = await env.DB.prepare("SELECT * FROM settings WHERE id = 1").first();
   return json({ ok: true, settings: rowToSettings(row) });
+}
+
+// -------------------- DOCUMENTOS INTERNOS --------------------
+const MAX_DOC_BASE64 = 700000; // ~525KB de arquivo real — mantém a linha do D1 bem abaixo do limite de ~1MB
+
+function rowToDocumento(row, comConteudo) {
+  const doc = {
+    id: row.id, criadoEm: row.criado_em, categoria: row.categoria, nome: row.nome, versao: row.versao,
+    papeisPermitidos: row.papeis_permitidos ? JSON.parse(row.papeis_permitidos) : [],
+    tipoArquivo: row.tipo_arquivo, tamanho: row.tamanho, enviadoPor: row.enviado_por
+  };
+  if (comConteudo) doc.conteudoBase64 = row.conteudo_base64;
+  return doc;
+}
+
+async function handleGetDocumentos(env) {
+  await ensureSchema(env);
+  const { results } = await env.DB.prepare("SELECT id, criado_em, categoria, nome, versao, papeis_permitidos, tipo_arquivo, tamanho, enviado_por FROM documentos ORDER BY criado_em DESC").all();
+  return json({ ok: true, itens: (results || []).map(r => rowToDocumento(r, false)) });
+}
+
+async function handleGetDocumentoDownload(request, env) {
+  await ensureSchema(env);
+  const url = new URL(request.url);
+  const id = url.searchParams.get("id") || "";
+  const row = await env.DB.prepare("SELECT * FROM documentos WHERE id = ?").bind(id).first();
+  if (!row) return json({ ok: false, erro: "Documento não encontrado." }, 404);
+  return json({ ok: true, documento: rowToDocumento(row, true) });
+}
+
+function checkAdminKey(request, env) {
+  if (!env.ADMIN_KEY) return { ok: false, erro: "Configure o segredo ADMIN_KEY no Worker antes de usar Documentos.", status: 501 };
+  const key = request.headers.get("x-solua-admin-key") || "";
+  if (key !== env.ADMIN_KEY) return { ok: false, erro: "Chave de administrador inválida.", status: 401 };
+  return { ok: true };
+}
+
+async function handlePostDocumento(request, env) {
+  await ensureSchema(env);
+  const auth = checkAdminKey(request, env);
+  if (!auth.ok) return json(auth, auth.status);
+  let body;
+  try { body = await request.json(); } catch (e) { return json({ ok: false, erro: "JSON inválido." }, 400); }
+
+  const nome = String(body.nome || "").trim().slice(0, 160);
+  const categoria = String(body.categoria || "Geral").trim().slice(0, 60);
+  const versao = String(body.versao || "1.0").trim().slice(0, 20);
+  const tipoArquivo = String(body.tipoArquivo || "").slice(0, 120);
+  const conteudoBase64 = String(body.conteudoBase64 || "");
+  const papeisPermitidos = Array.isArray(body.papeisPermitidos) ? body.papeisPermitidos.map(String).slice(0, 10) : [];
+  if (!nome) return json({ ok: false, erro: "Informe o nome do documento." }, 400);
+  if (!conteudoBase64) return json({ ok: false, erro: "Nenhum arquivo enviado." }, 400);
+  if (conteudoBase64.length > MAX_DOC_BASE64) {
+    return json({ ok: false, erro: "Arquivo grande demais (limite de ~525KB por documento neste plano)." }, 413);
+  }
+
+  const id = uid();
+  await env.DB.prepare(`INSERT INTO documentos
+      (id, criado_em, categoria, nome, versao, papeis_permitidos, tipo_arquivo, tamanho, conteudo_base64, enviado_por)
+      VALUES (?, datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?)`)
+    .bind(id, categoria, nome, versao, JSON.stringify(papeisPermitidos), tipoArquivo, conteudoBase64.length, conteudoBase64, String(body.enviadoPor || "").slice(0, 120))
+    .run();
+  return json({ ok: true, id });
+}
+
+async function handleDeleteDocumento(request, env) {
+  await ensureSchema(env);
+  const auth = checkAdminKey(request, env);
+  if (!auth.ok) return json(auth, auth.status);
+  const url = new URL(request.url);
+  const id = url.searchParams.get("id") || "";
+  if (!id) return json({ ok: false, erro: "Informe o id do documento." }, 400);
+  await env.DB.prepare("DELETE FROM documentos WHERE id = ?").bind(id).run();
+  return json({ ok: true });
 }
 
 async function logDispatch(env, entry) {
@@ -112,13 +248,14 @@ async function logDispatch(env, entry) {
   } catch (e) { /* nunca deixa o log derrubar o fluxo principal */ }
 }
 
-const TIPOS_VALIDOS = new Set(["seguro", "consorcio"]);
+const TIPOS_VALIDOS = new Set(["seguro", "consorcio", "imovel"]);
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i;
 
 // Dispara (ou registra como pulado) o e-mail e o WhatsApp automáticos de
 // boas-vindas para um lead recém-chegado do site. Nunca lança erro pra fora:
 // se o e-mail/WhatsApp falhar, o lead já foi criado no CRM de qualquer jeito.
 async function handleLeadNotify(request, env) {
+  await ensureSchema(env);
   let body;
   try { body = await request.json(); } catch (e) { return json({ ok: false, erro: "JSON inválido." }, 400); }
 
@@ -132,7 +269,7 @@ async function handleLeadNotify(request, env) {
   const settingsRow = await env.DB.prepare("SELECT * FROM settings WHERE id = 1").first();
   const settings = rowToSettings(settingsRow) || {};
   const primeiroNome = nome.split(" ")[0];
-  const produtoLabel = produto === "seguro" ? "seguro" : "consórcio";
+  const produtoLabel = produto === "seguro" ? "seguro" : produto === "imovel" ? "imóvel" : "consórcio";
   const results = { email: null, whatsapp: null };
 
   // ---------- E-MAIL (Resend) ----------
@@ -218,6 +355,7 @@ async function handleLeadNotify(request, env) {
 }
 
 async function handleGetDispatchLog(request, env) {
+  await ensureSchema(env);
   const url = new URL(request.url);
   const limit = Math.min(Number(url.searchParams.get("limit")) || 50, 200);
   const { results } = await env.DB.prepare("SELECT * FROM dispatch_log ORDER BY criado_em DESC LIMIT ?").bind(limit).all();
@@ -232,6 +370,10 @@ export default {
     if (url.pathname === "/api/settings" && request.method === "PUT") return handlePutSettings(request, env);
     if (url.pathname === "/api/lead-notify" && request.method === "POST") return handleLeadNotify(request, env);
     if (url.pathname === "/api/dispatch-log" && request.method === "GET") return handleGetDispatchLog(request, env);
+    if (url.pathname === "/api/documentos" && request.method === "GET") return handleGetDocumentos(env);
+    if (url.pathname === "/api/documentos" && request.method === "POST") return handlePostDocumento(request, env);
+    if (url.pathname === "/api/documentos" && request.method === "DELETE") return handleDeleteDocumento(request, env);
+    if (url.pathname === "/api/documentos/download" && request.method === "GET") return handleGetDocumentoDownload(request, env);
 
     if (url.pathname.startsWith("/api/")) return json({ ok: false, erro: "Rota não encontrada." }, 404);
 
