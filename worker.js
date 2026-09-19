@@ -65,19 +65,15 @@ async function migrate(env) {
     id TEXT PRIMARY KEY, criado_em TEXT, categoria TEXT, nome TEXT, versao TEXT,
     papeis_permitidos TEXT, tipo_arquivo TEXT, tamanho INTEGER, conteudo_base64 TEXT, enviado_por TEXT
   )`).run();
-  // colunas do Painel de Design, acrescentadas depois da criação original da tabela settings
-  const novasColunas = [
-    "ALTER TABLE settings ADD COLUMN hero_titulo TEXT",
-    "ALTER TABLE settings ADD COLUMN hero_subtitulo TEXT",
-    "ALTER TABLE settings ADD COLUMN mostrar_blog_home INTEGER DEFAULT 1",
-    "ALTER TABLE settings ADD COLUMN mostrar_imoveis_home INTEGER DEFAULT 1",
-    "ALTER TABLE settings ADD COLUMN banner_consorcio_texto TEXT"
-  ];
-  for (const sql of novasColunas) {
-    try { await env.DB.prepare(sql).run(); } catch (e) { /* coluna já existe — ok */ }
-  }
+  // coluna do Painel de Design/Conteúdo: um único blob JSON com todos os textos e
+  // mídias (foto/vídeo) editáveis do site público, chaveado por assets/js/content-schema.js
+  try { await env.DB.prepare("ALTER TABLE settings ADD COLUMN conteudo_json TEXT").run(); } catch (e) { /* coluna já existe — ok */ }
 }
 
+function parseConteudo(json_) {
+  if (!json_) return {};
+  try { return JSON.parse(json_) || {}; } catch (e) { return {}; }
+}
 function rowToSettings(row) {
   if (!row) return null;
   return {
@@ -90,11 +86,7 @@ function rowToSettings(row) {
     nomeRemetente: row.nome_remetente || "Solua",
     automacaoEmailAtiva: !!row.automacao_email_ativa,
     automacaoWhatsappAtiva: !!row.automacao_whatsapp_ativa,
-    heroTitulo: row.hero_titulo || null,
-    heroSubtitulo: row.hero_subtitulo || null,
-    mostrarBlogHome: row.mostrar_blog_home == null ? true : !!row.mostrar_blog_home,
-    mostrarImoveisHome: row.mostrar_imoveis_home == null ? true : !!row.mostrar_imoveis_home,
-    bannerConsorcioTexto: row.banner_consorcio_texto || null,
+    conteudo: parseConteudo(row.conteudo_json),
     atualizadoEm: row.atualizado_em || null
   };
 }
@@ -123,6 +115,7 @@ async function handlePutSettings(request, env) {
   const atualRow = await env.DB.prepare("SELECT * FROM settings WHERE id = 1").first() || {};
   const atual = rowToSettings(atualRow) || {};
   const has = k => Object.prototype.hasOwnProperty.call(body, k);
+  const conteudo = has("conteudo") ? (body.conteudo && typeof body.conteudo === "object" ? body.conteudo : {}) : atual.conteudo;
   const fields = {
     logo_url: has("logoUrl") ? (body.logoUrl ?? null) : atual.logoUrl,
     hero_image_url: has("heroImageUrl") ? (body.heroImageUrl ?? null) : atual.heroImageUrl,
@@ -133,30 +126,27 @@ async function handlePutSettings(request, env) {
     nome_remetente: has("nomeRemetente") ? (body.nomeRemetente || "Solua") : atual.nomeRemetente,
     automacao_email_ativa: has("automacaoEmailAtiva") ? (body.automacaoEmailAtiva ? 1 : 0) : (atual.automacaoEmailAtiva ? 1 : 0),
     automacao_whatsapp_ativa: has("automacaoWhatsappAtiva") ? (body.automacaoWhatsappAtiva ? 1 : 0) : (atual.automacaoWhatsappAtiva ? 1 : 0),
-    hero_titulo: has("heroTitulo") ? ((body.heroTitulo || "").slice(0, 120) || null) : atual.heroTitulo,
-    hero_subtitulo: has("heroSubtitulo") ? ((body.heroSubtitulo || "").slice(0, 280) || null) : atual.heroSubtitulo,
-    mostrar_blog_home: has("mostrarBlogHome") ? (body.mostrarBlogHome === false ? 0 : 1) : (atual.mostrarBlogHome === false ? 0 : 1),
-    mostrar_imoveis_home: has("mostrarImoveisHome") ? (body.mostrarImoveisHome === false ? 0 : 1) : (atual.mostrarImoveisHome === false ? 0 : 1),
-    banner_consorcio_texto: has("bannerConsorcioTexto") ? ((body.bannerConsorcioTexto || "").slice(0, 300) || null) : atual.bannerConsorcioTexto
+    conteudo_json: JSON.stringify(conteudo)
   };
-  // proteção simples contra logo/imagem gigante (D1 tem limite de linha ~1MB;
+  // proteção simples contra imagens gigantes (D1 tem limite de linha ~1MB;
   // aqui limitamos bem mais baixo pra manter a resposta rápida em qualquer plano)
   for (const k of ["logo_url", "hero_image_url"]) {
     if (fields[k] && fields[k].length > 350000) {
       return json({ ok: false, erro: `Imagem em "${k}" está grande demais (>350KB em base64). Use uma imagem mais leve ou um link (URL) em vez de anexar o arquivo.` }, 413);
     }
   }
+  if (fields.conteudo_json.length > 900000) {
+    return json({ ok: false, erro: "O conteúdo do site ficou grande demais para salvar (>900KB). Prefira colar links (URL) em vez de anexar arquivos de foto/vídeo diretamente, especialmente para vídeos." }, 413);
+  }
 
   await env.DB.prepare(`UPDATE settings SET
       logo_url=?, hero_image_url=?, cor_primaria=?, cor_texto=?, whatsapp_numero=?,
       email_remetente=?, nome_remetente=?, automacao_email_ativa=?, automacao_whatsapp_ativa=?,
-      hero_titulo=?, hero_subtitulo=?, mostrar_blog_home=?, mostrar_imoveis_home=?, banner_consorcio_texto=?,
-      atualizado_em=datetime('now')
+      conteudo_json=?, atualizado_em=datetime('now')
     WHERE id = 1`)
     .bind(fields.logo_url, fields.hero_image_url, fields.cor_primaria, fields.cor_texto,
       fields.whatsapp_numero, fields.email_remetente, fields.nome_remetente,
-      fields.automacao_email_ativa, fields.automacao_whatsapp_ativa,
-      fields.hero_titulo, fields.hero_subtitulo, fields.mostrar_blog_home, fields.mostrar_imoveis_home, fields.banner_consorcio_texto)
+      fields.automacao_email_ativa, fields.automacao_whatsapp_ativa, fields.conteudo_json)
     .run();
 
   const row = await env.DB.prepare("SELECT * FROM settings WHERE id = 1").first();

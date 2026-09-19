@@ -152,5 +152,22 @@ document.addEventListener("DOMContentLoaded", ()=>{
   animateCounters();
 });
 
-window.SoluaChrome = { observeReveals, animateCounters, page };
+// ---------- selo giratório (figurinha decorativa sobre fotos) ----------
+let seloSeq = 0;
+function renderSelo(opts){
+  opts = opts || {};
+  const id = "seloPath"+(seloSeq++);
+  const texto = opts.texto || "SOLUA";
+  const pos = opts.pos || "br";
+  const icone = opts.icone || "★";
+  return `<div class="selo ${pos}" data-cms="${opts.cmsKey||""}" data-cms-tipo="selo" aria-hidden="true">
+    <svg class="selo-anel" viewBox="0 0 120 120">
+      <defs><path id="${id}" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs>
+      <text font-size="9" letter-spacing="2"><textPath href="#${id}" startOffset="0%">• ${texto} </textPath></text>
+    </svg>
+    <span class="selo-centro"><span>${icone}</span></span>
+  </div>`;
+}
+
+window.SoluaChrome = { observeReveals, animateCounters, page, renderSelo };
 })();

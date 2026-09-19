@@ -94,6 +94,18 @@
 .team-card span{font-size:13px;color:var(--tinta-60)}
 @media(max-width:860px){ .team-grid{grid-template-columns:repeat(2,1fr)} }
 
+/* ---------- selo giratório (figurinha sobre as fotos) ---------- */
+.selo{position:absolute;width:118px;height:118px;z-index:3;pointer-events:none;filter:drop-shadow(0 4px 14px rgba(0,0,0,.25))}
+.selo.br{right:calc(var(--pad) - 10px);bottom:26px}
+.selo.bl{left:calc(var(--pad) - 10px);bottom:26px}
+.selo.tr{right:calc(var(--pad) - 10px);top:26px}
+.selo svg.selo-anel{width:100%;height:100%;animation:selo-girar 17s linear infinite}
+.selo text{fill:var(--creme);font-family:var(--font-body);font-weight:700;text-transform:uppercase}
+.selo-centro{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.selo-centro span{width:38px;height:38px;border-radius:50%;background:var(--azul);color:var(--creme);display:flex;align-items:center;justify-content:center;font-size:16px}
+@keyframes selo-girar{to{transform:rotate(360deg)}}
+@media(max-width:640px){.selo{width:88px;height:88px}.selo-centro span{width:28px;height:28px;font-size:12px}}
+
 /* ---------- contato ---------- */
 .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
 .contact-info .row{display:flex;gap:16px;padding:18px 0;border-top:1px solid var(--linha)}

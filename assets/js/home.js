@@ -14,12 +14,17 @@ const heroPhotos = [
 const heroEl = document.getElementById("heroPhoto");
 if(heroEl){
   const scrimEl = heroEl.querySelector(".scrim");
+  // cada slide fica marcado com data-cms — admin pode trocar por foto ou vídeo
+  // em Design; sem override, cai no picsum padrão já aplicado inline aqui.
   heroPhotos.forEach((url,i)=>{
     const s = document.createElement("div");
     s.className = "slide"+(i===0?" on":"");
+    s.dataset.cms = `home.hero.midia${i+1}`;
+    s.dataset.cmsMedia = "bg";
     s.style.backgroundImage = `url("${url}")`;
     heroEl.insertBefore(s, scrimEl);
   });
+  heroEl.insertAdjacentHTML("beforeend", window.SoluaChrome.renderSelo({cmsKey:"home.hero.selo", texto:"25 ANOS SOLUA DESDE 2001", pos:"br"}));
   const dots = document.getElementById("heroDots");
   dots.innerHTML = heroPhotos.map((_,i)=>`<button data-i="${i}" class="${i===0?"on":""}"></button>`).join("");
   let idx = 0;

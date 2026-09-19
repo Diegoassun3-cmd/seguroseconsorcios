@@ -45,7 +45,9 @@ assets/js/seguros.js            → dados e montagem da página de Seguros
 assets/js/consorcios.js         → dados e montagem da página de Consórcios
 assets/js/sobre.js              → equipe pública (a partir da mesma base do CRM)
 assets/js/contato.js            → formulário geral de contato
-assets/js/branding.js           → aplica a personalização (logo/cor/textos/seções) vinda de /api/settings
+assets/js/content-schema.js     → schema de tudo que é editável em Design (texto/foto/vídeo/seção, por página)
+assets/js/content-apply.js      → aplica o conteúdo salvo (data-cms="...") nas páginas públicas
+assets/js/branding.js           → aplica a personalização (logo/cor) e chama content-apply, vindos de /api/settings
 
 assets/js/crm-data.js           → "banco de dados" do CRM (localStorage) + regras de negócio
 assets/js/crm-ui.js             → sidebar/topbar/toasts/modais compartilhados do CRM
@@ -199,15 +201,41 @@ interesse em imóvel enviado pelo site** entra no CRM local
 decide — com base no que está ligado em Personalização — se dispara
 e-mail/WhatsApp automático de verdade.
 
-### Painel de Design
+### Painel de Design (CMS de conteúdo: texto, foto e vídeo)
 
-Em `crm/admin/design.html`: título e subtítulo do hero da Home, mostrar
-ou esconder a seção "Imóveis em destaque" e a seção de blog, e um banner
-de campanha opcional no topo de `consorcios.html`. Fica salvo na mesma
-linha de configurações da Personalização — o Worker faz atualização
-**parcial** de verdade (só sobrescreve os campos enviados por cada tela),
-então usar as duas telas no mesmo projeto nunca apaga a configuração da
+Em `crm/admin/design.html`, uma aba por página pública (Home, Seguros,
+Consórcios, Sobre, Contato) com um campo para cada título, texto, foto,
+vídeo ou seção ligável/desligável daquela página — cerca de 40 itens ao
+todo. É gerado a partir de `assets/js/content-schema.js` (a "lista do
+que pode ser editado"), aplicado no site por `assets/js/content-apply.js`
+e salvo como um único blob JSON (`conteudo`) na mesma linha de
+configurações da Personalização — o Worker faz atualização **parcial**
+de verdade (só sobrescreve os campos enviados por cada tela), então usar
+Personalização e Design no mesmo projeto nunca apaga a configuração da
 outra.
+
+Cada campo de mídia aceita **upload direto** (imagens pequenas, até
+~200KB — vira base64 guardado no D1) **ou colar um link**: para os 4
+fundos do hero da Home e os heros de Seguros/Consórcios/Sobre, o link
+pode ser uma imagem, um vídeo (`.mp4`/`.webm`) ou um embed do
+YouTube/Vimeo — o site detecta sozinho e troca `background-image` por
+`<video>` ou `<iframe>` automaticamente. Para os demais blocos (imagens
+editoriais, linha do tempo), só foto.
+
+Para adicionar um novo campo editável (ex.: mais um bloco de texto):
+1. acrescente uma chave em `content-schema.js`;
+2. marque o elemento correspondente no HTML da página pública com
+   `data-cms="a.mesma.chave"` (e `data-cms-media="bg"` se for um fundo de
+   foto/vídeo, ou `data-cms-tipo="toggle"` se for mostrar/esconder algo).
+Não precisa mexer no Worker — o blob `conteudo` é livre.
+
+### Selo giratório (figurinha sobre as fotos)
+
+Um selo circular animado (texto girando ao redor de um ícone fixo,
+`assets/js/site-chrome.js` → `renderSelo()`) aparece sobre as fotos de
+capa da Home, Seguros, Consórcios e Sobre — o mesmo efeito de "carimbo"
+usado em sites de produto, adaptado à identidade mais sóbria da Solua. O
+texto de cada selo é editável em Design (ex.: `home.hero.selo`).
 
 ### Documentos internos
 

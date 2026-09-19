@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="assets/css/fonts.css">
 <link rel="stylesheet" href="assets/css/site.css">
 <link rel="stylesheet" href="assets/css/editorial.css">
+<script defer src="assets/js/content-apply.js"></script>
 <script defer src="assets/js/branding.js"></script>
 </head>
 <body data-page="consorcios">
@@ -18,15 +19,15 @@
 <header id="hd"></header>
 <div class="mob" id="mob"></div>
 
-<div data-brand-campanha style="display:none;background:var(--azul);color:var(--creme);text-align:center;font-size:13.5px;padding:12px var(--pad);margin-top:78px"></div>
+<div data-cms="consorcios.banner.texto" data-cms-tipo="banner" style="display:none;background:var(--azul);color:var(--creme);text-align:center;font-size:13.5px;padding:12px var(--pad);margin-top:78px"></div>
 
-<section class="hero-photo" style="min-height:56vh">
-  <div class="slide on" style="background-image:url('https://picsum.photos/seed/solua-consorcios-hero/1800/1000')"></div>
+<section class="hero-photo" style="min-height:56vh" id="heroConsorcios">
+  <div class="slide on" data-cms="consorcios.hero.midia" data-cms-media="bg" style="background-image:url('https://picsum.photos/seed/solua-consorcios-hero/1800/1000')"></div>
   <div class="scrim"></div>
   <div class="in">
     <span class="lbl">/ Consórcios · Porto Bank e Ademicon</span>
-    <h1 style="font-size:clamp(38px,7vw,90px)">Comprar sem<br>juros existe.</h1>
-    <p>Consórcio é planejamento: você compra poder de compra, não dívida — com parcela que cabe no seu mês.</p>
+    <h1 style="font-size:clamp(38px,7vw,90px)" data-cms="consorcios.hero.titulo">Comprar sem<br>juros existe.</h1>
+    <p data-cms="consorcios.hero.subtitulo">Consórcio é planejamento: você compra poder de compra, não dívida — com parcela que cabe no seu mês.</p>
     <div class="hero-cta"><a class="btn lg" href="#simulador">Simular minha parcela</a></div>
   </div>
 </section>

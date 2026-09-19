@@ -9,6 +9,13 @@
 <link rel="preload" href="../../assets/fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="../../assets/css/fonts.css">
 <link rel="stylesheet" href="../../assets/css/crm.css">
+<style>
+  .midia-row{display:flex;gap:14px;align-items:flex-start}
+  .midia-preview{width:84px;height:64px;flex:none;border-radius:8px;background:var(--creme-2);background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--tinta-35);overflow:hidden}
+  .midia-preview img{width:100%;height:100%;object-fit:cover}
+  .design-grupo{margin-bottom:22px}
+  .design-grupo h4{font-size:13px;color:var(--tinta-45);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+</style>
 <script defer src="../../assets/js/branding.js"></script>
 </head>
 <body data-base="../" data-active="admin-design" data-title="Design" data-crumbs="CRM Solua / Administração">
@@ -21,46 +28,18 @@
 
       <div class="card" style="margin-bottom:16px">
         <div class="card-bd" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <span style="font-size:13px;color:var(--tinta-60)">Editor visual sem código: textos e visibilidade de seções da <b>Home</b> do site público, salvos no mesmo banco (D1) da Personalização.</span>
+          <span style="font-size:13px;color:var(--tinta-60)">Editor visual do site público: troque qualquer texto, foto ou vídeo por página, sem código. Salvo no banco real (D1), aplicado para todo mundo.</span>
           <span class="spacer"></span>
           <span id="apiStatus"></span>
         </div>
       </div>
 
-      <div class="card" style="margin-bottom:16px">
-        <div class="card-hd"><h3>Hero da Home</h3></div>
-        <div class="card-bd">
-          <div class="field" style="margin-bottom:16px"><label>Título principal</label><input id="fHeroTitulo" maxlength="120" placeholder="25 anos ao seu lado."></div>
-          <div class="field"><label>Subtítulo</label><textarea id="fHeroSubtitulo" rows="2" maxlength="280" placeholder="Imóveis, seguros e consórcios para cada etapa da sua vida…"></textarea></div>
-          <p style="font-size:12px;color:var(--tinta-45);margin-top:8px">Deixe em branco para usar o texto padrão já escrito no site.</p>
-        </div>
-      </div>
+      <div class="tabs" id="pageTabs"></div>
+      <div id="pageForms"></div>
 
-      <div class="card" style="margin-bottom:16px">
-        <div class="card-hd"><h3>Seções da Home</h3></div>
-        <div class="card-bd">
-          <label style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;font-size:13.5px">
-            <input type="checkbox" id="fMostrarImoveis" style="width:16px;height:16px;margin-top:2px;accent-color:var(--azul)">
-            <span><b>Mostrar "Imóveis em destaque"</b><br><span style="color:var(--tinta-45);font-size:12.5px">Vitrine com até 3 imóveis marcados como destaque no catálogo.</span></span>
-          </label>
-          <label style="display:flex;gap:10px;align-items:flex-start;font-size:13.5px">
-            <input type="checkbox" id="fMostrarBlog" style="width:16px;height:16px;margin-top:2px;accent-color:var(--azul)">
-            <span><b>Mostrar seção de Conteúdo (blog)</b><br><span style="color:var(--tinta-45);font-size:12.5px">Lista de artigos ao final da Home.</span></span>
-          </label>
-        </div>
-      </div>
+      <div class="demo-hint" style="margin:16px 0">Fotos pequenas (até ~200KB) podem ser enviadas direto pelo botão de arquivo. Para vídeos, ou imagens maiores, cole um link — de um arquivo <code>.mp4</code>/<code>.webm</code> hospedado, ou de um vídeo do YouTube/Vimeo.</div>
 
-      <div class="card" style="margin-bottom:16px">
-        <div class="card-hd"><h3>Banner de campanha — página de Consórcios</h3></div>
-        <div class="card-bd">
-          <div class="field"><label>Texto do banner (opcional)</label><input id="fBanner" maxlength="300" placeholder="Ex.: Condições especiais de parcela até o fim do mês."></div>
-          <p style="font-size:12px;color:var(--tinta-45);margin-top:8px">Aparece no topo de <code>consorcios.html</code>. Deixe em branco para não exibir nenhum banner.</p>
-        </div>
-      </div>
-
-      <div class="demo-hint" style="margin-bottom:16px">Precisa trocar logo, cor da marca ou o número de WhatsApp? Isso fica em <a href="personalizacao.html">Personalização</a>. Esta tela é só para textos e visibilidade de blocos.</div>
-
-      <button class="btn lg" id="btnSalvar">Salvar design</button>
+      <button class="btn lg" id="btnSalvarConteudo">Salvar conteúdo</button>
 
     </main>
   </div>
@@ -71,6 +50,7 @@
 <script>
 if(!window.SoluaUI.isAdmin){ window.SoluaUI.toast("Acesso restrito à administração.","err"); location.replace("../dashboard.html"); }
 </script>
+<script src="../../assets/js/content-schema.js"></script>
 <script src="../../assets/js/crm-design.js"></script>
 </body>
 </html>

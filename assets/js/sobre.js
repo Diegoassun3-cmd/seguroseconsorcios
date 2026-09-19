@@ -14,5 +14,8 @@ document.getElementById("teamGrid").innerHTML = equipe.map(u=>`
     <span>${DB.esc(u.papel)} · ${AREA_LABEL[u.produto]||""}</span>
   </div>`).join("");
 
+const heroSobre = document.getElementById("heroSobre");
+if(heroSobre) heroSobre.insertAdjacentHTML("beforeend", window.SoluaChrome.renderSelo({cmsKey:"sobre.hero.selo", texto:"CAMPINAS DESDE 2001", pos:"br"}));
+
 window.SoluaChrome.observeReveals();
 })();

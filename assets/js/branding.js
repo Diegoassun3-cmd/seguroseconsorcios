@@ -48,23 +48,9 @@ function aplicar(s){
     window.SoluaSite.setWhatsapp(s.whatsappNumero);
   }
 
-  // Painel de Design: título/subtítulo do hero da Home, visibilidade de seções
-  // e banner de campanha — tudo opcional, com o conteúdo padrão do HTML como fallback.
-  if(s.heroTitulo){
-    document.querySelectorAll("[data-brand-hero-titulo]").forEach(el=> el.textContent = s.heroTitulo);
-  }
-  if(s.heroSubtitulo){
-    document.querySelectorAll("[data-brand-hero-subtitulo]").forEach(el=> el.textContent = s.heroSubtitulo);
-  }
-  if(s.mostrarBlogHome === false){
-    document.querySelectorAll('[data-brand-toggle="blog"]').forEach(el=> el.style.display = "none");
-  }
-  if(s.mostrarImoveisHome === false){
-    document.querySelectorAll('[data-brand-toggle="imoveis-home"]').forEach(el=> el.style.display = "none");
-  }
-  if(s.bannerConsorcioTexto){
-    document.querySelectorAll("[data-brand-campanha]").forEach(el=>{ el.textContent = s.bannerConsorcioTexto; el.style.display = "block"; });
-  }
+  // Painel de Design: todo texto/foto/vídeo/visibilidade de seção editável do
+  // site público vem daqui — ver assets/js/content-schema.js e content-apply.js.
+  if(window.SoluaContentApply) window.SoluaContentApply.aplicarConteudo(s.conteudo);
 }
 
 window.SoluaBrandingReady = carregar();
