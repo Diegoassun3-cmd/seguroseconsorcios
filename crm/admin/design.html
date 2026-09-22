@@ -11,10 +11,16 @@
 <link rel="stylesheet" href="../../assets/css/crm.css">
 <style>
   .midia-row{display:flex;gap:14px;align-items:flex-start}
+  .midia-row > div{min-width:0}
+  .midia-row input{min-width:0;width:100%;box-sizing:border-box}
   .midia-preview{width:84px;height:64px;flex:none;border-radius:8px;background:var(--creme-2);background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--tinta-35);overflow:hidden}
   .midia-preview img{width:100%;height:100%;object-fit:cover}
   .design-grupo{margin-bottom:22px}
   .design-grupo h4{font-size:13px;color:var(--tinta-45);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+  @media(max-width:480px){
+    .midia-row{flex-direction:column}
+    .midia-preview{width:100%;height:110px}
+  }
 </style>
 <script defer src="../../assets/js/branding.js"></script>
 </head>

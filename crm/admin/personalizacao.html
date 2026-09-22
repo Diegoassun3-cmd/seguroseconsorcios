@@ -32,17 +32,17 @@
             <div class="field">
               <label>Logo (opcional — sem logo, o site usa o texto "solua" na fonte da marca)</label>
               <div id="logoPreview" style="margin-bottom:10px;min-height:48px;display:flex;align-items:center"></div>
-              <div style="display:flex;gap:8px">
-                <input type="file" id="fLogoFile" accept="image/png,image/svg+xml,image/jpeg,image/webp">
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <input type="file" id="fLogoFile" accept="image/png,image/svg+xml,image/jpeg,image/webp" style="min-width:0;width:100%;box-sizing:border-box">
                 <button class="btn ghost sm" id="btnRemoverLogo" type="button">Remover</button>
               </div>
               <p style="font-size:12px;color:var(--tinta-45);margin-top:6px">PNG ou SVG com fundo transparente, até 250KB. Aparece no cabeçalho do site público.</p>
             </div>
             <div class="field">
               <label>Cor principal da marca</label>
-              <div style="display:flex;gap:10px;align-items:center">
+              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
                 <input type="color" id="fCorPrimaria" value="#004BA5" style="width:48px;height:40px;padding:2px;border:1px solid var(--linha-forte);border-radius:8px">
-                <input type="text" id="fCorPrimariaHex" value="#004BA5" style="width:110px" placeholder="#004BA5">
+                <input type="text" id="fCorPrimariaHex" value="#004BA5" style="width:110px;min-width:0" placeholder="#004BA5">
                 <button type="button" id="corPreviewBtn" class="btn sm" style="pointer-events:none">Botão de exemplo</button>
               </div>
               <p style="font-size:12px;color:var(--tinta-45);margin-top:6px">Usada em botões, links e destaques no site e no CRM.</p>

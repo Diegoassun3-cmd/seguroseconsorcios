@@ -47,6 +47,8 @@ assets/js/sobre.js              → equipe pública (a partir da mesma base do C
 assets/js/contato.js            → formulário geral de contato
 assets/js/content-schema.js     → schema de tudo que é editável em Design (texto/foto/vídeo/seção, por página)
 assets/js/content-apply.js      → aplica o conteúdo salvo (data-cms="...") nas páginas públicas
+assets/js/search-index.js       → índice estático da busca do site (páginas, seguros, consórcios, dúvidas, artigos)
+assets/js/site-search.js        → lógica + interface da busca (combina o índice com o catálogo de imóveis ao vivo)
 assets/js/branding.js           → aplica a personalização (logo/cor) e chama content-apply, vindos de /api/settings
 
 assets/js/crm-data.js           → "banco de dados" do CRM (localStorage) + regras de negócio
@@ -236,6 +238,34 @@ Um selo circular animado (texto girando ao redor de um ícone fixo,
 capa da Home, Seguros, Consórcios e Sobre — o mesmo efeito de "carimbo"
 usado em sites de produto, adaptado à identidade mais sóbria da Solua. O
 texto de cada selo é editável em Design (ex.: `home.hero.selo`).
+
+### Cartões flutuantes ("pop-ups" que aparecem e ficam parados)
+
+`assets/js/site-chrome.js` → `renderFloatCard()` gera um cartãozinho
+branco (ícone + título curto + texto) que aparece com uma animação de
+"pop" (escala + opacidade, via `IntersectionObserver` — mesma lista
+`.rev`/`.float-card` observada em `observeReveals()`) quando a seção
+entra na tela, e depois **fica parado** — sem nenhuma animação contínua.
+Fica posicionado no limite entre uma imagem e o espaço em branco ao
+lado, tipo um aviso ou destaque rápido. Hoje aparece na Home (vitrine de
+imóveis e bloco de Seguros) e no catálogo de imóveis; para adicionar em
+outro lugar, chame `window.SoluaChrome.renderFloatCard({icone, titulo,
+texto, pos})` (`pos`: `corner-br`, `corner-bl`, `corner-tr` ou `edge-r`)
+e insira o HTML dentro de um contêiner com `position:relative`.
+
+### Busca do site
+
+Um botão de lupa no cabeçalho (funciona igual em desktop e mobile, ou
+`Ctrl/Cmd+K`) abre uma busca em tela cheia que filtra **o site inteiro**:
+páginas, linhas de seguro, linhas de consórcio, dúvidas frequentes,
+artigos do blog (clicar num artigo abre o leitor direto, via
+`index.html?post=N#blog`) e o catálogo de imóveis em tempo real (via
+`SoluaDB.getImoveis()`). O índice estático fica em
+`assets/js/search-index.js` — como o site é multi-página (não é uma
+SPA), mantenha os títulos/textos de lá em sincronia manualmente quando
+editar o conteúdo real das páginas (o catálogo de imóveis não precisa
+disso, já é lido ao vivo). A lógica de busca e a interface ficam em
+`assets/js/site-search.js`.
 
 ### Documentos internos
 

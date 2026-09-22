@@ -30,11 +30,11 @@
 .bizline:hover .go svg{transform:translateX(4px)}
 
 /* ---------- grade de catálogo (imóveis) ---------- */
-.prop-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:20px 0;border-top:1px solid var(--linha);border-bottom:1px solid var(--linha);margin-bottom:34px}
+.prop-toolbar{position:relative;display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:20px 0;border-top:1px solid var(--linha);border-bottom:1px solid var(--linha);margin-bottom:34px}
 .prop-toolbar select,.prop-toolbar input{font-size:13px;padding:9px 14px;border:1px solid var(--linha);border-radius:100px;background:var(--creme);color:var(--tinta);cursor:pointer}
 .prop-toolbar .spacer{flex:1}
 .prop-toolbar .cnt{font-size:12.5px;color:var(--tinta-35)}
-.prop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.prop-grid{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
 .prop-grid.wide{grid-template-columns:repeat(2,1fr)}
 .prop-card{cursor:pointer;transition:transform .3s}
 .prop-card .ph{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--creme-2);border-radius:2px}
@@ -69,7 +69,7 @@
 @media(max-width:640px){ .prop-grid,.prop-grid.wide{grid-template-columns:1fr} }
 
 /* ---------- bloco editorial alternado (texto/foto) ---------- */
-.ed-block{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,6vw,80px);align-items:center;padding:clamp(50px,7vw,90px) 0;border-top:1px solid var(--linha)}
+.ed-block{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,6vw,80px);align-items:center;padding:clamp(50px,7vw,90px) 0;border-top:1px solid var(--linha)}
 .ed-block.rev-order .ph{order:2}
 .ed-block .ph{aspect-ratio:5/4;overflow:hidden;border-radius:2px}
 .ed-block .ph img{width:100%;height:100%;object-fit:cover}
@@ -94,6 +94,50 @@
 .team-card span{font-size:13px;color:var(--tinta-60)}
 @media(max-width:860px){ .team-grid{grid-template-columns:repeat(2,1fr)} }
 
+/* ---------- cartão flutuante (pop-in, entre a foto e o espaço em branco) ---------- */
+.float-card{position:absolute;z-index:4;background:var(--creme);border-radius:14px;box-shadow:0 18px 40px -12px rgba(21,24,28,.28);padding:16px 18px;max-width:230px;display:flex;gap:12px;align-items:flex-start;
+  opacity:0;transform:scale(.85) translateY(10px);transition:opacity .5s cubic-bezier(.2,.8,.3,1.1),transform .5s cubic-bezier(.2,.8,.3,1.1)}
+.float-card.in{opacity:1;transform:scale(1) translateY(0)}
+.float-card .ico{width:34px;height:34px;border-radius:50%;background:var(--azul);color:var(--creme);display:flex;align-items:center;justify-content:center;font-size:15px;flex:none}
+.float-card b{display:block;font-size:13.5px;letter-spacing:-.01em;margin-bottom:2px}
+.float-card span{font-size:12px;color:var(--tinta-60);line-height:1.4;display:block}
+.float-card.corner-br{right:-18px;bottom:-24px}
+.float-card.corner-bl{left:-18px;bottom:-24px}
+.float-card.corner-tr{right:-18px;top:-24px}
+.float-card.edge-r{right:-40px;top:50%;transform:translateY(-50%) scale(.85)}
+.float-card.edge-r.in{transform:translateY(-50%) scale(1)}
+@media(max-width:960px){
+  .float-card{max-width:190px;padding:13px 14px;font-size:12px}
+  .float-card.corner-br,.float-card.corner-bl{right:10px;left:auto;bottom:-18px}
+  .float-card.edge-r{position:static;transform:none;margin-top:14px;box-shadow:var(--sombra,0 8px 24px -12px rgba(21,24,28,.18))}
+  .float-card.edge-r.in{transform:none}
+}
+
+/* ---------- busca do site ---------- */
+.search-trigger{width:40px;height:40px;border-radius:50%;border:1px solid var(--linha);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--tinta-60);flex:none;font-size:16px;transition:border-color .3s}
+.search-trigger:hover{border-color:var(--tinta-35)}
+header.solid .search-trigger,.blue .search-trigger{border-color:rgba(21,24,28,.2)}
+.search-overlay{position:fixed;inset:0;z-index:300;background:rgba(21,24,28,.62);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:center;padding:12vh 20px 20px}
+.search-overlay.on{display:flex}
+.search-box{width:100%;max-width:620px;background:var(--creme);border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.35);overflow:hidden;max-height:74vh;display:flex;flex-direction:column}
+.search-top{display:flex;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid var(--linha);flex:none}
+.search-top svg{width:20px;height:20px;color:var(--tinta-35);flex:none}
+.search-top input{flex:1;border:none;background:none;font-size:17px;outline:none;font-family:var(--font-body);color:var(--tinta)}
+.search-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--linha);background:none;cursor:pointer;flex:none;font-size:13px;color:var(--tinta-60)}
+.search-results{overflow-y:auto;padding:8px}
+.search-item{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:10px;cursor:pointer;text-decoration:none;color:inherit}
+.search-item:hover,.search-item.sel{background:var(--creme-2)}
+.search-item .ico{font-size:17px;flex:none;width:22px;text-align:center}
+.search-item .tx{flex:1;min-width:0}
+.search-item b{display:block;font-size:14px;letter-spacing:-.005em}
+.search-item span{font-size:12.5px;color:var(--tinta-60);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.search-item .tag{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--azul);flex:none;padding-top:2px}
+.search-empty,.search-hint{padding:34px 20px;text-align:center;color:var(--tinta-35);font-size:14px}
+@media(max-width:640px){
+  .search-overlay{padding:0}
+  .search-box{max-width:none;height:100%;max-height:none;border-radius:0}
+}
+
 /* ---------- selo giratório (figurinha sobre as fotos) ---------- */
 .selo{position:absolute;width:118px;height:118px;z-index:3;pointer-events:none;filter:drop-shadow(0 4px 14px rgba(0,0,0,.25))}
 .selo.br{right:calc(var(--pad) - 10px);bottom:26px}
@@ -117,4 +161,5 @@
 .map-ph .pin{position:absolute;left:50%;top:46%;transform:translate(-50%,-100%);width:30px;height:30px;color:var(--azul)}
 
 @media(max-width:860px){ .contact-grid{grid-template-columns:1fr} }
-@media(max-width:1080px){ .bizline-grid{grid-template-columns:1fr} .team-grid{grid-template-columns:repeat(2,1fr)} }
+.bizline-grid.cols-2{grid-template-columns:1fr 1fr}
+@media(max-width:1080px){ .bizline-grid{grid-template-columns:1fr} .bizline-grid.cols-2{grid-template-columns:1fr} .team-grid{grid-template-columns:repeat(2,1fr)} }

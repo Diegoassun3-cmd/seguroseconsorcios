@@ -40,6 +40,9 @@ function renderHeader(){
     <nav class="menu">
       ${NAV_LINKS.map(l=>`<a href="${l.href}" class="${l.page===active?"on":""}">${l.label}</a>`).join("")}
     </nav>
+    <button class="search-trigger" id="btnSiteSearch" aria-label="Buscar no site">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M17 17l-4-4" stroke-linecap="round"/></svg>
+    </button>
     <a class="btn hdr" href="contato.html">Fale com um consultor</a>
     <button class="burger" id="bg" aria-label="Menu"><i></i><i></i></button>
   </div>`;
@@ -118,7 +121,7 @@ window.SoluaSite = { setWhatsapp(numero){ if(numero){ WPP = numero; refreshWppLi
 
 // ---------- reveal on scroll ----------
 const io = new IntersectionObserver(es=> es.forEach(e=> e.isIntersecting && e.target.classList.add("in")), {threshold:.08});
-function observeReveals(){ document.querySelectorAll(".rev:not(.in)").forEach(e=> io.observe(e)); }
+function observeReveals(){ document.querySelectorAll(".rev:not(.in), .float-card:not(.in)").forEach(e=> io.observe(e)); }
 
 // ---------- contadores animados ----------
 function animateCounters(root){
@@ -169,5 +172,15 @@ function renderSelo(opts){
   </div>`;
 }
 
-window.SoluaChrome = { observeReveals, animateCounters, page, renderSelo };
+// ---------- cartão flutuante (pop-in, aparece conforme o scroll e fica parado) ----------
+function renderFloatCard(opts){
+  opts = opts || {};
+  const pos = opts.pos || "corner-br";
+  return `<div class="float-card ${pos}">
+    <span class="ico">${opts.icone||"★"}</span>
+    <span><b>${opts.titulo||""}</b><span>${opts.texto||""}</span></span>
+  </div>`;
+}
+
+window.SoluaChrome = { observeReveals, animateCounters, page, renderSelo, renderFloatCard };
 })();

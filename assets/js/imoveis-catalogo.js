@@ -43,6 +43,9 @@ function renderToolbar(){
   bar.querySelector("#fTipo").onchange = e=>{ filtro.tipo=e.target.value; renderGrid(); };
   bar.querySelector("#fQuartos").onchange = e=>{ filtro.quartos=e.target.value; renderGrid(); };
   bar.querySelector("#fStatus").onchange = e=>{ filtro.status=e.target.value; renderGrid(); };
+  bar.insertAdjacentHTML("beforeend", window.SoluaChrome.renderFloatCard({
+    icone:"🔎", titulo:"Não achou?", texto:"Fale com um consultor — temos imóveis fora do site.", pos:"corner-br"
+  }));
 }
 
 renderToolbar();

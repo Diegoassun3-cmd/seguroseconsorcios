@@ -54,7 +54,16 @@ if(propEl){
         <div class="specs"><span>${i.quartos} dorm.</span><span>${i.vagas} vaga(s)</span><span>${i.areaM2} m²</span></div>
       </div>
     </a>`).join("");
+  if(destaques.length) propEl.insertAdjacentHTML("beforeend", window.SoluaChrome.renderFloatCard({
+    icone:"🏠", titulo:`${DB.getImoveis().length} imóveis`, texto:"no catálogo completo, com filtros por tipo e preço.", pos:"corner-br"
+  }));
 }
+
+/* CARTÃO FLUTUANTE — bloco editorial de Seguros */
+const edSeguros = document.getElementById("edSeguros");
+if(edSeguros) edSeguros.insertAdjacentHTML("beforeend", window.SoluaChrome.renderFloatCard({
+  icone:"✓", titulo:"+15 seguradoras", texto:"comparadas antes de você decidir.", pos:"corner-br"
+}));
 
 /* MARQUEE DE PARCEIROS */
 const marcas = ["Porto Seguro","Bradesco Seguros","SulAmérica","Allianz","HDI","Tokio Marine","Azul Seguros","Porto Bank","Ademicon","Mapfre","Zurich","Liberty"];
@@ -92,15 +101,24 @@ if(filtersEl) filtersEl.onclick = e=>{ const b=e.target.closest(".filt"); if(!b)
 
 const reader = document.getElementById("reader");
 const postsEl = document.getElementById("posts");
-if(postsEl) postsEl.onclick = e=>{ const a=e.target.closest(".post"); if(!a) return;
- const p = posts[a.dataset.i];
+function abrirPost(i){
+ const p = posts[i]; if(!p) return;
  document.getElementById("rbody").innerHTML = `<span class="cat">${p.c}</span><h1>${p.t}</h1>
  <div class="meta">${p.dt} · ${p.d} de leitura · por Solua</div>${p.b}
  <div class="reader-cta"><h3>Quer aplicar isso ao seu caso?</h3><p>Peça uma cotação sem compromisso e receba a análise de um consultor.</p><a class="btn lg" href="contato.html">Falar com um consultor</a></div>`;
- reader.classList.add("on"); reader.scrollTop = 0; document.body.style.overflow = "hidden"; };
+ reader.classList.add("on"); reader.scrollTop = 0; document.body.style.overflow = "hidden";
+}
+if(postsEl) postsEl.onclick = e=>{ const a=e.target.closest(".post"); if(!a) return; abrirPost(+a.dataset.i); };
 window.closeReader = ()=>{ reader.classList.remove("on"); document.body.style.overflow=""; };
 const closeRBtn = document.getElementById("closeR"); if(closeRBtn) closeRBtn.onclick = window.closeReader;
 addEventListener("keydown", e=> e.key==="Escape" && window.closeReader());
+
+// abre um artigo direto quando chega pela busca (index.html?post=N#blog)
+const postParam = new URLSearchParams(location.search).get("post");
+if(postParam != null && posts[postParam]){
+  document.getElementById("blog").scrollIntoView({block:"start"});
+  abrirPost(+postParam);
+}
 
 window.SoluaChrome.observeReveals();
 })();

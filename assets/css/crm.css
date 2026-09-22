@@ -190,8 +190,8 @@ table.tbl tbody tr:hover{background:var(--azul-fundo)}
 .full{grid-column:1/-1}
 
 /* ---------- TABS ---------- */
-.tabs{display:flex;gap:4px;background:var(--creme-2);padding:4px;border-radius:10px;width:fit-content;margin-bottom:20px}
-.tab{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;color:var(--tinta-60);background:none}
+.tabs{display:flex;gap:4px;background:var(--creme-2);padding:4px;border-radius:10px;width:fit-content;max-width:100%;overflow-x:auto;margin-bottom:20px}
+.tab{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;color:var(--tinta-60);background:none;white-space:nowrap;flex:none}
 .tab.on{background:#fff;color:var(--tinta);box-shadow:var(--sombra)}
 
 /* ---------- STEPPER (composer de campanha) ---------- */
@@ -245,4 +245,7 @@ table.tbl tbody tr:hover{background:var(--azul-fundo)}
   .tb-search{min-width:0;display:none}
   .grid2,.grid3,.choice-grid{grid-template-columns:1fr}
   .metric-row{grid-template-columns:repeat(2,1fr)}
+  .auth-shell{grid-template-columns:1fr}
+  .auth-visual{display:none}
+  .auth-form{padding:24px}
 }
