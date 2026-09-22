@@ -46,6 +46,7 @@ function aplicarMidiaFundo(el, url){
   // mostrar/esconder) — quando é o caso, a seção também ganha a classe, pra
   // forçar texto claro por cima da foto (ver .sec.has-cms-bg em site.css)
   const secao = el.classList.contains("sec-bg") ? el.closest(".sec") : null;
+  el.style.background = "";
   if(!url){
     el.style.backgroundImage = "";
     el.classList.remove("has-cms-bg");
@@ -74,6 +75,29 @@ function aplicarMidiaFundo(el, url){
   }
 }
 
+// Luminância relativa (WCAG) — decide se uma cor de fundo sólida é escura o
+// bastante pra precisar do texto claro/overlay que .has-cms-bg já dá pra foto
+function luminanciaRelativa(hex){
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex || "");
+  if(!m) return 1;
+  const n = parseInt(m[1], 16);
+  const canal = c => { c/=255; return c<=.03928 ? c/12.92 : Math.pow((c+.055)/1.055, 2.4); };
+  const r = canal(n>>16 & 255), g = canal(n>>8 & 255), b = canal(n & 255);
+  return .2126*r + .7152*g + .0722*b;
+}
+
+function aplicarFundoCor(el, cor){
+  el.querySelectorAll(":scope > video, :scope > iframe.cms-embed").forEach(n=> n.remove());
+  const secao = el.classList.contains("sec-bg") ? el.closest(".sec") : null;
+  el.style.backgroundImage = "";
+  el.style.background = cor || "#FAF8F5";
+  // sem o véu escuro de .sec-bg.has-cms-bg::before (é pensado pra foto) —
+  // uma cor sólida já é a cor exata escolhida, sem overlay por cima dela
+  el.classList.remove("has-cms-bg");
+  const escura = luminanciaRelativa(cor) < .5;
+  if(secao) secao.classList.toggle("has-cms-bg", escura);
+}
+
 // Reescala o font-size de um elemento de texto em torno do tamanho que
 // ele já teria (respeitando clamp()/responsivo): mede o tamanho "natural"
 // a cada aplicação (nunca guarda um px fixo), então funciona bem também
@@ -99,7 +123,17 @@ function aplicarConteudo(conteudo){
   if(!conteudo) return;
   document.querySelectorAll("[data-cms]").forEach(el=>{
     const key = el.dataset.cms;
-    if(Object.prototype.hasOwnProperty.call(conteudo, key)){
+    // fundo de seção: o modo (foto/cor) decide sozinho, mesmo se a chave
+    // normal (URL da foto) não estiver no payload — não faz sentido essa
+    // checagem depender de um campo que o modo "cor" nem usa
+    if(el.dataset.cmsMedia === "bg"){
+      const modoKey = key + "__fundoModo";
+      if(Object.prototype.hasOwnProperty.call(conteudo, modoKey) && conteudo[modoKey] === "cor"){
+        aplicarFundoCor(el, conteudo[key+"__fundoCor"]);
+      } else if(Object.prototype.hasOwnProperty.call(conteudo, key)){
+        aplicarMidiaFundo(el, conteudo[key]);
+      }
+    } else if(Object.prototype.hasOwnProperty.call(conteudo, key)){
       const val = conteudo[key];
       if(el.dataset.cmsTipo === "toggle"){
         el.style.display = (val === false) ? "none" : "";
@@ -107,12 +141,16 @@ function aplicarConteudo(conteudo){
         el.textContent = val || "";
         el.style.display = val ? "block" : "none";
       } else if(el.dataset.cmsTipo === "alinhamento"){
-        if(val) el.style.textAlign = val;
+        if(val){
+          el.style.textAlign = val;
+          // .hero-cta é flex — text-align sozinho não move a linha de
+          // botões dentro dela, então o justify-content precisa ir junto
+          const justify = val==="right" ? "flex-end" : val==="center" ? "center" : "flex-start";
+          el.querySelectorAll(".hero-cta").forEach(cta=> cta.style.justifyContent = justify);
+        }
       } else if(el.dataset.cmsTipo === "icone"){
         const icone = window.SoluaIcons && window.SoluaIcons[val];
         if(icone) el.innerHTML = icone.svg;
-      } else if(el.dataset.cmsMedia === "bg"){
-        aplicarMidiaFundo(el, val);
       } else if(el.tagName === "IMG"){
         if(val) el.src = val;
       } else if(val != null && val !== ""){

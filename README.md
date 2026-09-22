@@ -218,13 +218,17 @@ de verdade (só sobrescreve os campos enviados por cada tela), então usar
 Personalização e Design no mesmo projeto nunca apaga a configuração da
 outra.
 
-Cada campo de mídia aceita **upload direto** (imagens pequenas, até
-~200KB — vira base64 guardado no D1) **ou colar um link**: para os fundos
-de hero e para o **fundo de qualquer seção** (ver abaixo), o link pode
-ser uma imagem, um vídeo (`.mp4`/`.webm`) ou um embed do YouTube/Vimeo —
-o site detecta sozinho e troca `background-image` por `<video>` ou
-`<iframe>` automaticamente. Para os demais blocos (imagens editoriais,
-linha do tempo), só foto.
+Cada campo de mídia tem um cartão com **preview grande, botão "Trocar
+foto/mídia" e "Remover"** — bem mais claro do que a linha apertada com
+um `<input type="file">` cru de antes. Aceita **upload direto** (imagens
+pequenas, até ~200KB — vira base64 guardado no D1) **ou colar um link**,
+num campo próprio e discreto abaixo do botão: para os fundos de hero e
+para o **fundo de qualquer seção** (ver abaixo), o link pode ser uma
+imagem, um vídeo (`.mp4`/`.webm`) ou um embed do YouTube/Vimeo — o site
+detecta sozinho e troca `background-image` por `<video>` ou `<iframe>`
+automaticamente. Para os demais blocos (imagens editoriais, linha do
+tempo), só foto. "Remover" limpa o campo (some a foto/vídeo do preview e
+do site ao salvar) sem precisar apagar o link manualmente.
 
 Para adicionar um novo campo editável (ex.: mais um bloco de texto):
 1. acrescente uma chave em `content-schema.js`;
@@ -236,23 +240,34 @@ Não precisa mexer no Worker — o blob `conteudo` é livre.
 Além de texto/foto/vídeo/visibilidade, dois tipos a mais de campo:
 - **`alinhamento`** — três botões (Esquerda / Centro / Direita) que
   aplicam `text-align` no bloco correspondente do site (hero, blocos
-  editoriais de Seguros/Consórcios/Institucional, CTA final).
+  editoriais de Seguros/Consórcios/Institucional, CTA final) **e também
+  o alinhamento do botão daquele bloco**, sempre — inclusive nos heros
+  (Home, Seguros, Consórcios), onde a linha de botões é um `flex` que só
+  responde a `text-align` se o `justify-content` for ajustado junto (bug
+  corrigido nesta rodada: escolher "Direita" ali antes não movia o
+  botão). O botão "Ver catálogo completo" da Home também ganhou esse
+  controle, que não existia antes.
 - **`icone`** — um seletor com pré-visualização que troca o ícone SVG de
   um elemento (hoje, os três ícones das "3 frentes de negócio" na Home)
   por um de um conjunto fixo em `assets/js/icon-library.js`
   (`window.SoluaIcons`) — por segurança, só esses ícones pré-aprovados
   podem ser injetados, nunca HTML arbitrário colado por alguém.
 
-**Fundo de qualquer seção com cor sólida** — Home ("3 frentes",
-Seguros/Consórcios/Institucional editoriais, chamada final), Seguros
-("Como funciona"), Consórcios ("Administradoras parceiras") e Sobre
-(Equipe, chamada final) têm um campo "Fundo da seção": em branco, a
-seção mantém a cor sólida original; com uma foto/vídeo, o site aplica
-o fundo por trás do conteúdo com uma camada escura automática para o
-texto continuar legível (classe `.has-cms-bg` em `assets/css/site.css`)
-— cartões com fundo próprio dentro da seção (como os cards de
-"Porto Bank"/"Ademicon") ficam de fora dessa troca de cor de texto, já
-que continuam opacos por cima de qualquer fundo.
+**Fundo de qualquer seção: foto/vídeo OU cor sólida** — Home ("3
+frentes", Seguros/Consórcios/Institucional editoriais, chamada final),
+Seguros ("Como funciona"), Consórcios ("Administradoras parceiras") e
+Sobre (Equipe, chamada final) têm um campo "Fundo da seção" com dois
+modos, escolhidos por dois botões: **Foto ou vídeo** (o cartão de mídia
+de sempre) ou **Cor sólida** (um seletor de cor nativo do navegador).
+Com uma foto/vídeo, o site aplica o fundo por trás do conteúdo com uma
+camada escura automática para o texto continuar legível (classe
+`.has-cms-bg` em `assets/css/site.css`); com uma cor sólida, o site
+calcula a luminância da cor escolhida e só troca o texto para branco
+quando a cor é escura o bastante para precisar — uma cor clara mantém o
+texto escuro normal, sem o véu escuro pensado para foto. Cartões com
+fundo próprio dentro da seção (como os cards de "Porto Bank"/"Ademicon")
+ficam de fora dessa troca de cor de texto, já que continuam opacos por
+cima de qualquer fundo.
 
 **Todo campo de texto (título ou parágrafo) tem um controle "A− / A+"**
 ao lado do rótulo, que diminui ou aumenta o tamanho daquele texto

@@ -46,7 +46,31 @@ function tamanhoStepperHtml(key, escala){
   <input type="hidden" data-key="${key}__tamanho" data-tipo="tamanho" value="${escala}">`;
 }
 
-function campoHtml(campo, val, tamanhoVal){
+// Cartão de mídia compartilhado — usado tanto pelo campo "imagem"/"midia"
+// comum quanto pelo modo "foto/vídeo" do campo "Fundo da seção". Preview
+// grande, botão "Trocar" (label estilizado escondendo o <input type=file>
+// cru) e "Remover", com o link colado como opção secundária, discreta.
+function midiaCardHtml(key, val, aceitaVideo){
+  const accept = aceitaVideo ? "image/*,video/*" : "image/*";
+  const fileId = "file__"+key;
+  return `<div class="midia-card">
+    <div class="midia-preview" id="prev__${key}">${previewHtml(val)}</div>
+    <div class="midia-actions">
+      <div class="midia-actions-row">
+        <label class="btn-file" for="${fileId}">Trocar ${aceitaVideo?"mídia":"foto"}</label>
+        <input type="file" id="${fileId}" accept="${accept}" data-fileinput="${key}" style="display:none">
+        <button type="button" class="midia-clear" data-clearmidia="${key}" style="${val?"":"display:none"}">Remover</button>
+      </div>
+      <label class="midia-link-label">ou cole um link (${aceitaVideo?"imagem, .mp4 ou YouTube/Vimeo":"imagem"})
+        <input data-key="${key}" data-tipo="${aceitaVideo?"midia":"imagem"}" placeholder="https://…" value="${DB.esc(val||"")}">
+      </label>
+    </div>
+  </div>`;
+}
+
+function campoHtml(campo, conteudo){
+  const val = conteudo[campo.key];
+  const tamanhoVal = conteudo[campo.key+"__tamanho"];
   const label = DB.esc(campo.label);
   if(campo.tipo === "toggle"){
     return `<label class="switch-field">
@@ -61,17 +85,35 @@ function campoHtml(campo, val, tamanhoVal){
       <textarea data-key="${campo.key}" data-tipo="textarea" rows="3" placeholder="${DB.esc(campo.placeholder||"")}" style="${escala!==100?`font-size:${escala/100}em`:""}">${DB.esc(val||"")}</textarea>
     </div>`;
   }
+  // "Fundo da seção" ganha um seletor Foto/Vídeo × Cor sólida — os dois
+  // modos ficam guardados em chaves companheiras (key__fundoModo/Cor),
+  // no mesmo espírito do key__tamanho já usado pelo controle de texto
+  if(campo.tipo === "midia" && /^Fundo/i.test(campo.label)){
+    const modo = conteudo[campo.key+"__fundoModo"] === "cor" ? "cor" : "foto";
+    const cor = conteudo[campo.key+"__fundoCor"] || "#FAF8F5";
+    return `<div class="field bg-field" style="margin-bottom:14px">
+      <label>${label}</label>
+      <div class="align-row" data-bgmodegroup="${campo.key}">
+        <button type="button" data-bgmodeval="foto" class="${modo==="foto"?"on":""}">Foto ou vídeo</button>
+        <button type="button" data-bgmodeval="cor" class="${modo==="cor"?"on":""}">Cor sólida</button>
+      </div>
+      <input type="hidden" data-key="${campo.key}__fundoModo" data-tipo="texto" value="${modo}">
+      <div class="bg-modo-bloco" data-bgmodo="foto" style="display:${modo==="foto"?"block":"none"}">
+        ${midiaCardHtml(campo.key, val, true)}
+      </div>
+      <div class="bg-modo-bloco" data-bgmodo="cor" style="display:${modo==="cor"?"block":"none"}">
+        <div class="bg-cor-row">
+          <input type="color" data-key="${campo.key}__fundoCor" data-tipo="texto" value="${DB.esc(cor)}">
+          <span>Cor de fundo da seção</span>
+        </div>
+      </div>
+    </div>`;
+  }
   if(campo.tipo === "imagem" || campo.tipo === "midia"){
     const aceitaVideo = campo.tipo === "midia";
     return `<div class="field" style="margin-bottom:14px">
       <label>${label}${aceitaVideo?` <span style="color:var(--tinta-45);font-weight:400">(foto ou vídeo)</span>`:""}</label>
-      <div class="midia-row">
-        <div class="midia-preview" id="prev__${campo.key}">${previewHtml(val)}</div>
-        <div style="flex:1;display:flex;flex-direction:column;gap:6px">
-          <input data-key="${campo.key}" data-tipo="${campo.tipo}" placeholder="Cole uma URL de imagem${aceitaVideo?", vídeo (.mp4) ou link do YouTube/Vimeo":""}" value="${DB.esc(val||"")}">
-          <input type="file" accept="${aceitaVideo?"image/*,video/*":"image/*"}" data-fileinput="${campo.key}">
-        </div>
-      </div>
+      ${midiaCardHtml(campo.key, val, aceitaVideo)}
     </div>`;
   }
   if(campo.tipo === "alinhamento"){
@@ -123,7 +165,7 @@ function paginaHtml(pagina, conteudo){
   const paineis = pagina.grupos.map((g,idx)=>`
     <div class="design-grupo-panel" data-groupidx="${idx}" style="display:${idx===0?"block":"none"}">
       <div class="dp-hd"><h3>${DB.esc(g.titulo)}</h3><span class="dp-count">${g.campos.length} campo${g.campos.length===1?"":"s"}</span></div>
-      <div class="dp-bd">${g.campos.map(c=> campoHtml(c, conteudo[c.key], conteudo[c.key+"__tamanho"])).join("")}</div>
+      <div class="dp-bd">${g.campos.map(c=> campoHtml(c, conteudo)).join("")}</div>
     </div>`).join("");
   return `<div class="design-layout">
     <nav class="design-nav" data-pagenav="${pagina.id}">
@@ -195,6 +237,8 @@ function ligarCampos(){
       if(textInput) textInput.value = dataUrl;
       const prev = document.getElementById("prev__"+key);
       if(prev) prev.innerHTML = previewHtml(dataUrl);
+      const clearBtn = document.querySelector(`[data-clearmidia="${CSS.escape(key)}"]`);
+      if(clearBtn) clearBtn.style.display = "";
     };
   });
   document.querySelectorAll('input[data-tipo="imagem"], input[data-tipo="midia"]').forEach(input=>{
@@ -202,7 +246,38 @@ function ligarCampos(){
     input.oninput = ()=>{
       const prev = document.getElementById("prev__"+input.dataset.key);
       if(prev) prev.innerHTML = previewHtml(input.value.trim());
+      const clearBtn = document.querySelector(`[data-clearmidia="${CSS.escape(input.dataset.key)}"]`);
+      if(clearBtn) clearBtn.style.display = input.value.trim() ? "" : "none";
     };
+  });
+  document.querySelectorAll("[data-clearmidia]").forEach(btn=>{
+    if(btn.dataset.ligado) return; btn.dataset.ligado = "1";
+    btn.onclick = ()=>{
+      const key = btn.dataset.clearmidia;
+      const textInput = document.querySelector(`input[data-key="${CSS.escape(key)}"]`);
+      if(textInput) textInput.value = "";
+      const fileInput = document.getElementById("file__"+key);
+      if(fileInput) fileInput.value = "";
+      const prev = document.getElementById("prev__"+key);
+      if(prev) prev.innerHTML = previewHtml("");
+      btn.style.display = "none";
+    };
+  });
+  document.querySelectorAll("[data-bgmodegroup]").forEach(grupo=>{
+    if(grupo.dataset.ligado) return; grupo.dataset.ligado = "1";
+    const key = grupo.dataset.bgmodegroup;
+    const hidden = document.querySelector(`input[type="hidden"][data-key="${CSS.escape(key+"__fundoModo")}"]`);
+    const campoWrap = grupo.closest(".bg-field");
+    grupo.querySelectorAll("[data-bgmodeval]").forEach(btn=>{
+      btn.onclick = ()=>{
+        grupo.querySelectorAll("[data-bgmodeval]").forEach(b=> b.classList.remove("on"));
+        btn.classList.add("on");
+        if(hidden) hidden.value = btn.dataset.bgmodeval;
+        if(campoWrap) campoWrap.querySelectorAll(".bg-modo-bloco").forEach(bloco=>{
+          bloco.style.display = bloco.dataset.bgmodo === btn.dataset.bgmodeval ? "block" : "none";
+        });
+      };
+    });
   });
   document.querySelectorAll("[data-aligngroup]").forEach(grupo=>{
     if(grupo.dataset.ligado) return; grupo.dataset.ligado = "1";

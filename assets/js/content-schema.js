@@ -64,7 +64,8 @@ const SCHEMA = [
       {key:"home.imoveis.visivel", label:"Mostrar esta seção na Home", tipo:"toggle"},
       {key:"home.imoveis.titulo", label:"Título", tipo:"texto", placeholder:"Selecionados para você."},
       {key:"home.imoveis.texto", label:"Texto", tipo:"textarea", placeholder:"Uma amostra do catálogo…"},
-      {key:"home.imoveis.botao", label:"Botão — texto", tipo:"texto", placeholder:"Ver catálogo completo"}
+      {key:"home.imoveis.botao", label:"Botão — texto", tipo:"texto", placeholder:"Ver catálogo completo"},
+      {key:"home.imoveis.botaoAlinhamento", label:"Alinhamento do botão", tipo:"alinhamento"}
     ]},
     { titulo:"Bloco editorial — Seguros", campos:[
       {key:"home.seguros.visivel", label:"Mostrar este bloco na Home", tipo:"toggle"},
