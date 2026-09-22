@@ -246,6 +246,22 @@ de negócio", os blocos de Seguros/Consórcios/Institucional/CTA final na
 Home, o bloco "Como funciona" em Seguros, "Administradoras parceiras" em
 Consórcios, e a linha do tempo e a equipe em Sobre.
 
+**Todo campo de texto (título ou parágrafo) tem um controle "A− / A+"**
+ao lado do rótulo, que diminui ou aumenta o tamanho daquele texto
+especificamente no site público, de 70% a 150% em passos de 10 —
+sem precisar de nenhuma marcação nova no HTML: é salvo como uma chave
+`"a.mesma.chave__tamanho"` dentro do próprio blob `conteudo`, e
+`content-apply.js` reescala o `font-size` do elemento correspondente
+(medindo o tamanho natural dele a cada vez, então continua responsivo
+depois de redimensionar a janela).
+
+E a própria página do Painel de Design foi reorganizada para não virar
+uma parede de campos: cada grupo agora é **recolhível** (clique no
+cabeçalho do grupo para abrir/fechar — o primeiro de cada página já
+começa aberto), com um contador de campos em cada um, e um atalho
+"Expandir tudo / Recolher tudo" no topo de cada aba. Os campos de
+mostrar/esconder também viraram um **switch** em vez de checkbox simples.
+
 ### Identidade visual, manutenção e SEO básico (Personalização)
 
 Em `crm/admin/personalizacao.html`, além de logo e cor:

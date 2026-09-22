@@ -15,6 +15,12 @@
      data-cms-tipo="icone"                    → troca o miolo de um <svg> por
                                                  um ícone de assets/js/icon-library.js
      (nenhum dos casos acima)                 → define o texto (textContent)
+
+   Além da chave normal, qualquer campo de texto/textarea pode ter uma
+   chave companheira "chave__tamanho" (70–150, % do tamanho original) —
+   escrita pelo controle "A− / A+" do Painel de Design — que reescala o
+   font-size do MESMO elemento [data-cms="chave"], sem precisar de
+   nenhum atributo novo no HTML.
    =========================================================== */
 (function(){
 "use strict";
@@ -51,28 +57,54 @@ function aplicarMidiaFundo(el, url){
   }
 }
 
+// Reescala o font-size de um elemento de texto em torno do tamanho que
+// ele já teria (respeitando clamp()/responsivo): mede o tamanho "natural"
+// a cada aplicação (nunca guarda um px fixo), então funciona bem também
+// depois de um resize de janela (ver listener de "resize" abaixo).
+function aplicarTamanho(el, pct){
+  const p = parseInt(pct, 10) || 100;
+  el.dataset.cmsFsPct = String(p);
+  el.style.fontSize = "";
+  if(p === 100) return;
+  const base = parseFloat(getComputedStyle(el).fontSize) || 16;
+  el.style.fontSize = (base * p / 100) + "px";
+}
+
+let resizeTimer;
+addEventListener("resize", ()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(()=>{
+    document.querySelectorAll("[data-cms-fs-pct]").forEach(el=> aplicarTamanho(el, el.dataset.cmsFsPct));
+  }, 200);
+});
+
 function aplicarConteudo(conteudo){
   if(!conteudo) return;
   document.querySelectorAll("[data-cms]").forEach(el=>{
     const key = el.dataset.cms;
-    if(!Object.prototype.hasOwnProperty.call(conteudo, key)) return;
-    const val = conteudo[key];
-    if(el.dataset.cmsTipo === "toggle"){
-      el.style.display = (val === false) ? "none" : "";
-    } else if(el.dataset.cmsTipo === "banner"){
-      el.textContent = val || "";
-      el.style.display = val ? "block" : "none";
-    } else if(el.dataset.cmsTipo === "alinhamento"){
-      if(val) el.style.textAlign = val;
-    } else if(el.dataset.cmsTipo === "icone"){
-      const icone = window.SoluaIcons && window.SoluaIcons[val];
-      if(icone) el.innerHTML = icone.svg;
-    } else if(el.dataset.cmsMedia === "bg"){
-      aplicarMidiaFundo(el, val);
-    } else if(el.tagName === "IMG"){
-      if(val) el.src = val;
-    } else if(val != null && val !== ""){
-      el.textContent = val;
+    if(Object.prototype.hasOwnProperty.call(conteudo, key)){
+      const val = conteudo[key];
+      if(el.dataset.cmsTipo === "toggle"){
+        el.style.display = (val === false) ? "none" : "";
+      } else if(el.dataset.cmsTipo === "banner"){
+        el.textContent = val || "";
+        el.style.display = val ? "block" : "none";
+      } else if(el.dataset.cmsTipo === "alinhamento"){
+        if(val) el.style.textAlign = val;
+      } else if(el.dataset.cmsTipo === "icone"){
+        const icone = window.SoluaIcons && window.SoluaIcons[val];
+        if(icone) el.innerHTML = icone.svg;
+      } else if(el.dataset.cmsMedia === "bg"){
+        aplicarMidiaFundo(el, val);
+      } else if(el.tagName === "IMG"){
+        if(val) el.src = val;
+      } else if(val != null && val !== ""){
+        el.textContent = val;
+      }
+    }
+    const escalaKey = key + "__tamanho";
+    if(Object.prototype.hasOwnProperty.call(conteudo, escalaKey)){
+      aplicarTamanho(el, conteudo[escalaKey]);
     }
   });
 }

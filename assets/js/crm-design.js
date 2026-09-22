@@ -16,6 +16,13 @@ const MAX_ARQUIVO = 200000; // bytes — upload direto; arquivos maiores (e víd
 
 let atual = null;
 let paginaAtiva = SCHEMA[0].id;
+let gruposAbertos = {}; // "paginaId::índice" -> aberto/fechado (primeiro grupo de cada página começa aberto)
+
+function grupoAberto(paginaId, idx){
+  const k = paginaId+"::"+idx;
+  if(!(k in gruposAbertos)) gruposAbertos[k] = idx===0;
+  return gruposAbertos[k];
+}
 
 function getAdminKey(){ try{ return localStorage.getItem(ADMIN_KEY_STORAGE) || ""; }catch(e){ return ""; } }
 
@@ -29,14 +36,29 @@ function previewHtml(val){
   return `<img src="${DB.esc(val)}" alt="">`;
 }
 
-function campoHtml(campo, val){
+function tamanhoStepperHtml(key, escala){
+  return `<div class="fs-step" data-fsgroup="${key}">
+    <button type="button" data-fsdelta="-10" aria-label="Diminuir texto">A−</button>
+    <span class="fs-val" data-fsval>${escala}%</span>
+    <button type="button" data-fsdelta="10" aria-label="Aumentar texto">A+</button>
+  </div>
+  <input type="hidden" data-key="${key}__tamanho" data-tipo="tamanho" value="${escala}">`;
+}
+
+function campoHtml(campo, val, tamanhoVal){
   const label = DB.esc(campo.label);
   if(campo.tipo === "toggle"){
-    return `<label style="display:flex;gap:10px;align-items:center;font-size:13.5px;margin-bottom:14px">
-      <input type="checkbox" data-key="${campo.key}" data-tipo="toggle" ${val!==false?"checked":""} style="width:16px;height:16px;accent-color:var(--azul)"> ${label}</label>`;
+    return `<label class="switch-field">
+      <span class="switch"><input type="checkbox" data-key="${campo.key}" data-tipo="toggle" ${val!==false?"checked":""}><span class="switch-track"></span></span>
+      <span>${label}</span>
+    </label>`;
   }
   if(campo.tipo === "textarea"){
-    return `<div class="field" style="margin-bottom:14px"><label>${label}</label><textarea data-key="${campo.key}" data-tipo="textarea" rows="3" placeholder="${DB.esc(campo.placeholder||"")}">${DB.esc(val||"")}</textarea></div>`;
+    const escala = parseInt(tamanhoVal,10) || 100;
+    return `<div class="field" style="margin-bottom:14px">
+      <div class="field-label-row"><label>${label}</label>${tamanhoStepperHtml(campo.key, escala)}</div>
+      <textarea data-key="${campo.key}" data-tipo="textarea" rows="3" placeholder="${DB.esc(campo.placeholder||"")}" style="${escala!==100?`font-size:${escala/100}em`:""}">${DB.esc(val||"")}</textarea>
+    </div>`;
   }
   if(campo.tipo === "imagem" || campo.tipo === "midia"){
     const aceitaVideo = campo.tipo === "midia";
@@ -77,15 +99,29 @@ function campoHtml(campo, val){
     </div>`;
   }
   // texto
-  return `<div class="field" style="margin-bottom:14px"><label>${label}</label><input data-key="${campo.key}" data-tipo="texto" placeholder="${DB.esc(campo.placeholder||"")}" value="${DB.esc(val||"")}"></div>`;
+  const escala = parseInt(tamanhoVal,10) || 100;
+  return `<div class="field" style="margin-bottom:14px">
+    <div class="field-label-row"><label>${label}</label>${tamanhoStepperHtml(campo.key, escala)}</div>
+    <input data-key="${campo.key}" data-tipo="texto" placeholder="${DB.esc(campo.placeholder||"")}" value="${DB.esc(val||"")}" style="${escala!==100?`font-size:${escala/100}em`:""}">
+  </div>`;
 }
 
 function paginaHtml(pagina, conteudo){
-  return pagina.grupos.map(g=>`
-    <div class="card design-grupo">
-      <div class="card-hd"><h3 style="font-size:14px">${DB.esc(g.titulo)}</h3></div>
-      <div class="card-bd">${g.campos.map(c=> campoHtml(c, conteudo[c.key])).join("")}</div>
-    </div>`).join("");
+  return pagina.grupos.map((g,idx)=>{
+    const aberto = grupoAberto(pagina.id, idx);
+    const n = g.campos.length;
+    return `
+    <div class="card design-grupo ${aberto?"open":""}">
+      <div class="card-hd grupo-hd" data-grupotoggle="${pagina.id}::${idx}">
+        <h3 style="font-size:14px">${DB.esc(g.titulo)}</h3>
+        <span class="grupo-meta">
+          <span class="grupo-count">${n} campo${n===1?"":"s"}</span>
+          <svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg>
+        </span>
+      </div>
+      <div class="card-bd">${g.campos.map(c=> campoHtml(c, conteudo[c.key], conteudo[c.key+"__tamanho"])).join("")}</div>
+    </div>`;
+  }).join("");
 }
 
 function renderTabs(){
@@ -96,6 +132,27 @@ function renderTabs(){
     renderTabs();
     renderForms();
   });
+  renderToolbar();
+}
+
+function renderToolbar(){
+  const el = document.getElementById("pageToolbar");
+  if(!el) return;
+  const p = SCHEMA.find(x=> x.id===paginaAtiva);
+  const total = p.grupos.reduce((a,g)=> a+g.campos.length, 0);
+  el.innerHTML = `
+    <span class="toolbar-count">${p.grupos.length} grupo${p.grupos.length===1?"":"s"} · ${total} campo${total===1?"":"s"} nesta página</span>
+    <span class="spacer"></span>
+    <button type="button" class="btn ghost sm" id="btnExpandirTudo">Expandir tudo</button>
+    <button type="button" class="btn ghost sm" id="btnRecolherTudo">Recolher tudo</button>`;
+  document.getElementById("btnExpandirTudo").onclick = ()=> alternarTodosGrupos(true);
+  document.getElementById("btnRecolherTudo").onclick = ()=> alternarTodosGrupos(false);
+}
+
+function alternarTodosGrupos(abrir){
+  const p = SCHEMA.find(x=> x.id===paginaAtiva);
+  p.grupos.forEach((g,idx)=> gruposAbertos[paginaAtiva+"::"+idx] = abrir);
+  document.querySelectorAll(`.pageform[data-page="${paginaAtiva}"] .design-grupo`).forEach(el=> el.classList.toggle("open", abrir));
 }
 
 function renderForms(){
@@ -153,6 +210,29 @@ function ligarCampos(){
       const prev = document.getElementById("iconprev__"+select.dataset.key);
       if(prev && icone) prev.innerHTML = `<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5">${icone.svg}</svg>`;
     };
+  });
+  document.querySelectorAll("[data-grupotoggle]").forEach(hd=>{
+    hd.onclick = ()=>{
+      const [pid, idxStr] = hd.dataset.grupotoggle.split("::");
+      const idx = Number(idxStr);
+      gruposAbertos[pid+"::"+idx] = !grupoAberto(pid, idx);
+      hd.closest(".design-grupo").classList.toggle("open", gruposAbertos[pid+"::"+idx]);
+    };
+  });
+  document.querySelectorAll("[data-fsgroup]").forEach(grupo=>{
+    const key = grupo.dataset.fsgroup;
+    const hidden = document.querySelector(`input[type="hidden"][data-key="${CSS.escape(key+"__tamanho")}"]`);
+    const valEl = grupo.querySelector("[data-fsval]");
+    const campoEl = document.querySelector(`[data-key="${CSS.escape(key)}"]`);
+    grupo.querySelectorAll("[data-fsdelta]").forEach(btn=>{
+      btn.onclick = ()=>{
+        let v = parseInt(hidden.value, 10) || 100;
+        v = Math.min(150, Math.max(70, v + parseInt(btn.dataset.fsdelta, 10)));
+        hidden.value = v;
+        valEl.textContent = v + "%";
+        if(campoEl) campoEl.style.fontSize = v===100 ? "" : (v/100)+"em";
+      };
+    });
   });
 }
 

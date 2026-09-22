@@ -15,17 +15,50 @@
   .midia-row input{min-width:0;width:100%;box-sizing:border-box}
   .midia-preview{width:84px;height:64px;flex:none;border-radius:8px;background:var(--creme-2);background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--tinta-35);overflow:hidden}
   .midia-preview img{width:100%;height:100%;object-fit:cover}
-  .design-grupo{margin-bottom:22px}
-  .design-grupo h4{font-size:13px;color:var(--tinta-45);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
   .align-row{display:flex;gap:8px}
   .align-row button{flex:1;padding:8px;border:1px solid var(--linha);border-radius:8px;background:var(--branco);cursor:pointer;font-size:13px}
   .align-row button.on{border-color:var(--azul);color:var(--azul);background:rgba(0,75,165,.06)}
   .icon-row{display:flex;gap:14px;align-items:center}
   .icon-preview{width:44px;height:44px;flex:none;border-radius:8px;background:var(--creme-2);display:flex;align-items:center;justify-content:center;color:var(--tinta)}
   .icon-preview svg{width:24px;height:24px}
+
+  /* ---------- ferramentas do topo (contador + expandir/recolher) ---------- */
+  .design-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .toolbar-count{font-size:12.5px;color:var(--tinta-45)}
+
+  /* ---------- grupos recolhíveis ---------- */
+  .design-grupo{margin-bottom:14px;overflow:hidden}
+  .design-grupo .grupo-hd{cursor:pointer;user-select:none;transition:background .15s}
+  .design-grupo .grupo-hd:hover{background:var(--creme-2)}
+  .design-grupo .card-bd{display:none}
+  .design-grupo.open .card-bd{display:block}
+  .grupo-meta{display:flex;align-items:center;gap:10px;color:var(--tinta-45)}
+  .grupo-count{background:var(--creme-2);padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:700;letter-spacing:.02em}
+  .chev{width:14px;height:14px;flex:none;transition:transform .2s}
+  .design-grupo.open .chev{transform:rotate(180deg)}
+
+  /* ---------- rótulo + controle de tamanho de texto (A- / A+) ---------- */
+  .field-label-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+  .field-label-row label{margin:0}
+  .fs-step{display:flex;align-items:center;gap:2px;background:var(--creme-2);border-radius:99px;padding:3px;flex:none}
+  .fs-step button{width:24px;height:24px;border-radius:50%;border:none;background:transparent;color:var(--tinta-60);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s}
+  .fs-step button:hover{background:#fff;color:var(--azul)}
+  .fs-val{font-size:11px;color:var(--tinta-45);min-width:34px;text-align:center;font-weight:600}
+
+  /* ---------- switch (toggle de visibilidade) ---------- */
+  .switch-field{display:flex;align-items:center;gap:10px;font-size:13.5px;margin-bottom:14px;cursor:pointer}
+  .switch{position:relative;display:inline-block;width:38px;height:22px;flex:none}
+  .switch input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer;z-index:1}
+  .switch-track{position:absolute;inset:0;background:var(--linha-forte);border-radius:99px;transition:background .2s}
+  .switch-track::before{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+  .switch input:checked + .switch-track{background:var(--azul)}
+  .switch input:checked + .switch-track::before{transform:translateX(16px)}
+
   @media(max-width:480px){
     .midia-row{flex-direction:column}
     .midia-preview{width:100%;height:110px}
+    .field-label-row{flex-direction:column;align-items:flex-start;gap:8px}
+    .design-toolbar{flex-wrap:wrap}
   }
 </style>
 <script defer src="../../assets/js/branding.js"></script>
@@ -47,6 +80,7 @@
       </div>
 
       <div class="tabs" id="pageTabs"></div>
+      <div class="design-toolbar" id="pageToolbar"></div>
       <div id="pageForms"></div>
 
       <div class="demo-hint" style="margin:16px 0">Fotos pequenas (até ~200KB) podem ser enviadas direto pelo botão de arquivo. Para vídeos, ou imagens maiores, cole um link — de um arquivo <code>.mp4</code>/<code>.webm</code> hospedado, ou de um vídeo do YouTube/Vimeo.</div>
