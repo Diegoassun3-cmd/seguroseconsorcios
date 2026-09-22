@@ -32,14 +32,15 @@
     <h1 data-cms="home.hero.titulo">25 anos ao<br>seu lado.</h1>
     <p data-cms="home.hero.subtitulo">Imóveis, seguros e consórcios para cada etapa da sua vida — com um consultor dedicado do primeiro contato ao pós-venda, nunca um robô ou uma fila.</p>
     <div class="hero-cta">
-      <a class="btn lg" href="imoveis.html">Ver imóveis</a>
-      <a class="btn lg ghost" style="border-color:rgba(242,237,230,.4);color:#fff" href="contato.html">Fale com um consultor</a>
+      <a class="btn lg" href="imoveis.html" data-cms="home.hero.botao1">Ver imóveis</a>
+      <a class="btn lg ghost" style="border-color:rgba(242,237,230,.4);color:#fff" href="contato.html" data-cms="home.hero.botao2">Fale com um consultor</a>
     </div>
   </div>
 </section>
 
 <!-- 3 FRENTES -->
 <section class="sec" style="padding-bottom:0" data-cms="home.bizlines.visivel" data-cms-tipo="toggle">
+  <div class="sec-bg" data-cms="home.bizlines.fundo" data-cms-media="bg"></div>
   <div class="wrap rev">
     <div class="sec-head" style="margin-bottom:34px">
       <div>
@@ -53,19 +54,19 @@
         <svg class="ico" data-cms="home.bizline.imoveis.icone" data-cms-tipo="icone" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12l10-8 10 8M6 11v12h16V11" stroke-linejoin="round"/><path d="M11 23v-7h6v7" stroke-linejoin="round"/></svg>
         <h3 data-cms="home.bizline.imoveis.titulo">Imóveis</h3>
         <p data-cms="home.bizline.imoveis.texto">Venda e locação em Campinas e região, com catálogo atualizado, filtros e ficha técnica completa de cada imóvel.</p>
-        <span class="go">Ver catálogo <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+        <span class="go"><span data-cms="home.bizline.imoveis.link">Ver catálogo</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
       </a>
       <a class="bizline" href="seguros.html">
         <svg class="ico" data-cms="home.bizline.seguros.icone" data-cms-tipo="icone" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3l10 4.4v6.6c0 7-4.4 12-10 14-5.6-2-10-7-10-14V7.4L14 3z" stroke-linejoin="round"/></svg>
         <h3 data-cms="home.bizline.seguros.titulo">Seguros</h3>
         <p data-cms="home.bizline.seguros.texto">Auto, residencial, vida, empresarial e mais — comparativo entre as principais seguradoras do país, sem letra miúda.</p>
-        <span class="go">Simular agora <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+        <span class="go"><span data-cms="home.bizline.seguros.link">Simular agora</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
       </a>
       <a class="bizline" href="consorcios.html">
         <svg class="ico" data-cms="home.bizline.consorcios.icone" data-cms-tipo="icone" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="14" cy="14" r="10"/><path d="M14 8v6l4.5 2.6"/></svg>
         <h3 data-cms="home.bizline.consorcios.titulo">Consórcios</h3>
         <p data-cms="home.bizline.consorcios.texto">Imóvel, automóvel e pesados com Porto Bank e Ademicon — poder de compra sem juros, com parcela que cabe no seu mês.</p>
-        <span class="go">Simular parcela <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+        <span class="go"><span data-cms="home.bizline.consorcios.link">Simular parcela</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
       </a>
     </div>
   </div>
@@ -75,11 +76,11 @@
 <section class="sec" data-cms="home.imoveis.visivel" data-cms-tipo="toggle">
   <div class="wrap rev">
     <div class="sec-head">
-      <div><span class="num">/ 01 — Imóveis</span><h2>Selecionados para você.</h2></div>
-      <p class="side">Uma amostra do catálogo. Filtre por tipo, faixa de preço e finalidade no catálogo completo.</p>
+      <div><span class="num" data-cms="home.imoveis.numero">/ 01 — Imóveis</span><h2 data-cms="home.imoveis.titulo">Selecionados para você.</h2></div>
+      <p class="side" data-cms="home.imoveis.texto">Uma amostra do catálogo. Filtre por tipo, faixa de preço e finalidade no catálogo completo.</p>
     </div>
     <div class="prop-grid" id="propDestaque"></div>
-    <div style="margin-top:36px"><a class="btn lg ghost" href="imoveis.html">Ver catálogo completo</a></div>
+    <div style="margin-top:36px"><a class="btn lg ghost" href="imoveis.html" data-cms="home.imoveis.botao">Ver catálogo completo</a></div>
   </div>
 </section>
 
@@ -87,6 +88,7 @@
 
 <!-- SEGUROS (editorial) -->
 <section class="sec" style="background:var(--papel)" data-cms="home.seguros.visivel" data-cms-tipo="toggle">
+  <div class="sec-bg" data-cms="home.seguros.fundo" data-cms-media="bg"></div>
   <div class="wrap rev">
     <div class="ed-block" id="edSeguros" style="border-top:none;padding-top:0">
       <div class="ph"><img data-cms="home.seguros.midia" src="https://picsum.photos/seed/solua-seguro-home/900/720" alt="Família protegida por um seguro Solua" loading="lazy"></div>
@@ -94,7 +96,7 @@
         <span class="num">/ 02 — Seguros</span>
         <h3 data-cms="home.seguros.titulo">Proteção para o que você levou anos construindo.</h3>
         <p data-cms="home.seguros.texto">Trabalhamos com as maiores seguradoras do país e entregamos o comparativo pronto — coberturas, franquias e preços lado a lado, para você decidir com informação.</p>
-        <a class="btn" href="seguros.html">Conhecer os seguros</a>
+        <a class="btn" href="seguros.html" data-cms="home.seguros.botao">Conhecer os seguros</a>
       </div>
     </div>
   </div>
@@ -104,6 +106,7 @@
 
 <!-- CONSÓRCIOS (editorial, invertido) -->
 <section class="sec blue" data-cms="home.consorcios.visivel" data-cms-tipo="toggle">
+  <div class="sec-bg" data-cms="home.consorcios.fundo" data-cms-media="bg"></div>
   <div class="wrap rev">
     <div class="ed-block rev-order" style="border-top:1px solid rgba(242,237,230,.22);padding-top:clamp(50px,7vw,90px)">
       <div class="ph"><img data-cms="home.consorcios.midia" src="https://picsum.photos/seed/solua-consorcio-home/900/720" alt="Chaves de um imóvel adquirido por consórcio" loading="lazy"></div>
@@ -111,7 +114,7 @@
         <span class="num" style="color:rgba(242,237,230,.5)">/ 03 — Consórcios</span>
         <h3 data-cms="home.consorcios.titulo">A forma mais inteligente de comprar sem juros.</h3>
         <p style="color:rgba(242,237,230,.75)" data-cms="home.consorcios.texto">Operamos com Porto Bank e Ademicon. Consórcio é planejamento: você compra poder de compra, não dívida — sem juros, com parcela que cabe no seu mês.</p>
-        <a class="btn" href="consorcios.html">Simular consórcio</a>
+        <a class="btn" href="consorcios.html" data-cms="home.consorcios.botao">Simular consórcio</a>
       </div>
     </div>
   </div>
@@ -134,13 +137,14 @@
 
 <!-- INSTITUCIONAL -->
 <section class="sec" style="padding-top:0" data-cms="home.institucional.visivel" data-cms-tipo="toggle">
+  <div class="sec-bg" data-cms="home.institucional.fundo" data-cms-media="bg"></div>
   <div class="wrap rev">
     <div class="ed-block" style="border-top:1px solid var(--linha)">
       <div data-cms="home.institucional.alinhamento" data-cms-tipo="alinhamento">
         <span class="num">/ A Solua</span>
         <h3 data-cms="home.institucional.titulo">Uma corretora de bairro com estrutura de mercado.</h3>
         <p data-cms="home.institucional.texto">Nascemos em 2001 em Campinas como corretora de seguros. Em 2010 abrimos a imobiliária e, mais recentemente, passamos a atuar também com consórcios. A ideia nunca mudou: ficar do lado de quem contrata, não de quem vende.</p>
-        <a class="btn ghost" href="sobre.html">Conhecer nossa história</a>
+        <a class="btn ghost" href="sobre.html" data-cms="home.institucional.botao">Conhecer nossa história</a>
       </div>
       <div class="ph"><img data-cms="home.institucional.midia" src="https://picsum.photos/seed/solua-equipe-home/900/720" alt="Equipe Solua" loading="lazy"></div>
     </div>
@@ -161,11 +165,12 @@
 
 <!-- CTA FINAL -->
 <section class="sec" style="text-align:center;padding:clamp(70px,9vw,130px) 0" data-cms="home.ctafinal.visivel" data-cms-tipo="toggle">
+  <div class="sec-bg" data-cms="home.ctafinal.fundo" data-cms-media="bg"></div>
   <div class="wrap rev" data-cms="home.ctafinal.alinhamento" data-cms-tipo="alinhamento">
     <span class="lbl">/ Vamos começar</span>
     <h2 class="display" style="font-size:clamp(36px,7vw,90px);margin:22px auto 26px;max-width:16ch" data-cms="home.ctafinal.titulo">Fale com um consultor Solua hoje.</h2>
     <p style="color:var(--tinta-60);max-width:46ch;margin:0 auto 34px" data-cms="home.ctafinal.texto">Dois minutos agora podem significar anos de tranquilidade — e a parcela ou apólice certa no fim do mês.</p>
-    <a class="btn lg" href="contato.html">Fale com um consultor</a>
+    <a class="btn lg" href="contato.html" data-cms="home.ctafinal.botao">Fale com um consultor</a>
   </div>
 </section>
 

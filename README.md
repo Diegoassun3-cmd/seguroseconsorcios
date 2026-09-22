@@ -203,13 +203,15 @@ interesse em imóvel enviado pelo site** entra no CRM local
 decide — com base no que está ligado em Personalização — se dispara
 e-mail/WhatsApp automático de verdade.
 
-### Painel de Design (CMS de conteúdo: texto, foto e vídeo)
+### Painel de Design (CMS de conteúdo: texto, foto, vídeo e fundo de seção)
 
 Em `crm/admin/design.html`, uma aba por página pública (Home, Seguros,
-Consórcios, Sobre, Contato) com um campo para cada título, texto, foto,
-vídeo ou seção ligável/desligável daquela página — cerca de 40 itens ao
-todo. É gerado a partir de `assets/js/content-schema.js` (a "lista do
-que pode ser editado"), aplicado no site por `assets/js/content-apply.js`
+Consórcios, Sobre, Contato) mais uma aba **"Menu e Rodapé"** para o
+cabeçalho e o rodapé (que são os mesmos em toda página) — cerca de
+**120 campos editáveis** ao todo: todo título, parágrafo, texto de botão,
+rótulo pequeno, link do menu e coluna do rodapé é editável, sem depender
+de código. É gerado a partir de `assets/js/content-schema.js` (a "lista
+do que pode ser editado"), aplicado no site por `assets/js/content-apply.js`
 e salvo como um único blob JSON (`conteudo`) na mesma linha de
 configurações da Personalização — o Worker faz atualização **parcial**
 de verdade (só sobrescreve os campos enviados por cada tela), então usar
@@ -217,12 +219,12 @@ Personalização e Design no mesmo projeto nunca apaga a configuração da
 outra.
 
 Cada campo de mídia aceita **upload direto** (imagens pequenas, até
-~200KB — vira base64 guardado no D1) **ou colar um link**: para os 4
-fundos do hero da Home e os heros de Seguros/Consórcios/Sobre, o link
-pode ser uma imagem, um vídeo (`.mp4`/`.webm`) ou um embed do
-YouTube/Vimeo — o site detecta sozinho e troca `background-image` por
-`<video>` ou `<iframe>` automaticamente. Para os demais blocos (imagens
-editoriais, linha do tempo), só foto.
+~200KB — vira base64 guardado no D1) **ou colar um link**: para os fundos
+de hero e para o **fundo de qualquer seção** (ver abaixo), o link pode
+ser uma imagem, um vídeo (`.mp4`/`.webm`) ou um embed do YouTube/Vimeo —
+o site detecta sozinho e troca `background-image` por `<video>` ou
+`<iframe>` automaticamente. Para os demais blocos (imagens editoriais,
+linha do tempo), só foto.
 
 Para adicionar um novo campo editável (ex.: mais um bloco de texto):
 1. acrescente uma chave em `content-schema.js`;
@@ -241,10 +243,16 @@ Além de texto/foto/vídeo/visibilidade, dois tipos a mais de campo:
   (`window.SoluaIcons`) — por segurança, só esses ícones pré-aprovados
   podem ser injetados, nunca HTML arbitrário colado por alguém.
 
-Também dá pra **mostrar/esconder** bem mais seções agora: as "3 frentes
-de negócio", os blocos de Seguros/Consórcios/Institucional/CTA final na
-Home, o bloco "Como funciona" em Seguros, "Administradoras parceiras" em
-Consórcios, e a linha do tempo e a equipe em Sobre.
+**Fundo de qualquer seção com cor sólida** — Home ("3 frentes",
+Seguros/Consórcios/Institucional editoriais, chamada final), Seguros
+("Como funciona"), Consórcios ("Administradoras parceiras") e Sobre
+(Equipe, chamada final) têm um campo "Fundo da seção": em branco, a
+seção mantém a cor sólida original; com uma foto/vídeo, o site aplica
+o fundo por trás do conteúdo com uma camada escura automática para o
+texto continuar legível (classe `.has-cms-bg` em `assets/css/site.css`)
+— cartões com fundo próprio dentro da seção (como os cards de
+"Porto Bank"/"Ademicon") ficam de fora dessa troca de cor de texto, já
+que continuam opacos por cima de qualquer fundo.
 
 **Todo campo de texto (título ou parágrafo) tem um controle "A− / A+"**
 ao lado do rótulo, que diminui ou aumenta o tamanho daquele texto
@@ -255,12 +263,28 @@ sem precisar de nenhuma marcação nova no HTML: é salvo como uma chave
 (medindo o tamanho natural dele a cada vez, então continua responsivo
 depois de redimensionar a janela).
 
-E a própria página do Painel de Design foi reorganizada para não virar
-uma parede de campos: cada grupo agora é **recolhível** (clique no
-cabeçalho do grupo para abrir/fechar — o primeiro de cada página já
-começa aberto), com um contador de campos em cada um, e um atalho
-"Expandir tudo / Recolher tudo" no topo de cada aba. Os campos de
-mostrar/esconder também viraram um **switch** em vez de checkbox simples.
+A tela em si usa um layout **mestre-detalhe**: dentro de cada aba de
+página, uma barra lateral lista os grupos daquela página (com contador
+de campos, um ícone quando o grupo tem "fundo de seção", e um campo de
+filtro para achar um grupo rápido) — só o grupo selecionado aparece no
+painel à direita, em vez de empilhar todos os campos de uma vez. Trocar
+de aba ou de grupo nunca descarta o que você digitou e ainda não salvou
+(cada página é montada uma única vez; só a visibilidade muda). Os campos
+de mostrar/esconder viraram um **switch** em vez de checkbox simples.
+
+A aba **"Menu e Rodapé"** cobre o que é igual em toda página pública:
+os 6 links do menu (e o botão do cabeçalho), e o texto/colunas/direitos
+autorais do rodapé — editar ali muda em todas as páginas de uma vez
+(o menu mobile reaproveita os mesmos textos de Imóveis/Seguros/Consórcios/
+A Solua automaticamente).
+
+> **O que não está no Painel de Design:** os dados de cada imóvel
+> individual (preço, endereço, fotos, especificações) são catálogo/produto,
+> não texto de marketing — hoje vêm do `assets/js/crm-data.js`
+> (`window.SoluaDB`), sem uma tela de cadastro dedicada no CRM ainda. Um
+> gerenciador de catálogo de imóveis (criar/editar/remover cada imóvel
+> pelo CRM) é um próximo passo natural, mas é um recurso à parte — não
+> uma extensão do Design.
 
 ### Identidade visual, manutenção e SEO básico (Personalização)
 

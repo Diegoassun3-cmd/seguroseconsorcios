@@ -1,10 +1,17 @@
 /* ===========================================================
    Solua CRM — Painel de Design: editor de conteúdo do site público
-   (qualquer texto, foto ou vídeo, por página), montado a partir de
-   assets/js/content-schema.js. Lê/grava em /api/settings — a MESMA
-   linha de configurações da Personalização — então sempre carregamos
-   o estado atual inteiro antes de salvar, para nunca sobrescrever
-   logo/cor/WhatsApp definidos em Personalização.
+   (qualquer texto, foto, vídeo ou fundo de seção, por página), montado
+   a partir de assets/js/content-schema.js. Lê/grava em /api/settings —
+   a MESMA linha de configurações da Personalização — então sempre
+   carregamos o estado atual inteiro antes de salvar, para nunca
+   sobrescrever logo/cor/WhatsApp definidos em Personalização.
+
+   Layout "mestre-detalhe": uma aba por página (SCHEMA), e dentro de
+   cada aba uma barra lateral com os grupos daquela página — só o grupo
+   selecionado aparece no painel à direita. Cada página é montada em
+   HTML só na primeira vez que é aberta e nunca mais reconstruída a
+   partir do zero (só escondida/mostrada) — trocar de aba ou de grupo
+   NUNCA descarta o que você digitou e ainda não salvou.
    =========================================================== */
 (function(){
 "use strict";
@@ -16,13 +23,7 @@ const MAX_ARQUIVO = 200000; // bytes — upload direto; arquivos maiores (e víd
 
 let atual = null;
 let paginaAtiva = SCHEMA[0].id;
-let gruposAbertos = {}; // "paginaId::índice" -> aberto/fechado (primeiro grupo de cada página começa aberto)
-
-function grupoAberto(paginaId, idx){
-  const k = paginaId+"::"+idx;
-  if(!(k in gruposAbertos)) gruposAbertos[k] = idx===0;
-  return gruposAbertos[k];
-}
+const grupoSelecionado = {}; // paginaId -> índice do grupo selecionado
 
 function getAdminKey(){ try{ return localStorage.getItem(ADMIN_KEY_STORAGE) || ""; }catch(e){ return ""; } }
 
@@ -106,22 +107,39 @@ function campoHtml(campo, val, tamanhoVal){
   </div>`;
 }
 
+// campo "fundo de seção" (tipo midia, label começa com "Fundo") tem seu
+// próprio badge visual na navegação lateral — deixa claro que aquele
+// grupo controla mais do que só texto
+function grupoTemFundo(g){ return g.campos.some(c=> c.tipo==="midia" && /^Fundo/i.test(c.label)); }
+
 function paginaHtml(pagina, conteudo){
-  return pagina.grupos.map((g,idx)=>{
-    const aberto = grupoAberto(pagina.id, idx);
+  const nav = pagina.grupos.map((g,idx)=>{
     const n = g.campos.length;
-    return `
-    <div class="card design-grupo ${aberto?"open":""}">
-      <div class="card-hd grupo-hd" data-grupotoggle="${pagina.id}::${idx}">
-        <h3 style="font-size:14px">${DB.esc(g.titulo)}</h3>
-        <span class="grupo-meta">
-          <span class="grupo-count">${n} campo${n===1?"":"s"}</span>
-          <svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg>
-        </span>
-      </div>
-      <div class="card-bd">${g.campos.map(c=> campoHtml(c, conteudo[c.key], conteudo[c.key+"__tamanho"])).join("")}</div>
-    </div>`;
+    return `<button type="button" class="design-nav-item ${idx===0?"on":""}" data-groupidx="${idx}">
+      <span class="dn-title">${DB.esc(g.titulo)}</span>
+      <span class="dn-meta">${grupoTemFundo(g)?`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" title="Tem fundo de seção"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 11l3.5-3.5L9 11l2-2 3 3"/></svg>`:""}<span class="dn-count">${n}</span></span>
+    </button>`;
   }).join("");
+  const paineis = pagina.grupos.map((g,idx)=>`
+    <div class="design-grupo-panel" data-groupidx="${idx}" style="display:${idx===0?"block":"none"}">
+      <div class="dp-hd"><h3>${DB.esc(g.titulo)}</h3><span class="dp-count">${g.campos.length} campo${g.campos.length===1?"":"s"}</span></div>
+      <div class="dp-bd">${g.campos.map(c=> campoHtml(c, conteudo[c.key], conteudo[c.key+"__tamanho"])).join("")}</div>
+    </div>`).join("");
+  return `<div class="design-layout">
+    <nav class="design-nav" data-pagenav="${pagina.id}">
+      <div class="design-nav-search"><input type="search" placeholder="Filtrar grupos…" data-navfiltro="${pagina.id}"></div>
+      ${nav}
+    </nav>
+    <div class="design-panel" data-pagepanel="${pagina.id}">${paineis}</div>
+  </div>`;
+}
+
+function selecionarGrupo(paginaId, idx){
+  grupoSelecionado[paginaId] = idx;
+  const escopo = document.querySelector(`.pageform[data-page="${paginaId}"]`);
+  if(!escopo) return;
+  escopo.querySelectorAll(".design-nav-item").forEach(b=> b.classList.toggle("on", Number(b.dataset.groupidx)===idx));
+  escopo.querySelectorAll(".design-grupo-panel").forEach(p=> p.style.display = Number(p.dataset.groupidx)===idx ? "block" : "none");
 }
 
 function renderTabs(){
@@ -132,39 +150,32 @@ function renderTabs(){
     renderTabs();
     renderForms();
   });
-  renderToolbar();
 }
 
-function renderToolbar(){
-  const el = document.getElementById("pageToolbar");
-  if(!el) return;
-  const p = SCHEMA.find(x=> x.id===paginaAtiva);
-  const total = p.grupos.reduce((a,g)=> a+g.campos.length, 0);
-  el.innerHTML = `
-    <span class="toolbar-count">${p.grupos.length} grupo${p.grupos.length===1?"":"s"} · ${total} campo${total===1?"":"s"} nesta página</span>
-    <span class="spacer"></span>
-    <button type="button" class="btn ghost sm" id="btnExpandirTudo">Expandir tudo</button>
-    <button type="button" class="btn ghost sm" id="btnRecolherTudo">Recolher tudo</button>`;
-  document.getElementById("btnExpandirTudo").onclick = ()=> alternarTodosGrupos(true);
-  document.getElementById("btnRecolherTudo").onclick = ()=> alternarTodosGrupos(false);
-}
-
-function alternarTodosGrupos(abrir){
-  const p = SCHEMA.find(x=> x.id===paginaAtiva);
-  p.grupos.forEach((g,idx)=> gruposAbertos[paginaAtiva+"::"+idx] = abrir);
-  document.querySelectorAll(`.pageform[data-page="${paginaAtiva}"] .design-grupo`).forEach(el=> el.classList.toggle("open", abrir));
-}
-
+// Monta o HTML de cada página só na primeira visita (nunca mais depois
+// disso) — trocar de aba só troca qual .pageform está visível, então
+// nenhum texto digitado (e ainda não salvo) se perde ao navegar.
 function renderForms(){
   const conteudo = (atual && atual.conteudo) || {};
-  document.getElementById("pageForms").innerHTML = SCHEMA.map(p=>
-    `<div class="pageform" data-page="${p.id}" style="display:${p.id===paginaAtiva?"block":"none"}">${paginaHtml(p, conteudo)}</div>`
-  ).join("");
+  const container = document.getElementById("pageForms");
+  if(container.children.length === 0){
+    container.innerHTML = SCHEMA.map(p=> `<div class="pageform" data-page="${p.id}" style="display:none"></div>`).join("");
+  }
+  container.querySelectorAll(".pageform").forEach(el=>{
+    const pid = el.dataset.page;
+    if(el.dataset.montada !== "1"){
+      const pagina = SCHEMA.find(p=> p.id===pid);
+      el.innerHTML = paginaHtml(pagina, conteudo);
+      el.dataset.montada = "1";
+    }
+    el.style.display = pid===paginaAtiva ? "block" : "none";
+  });
   ligarCampos();
 }
 
 function ligarCampos(){
   document.querySelectorAll("[data-fileinput]").forEach(input=>{
+    if(input.dataset.ligado) return; input.dataset.ligado = "1";
     input.onchange = async ()=>{
       const file = input.files[0];
       if(!file) return;
@@ -187,12 +198,14 @@ function ligarCampos(){
     };
   });
   document.querySelectorAll('input[data-tipo="imagem"], input[data-tipo="midia"]').forEach(input=>{
+    if(input.dataset.ligado) return; input.dataset.ligado = "1";
     input.oninput = ()=>{
       const prev = document.getElementById("prev__"+input.dataset.key);
       if(prev) prev.innerHTML = previewHtml(input.value.trim());
     };
   });
   document.querySelectorAll("[data-aligngroup]").forEach(grupo=>{
+    if(grupo.dataset.ligado) return; grupo.dataset.ligado = "1";
     const key = grupo.dataset.aligngroup;
     const hidden = document.querySelector(`input[type="hidden"][data-key="${CSS.escape(key)}"]`);
     grupo.querySelectorAll("[data-alignval]").forEach(btn=>{
@@ -204,6 +217,7 @@ function ligarCampos(){
     });
   });
   document.querySelectorAll('select[data-tipo="icone"]').forEach(select=>{
+    if(select.dataset.ligado) return; select.dataset.ligado = "1";
     select.onchange = ()=>{
       const icones = window.SoluaIcons || {};
       const icone = icones[select.value];
@@ -211,15 +225,8 @@ function ligarCampos(){
       if(prev && icone) prev.innerHTML = `<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5">${icone.svg}</svg>`;
     };
   });
-  document.querySelectorAll("[data-grupotoggle]").forEach(hd=>{
-    hd.onclick = ()=>{
-      const [pid, idxStr] = hd.dataset.grupotoggle.split("::");
-      const idx = Number(idxStr);
-      gruposAbertos[pid+"::"+idx] = !grupoAberto(pid, idx);
-      hd.closest(".design-grupo").classList.toggle("open", gruposAbertos[pid+"::"+idx]);
-    };
-  });
   document.querySelectorAll("[data-fsgroup]").forEach(grupo=>{
+    if(grupo.dataset.ligado) return; grupo.dataset.ligado = "1";
     const key = grupo.dataset.fsgroup;
     const hidden = document.querySelector(`input[type="hidden"][data-key="${CSS.escape(key+"__tamanho")}"]`);
     const valEl = grupo.querySelector("[data-fsval]");
@@ -233,6 +240,24 @@ function ligarCampos(){
         if(campoEl) campoEl.style.fontSize = v===100 ? "" : (v/100)+"em";
       };
     });
+  });
+  document.querySelectorAll(".design-nav-item").forEach(btn=>{
+    if(btn.dataset.ligado) return; btn.dataset.ligado = "1";
+    btn.onclick = ()=>{
+      const pid = btn.closest("[data-pagenav]").dataset.pagenav;
+      selecionarGrupo(pid, Number(btn.dataset.groupidx));
+    };
+  });
+  document.querySelectorAll("[data-navfiltro]").forEach(input=>{
+    if(input.dataset.ligado) return; input.dataset.ligado = "1";
+    input.oninput = ()=>{
+      const termo = input.value.trim().toLowerCase();
+      const nav = input.closest(".design-nav");
+      nav.querySelectorAll(".design-nav-item").forEach(btn=>{
+        const titulo = btn.querySelector(".dn-title").textContent.toLowerCase();
+        btn.style.display = !termo || titulo.includes(termo) ? "" : "none";
+      });
+    };
   });
 }
 
@@ -272,7 +297,12 @@ document.getElementById("btnSalvarConteudo").onclick = async ()=>{
     const data = await r.json().catch(()=>({}));
     if(r.ok && data.ok){
       UI.toast("Conteúdo salvo — já vale para o site inteiro.","ok");
-      atual = data.settings; renderForms();
+      atual = data.settings;
+      // depois de salvar, remonta tudo do zero pra refletir o que veio do
+      // servidor (ex.: upload de arquivo virou link definitivo) — aqui é
+      // seguro perder o estado do formulário, pois acabamos de salvar
+      document.querySelectorAll(".pageform").forEach(el=> el.dataset.montada = "");
+      renderForms();
     } else {
       UI.toast(data.erro || `Não foi possível salvar (HTTP ${r.status}).`, "err");
     }

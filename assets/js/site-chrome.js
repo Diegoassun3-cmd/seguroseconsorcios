@@ -17,12 +17,12 @@ let WPP = "5519999999999"; // valor padrão — Personalização (CRM) sobrescre
 const wppMsg = t => `https://wa.me/${WPP}?text=${encodeURIComponent(t||"Olá! Vim pelo site e gostaria de falar com um consultor.")}`;
 
 const NAV_LINKS = [
-  {href:"index.html",      page:"home",       label:"Início"},
-  {href:"imoveis.html",    page:"imoveis",    label:"Imóveis"},
-  {href:"seguros.html",    page:"seguros",    label:"Seguros"},
-  {href:"consorcios.html", page:"consorcios", label:"Consórcios"},
-  {href:"sobre.html",      page:"sobre",      label:"A Solua"},
-  {href:"contato.html",    page:"contato",    label:"Contato"}
+  {href:"index.html",      page:"home",       label:"Início",     cms:"nav.inicio"},
+  {href:"imoveis.html",    page:"imoveis",    label:"Imóveis",    cms:"nav.imoveis"},
+  {href:"seguros.html",    page:"seguros",    label:"Seguros",    cms:"nav.seguros"},
+  {href:"consorcios.html", page:"consorcios", label:"Consórcios", cms:"nav.consorcios"},
+  {href:"sobre.html",      page:"sobre",      label:"A Solua",    cms:"nav.sobre"},
+  {href:"contato.html",    page:"contato",    label:"Contato",    cms:"nav.contato"}
 ];
 
 function page(){ return document.body.dataset.page || "home"; }
@@ -52,12 +52,12 @@ function renderHeader(){
       <span class="desc">imóveis, seguros e consórcios.</span>
     </a>
     <nav class="menu">
-      ${NAV_LINKS.map(l=>`<a href="${l.href}" class="${l.page===active?"on":""}">${l.label}</a>`).join("")}
+      ${NAV_LINKS.map(l=>`<a href="${l.href}" class="${l.page===active?"on":""}" data-cms="${l.cms}">${l.label}</a>`).join("")}
     </nav>
     <button class="search-trigger" id="btnSiteSearch" aria-label="Buscar no site">
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M17 17l-4-4" stroke-linecap="round"/></svg>
     </button>
-    <a class="btn hdr" href="contato.html">Fale com um consultor</a>
+    <a class="btn hdr" href="contato.html" data-cms="nav.cta">Fale com um consultor</a>
     <button class="burger" id="bg" aria-label="Menu"><i></i><i></i></button>
   </div>`;
   hd.classList.toggle("on-photo", temFotoTopo());
@@ -68,12 +68,12 @@ function renderHeader(){
 
 const MOB_GROUPS = [
   {titulo:"Produtos", itens:[
-    {href:"imoveis.html", page:"imoveis", label:"Imóveis"},
-    {href:"seguros.html", page:"seguros", label:"Seguros"},
-    {href:"consorcios.html", page:"consorcios", label:"Consórcios"}
+    {href:"imoveis.html", page:"imoveis", label:"Imóveis", cms:"nav.imoveis"},
+    {href:"seguros.html", page:"seguros", label:"Seguros", cms:"nav.seguros"},
+    {href:"consorcios.html", page:"consorcios", label:"Consórcios", cms:"nav.consorcios"}
   ]},
   {titulo:"Institucional", itens:[
-    {href:"sobre.html", page:"sobre", label:"A Solua"},
+    {href:"sobre.html", page:"sobre", label:"A Solua", cms:"nav.sobre"},
     {href:"sobre.html#equipe", page:null, label:"Equipe"},
     {href:"index.html#blog", page:null, label:"Blog"}
   ]},
@@ -92,7 +92,7 @@ function renderMobile(){
       <div class="mob-group">
         <h4>${g.titulo}</h4>
         <div class="sub">
-          ${g.itens.map(it=>`<a href="${it.href}" data-close class="${it.page===active?"on":""}">${it.label}</a>`).join("")}
+          ${g.itens.map(it=>`<a href="${it.href}" data-close class="${it.page===active?"on":""}"${it.cms?` data-cms="${it.cms}"`:""}>${it.label}</a>`).join("")}
         </div>
       </div>`).join("")}
   </nav>
@@ -102,7 +102,7 @@ function renderMobile(){
     <a class="email" href="mailto:contato@solua.com.br" id="mobEmail">contato@solua.com.br</a>
     <a class="wpp-link" href="#" id="mobWpp" target="_blank" rel="noopener" data-close>Conversar no WhatsApp →</a>
   </div>
-  <a class="btn lg" style="width:100%;text-align:center;margin-top:24px" href="contato.html" data-close>Fale com um consultor</a>`;
+  <a class="btn lg" style="width:100%;text-align:center;margin-top:24px" href="contato.html" data-close data-cms="nav.cta">Fale com um consultor</a>`;
   const bg = document.getElementById("bg");
   const closeMob = ()=>{ mob.classList.remove("on"); bg.classList.remove("on"); document.body.style.overflow=""; };
   if(bg){
@@ -120,29 +120,29 @@ function renderFooter(){
     <div class="foot-top">
       <div>
         <span class="mark" data-brand-logo>solua</span>
-        <p>Corretora de seguros e consórcios e imobiliária em Campinas, desde 2001. Um consultor dedicado do primeiro contato ao pós-venda.</p>
+        <p data-cms="footer.descricao">Corretora de seguros e consórcios e imobiliária em Campinas, desde 2001. Um consultor dedicado do primeiro contato ao pós-venda.</p>
       </div>
       <div class="fcol">
-        <h5>Produtos</h5>
-        <a href="imoveis.html">Imóveis</a>
-        <a href="seguros.html">Seguros</a>
-        <a href="consorcios.html">Consórcios</a>
+        <h5 data-cms="footer.col.produtos">Produtos</h5>
+        <a href="imoveis.html" data-cms="nav.imoveis">Imóveis</a>
+        <a href="seguros.html" data-cms="nav.seguros">Seguros</a>
+        <a href="consorcios.html" data-cms="nav.consorcios">Consórcios</a>
       </div>
       <div class="fcol">
-        <h5>Institucional</h5>
-        <a href="sobre.html">A Solua</a>
+        <h5 data-cms="footer.col.institucional">Institucional</h5>
+        <a href="sobre.html" data-cms="nav.sobre">A Solua</a>
         <a href="sobre.html#equipe">Nossa equipe</a>
-        <a href="contato.html">Contato</a>
+        <a href="contato.html" data-cms="nav.contato">Contato</a>
       </div>
       <div class="fcol">
-        <h5>Contato</h5>
+        <h5 data-cms="footer.col.contato">Contato</h5>
         <span id="footEmail">contato@solua.com.br</span>
         <span>Campinas — SP</span>
         <a href="#" id="wppFoot">Falar no WhatsApp</a>
       </div>
     </div>
     <div class="foot-bot">
-      <span>© ${yr} Solua Corretora e Imobiliária — CRECI e SUSEP conforme legislação vigente.</span>
+      <span>© ${yr} <span data-cms="footer.copyright">Solua Corretora e Imobiliária — CRECI e SUSEP conforme legislação vigente.</span></span>
       <span class="staff"><a href="crm/login.html">Acesso da equipe</a></span>
     </div>
   </div>`;

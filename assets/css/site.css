@@ -137,6 +137,30 @@ section{position:relative}
 .blue .lbl,.blue .num{color:rgba(242,237,230,.5)}
 .blue .rule,.blue .sec-head{border-color:rgba(242,237,230,.22)}
 .blue .sec-head .side{color:rgba(242,237,230,.72)}
+
+/* fundo de seção customizado pelo Painel de Design: qualquer .sec pode
+   ganhar uma <div class="sec-bg" data-cms="..." data-cms-media="bg">
+   como plano de fundo (foto, vídeo ou embed) no lugar da cor sólida —
+   mesmo mecanismo do carrossel do hero, só que atrás de uma seção
+   inteira. A camada escura na própria .sec-bg garante contraste; a
+   classe .has-cms-bg na SEÇÃO (aplicada junto, via JS) força texto
+   claro independente da foto escolhida. */
+.sec-bg{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;pointer-events:none}
+.sec-bg.has-cms-bg::before{content:"";position:absolute;inset:0;background:rgba(10,14,20,.5)}
+.sec > .wrap{position:relative;z-index:1}
+.sec.has-cms-bg{color:#fff}
+.sec.has-cms-bg .lbl,.sec.has-cms-bg .num{color:rgba(255,255,255,.6) !important}
+.sec.has-cms-bg .sec-head,.sec.has-cms-bg .rule{border-color:rgba(255,255,255,.22)}
+.sec.has-cms-bg .sec-head .side,.sec.has-cms-bg .ed-block p,.sec.has-cms-bg p{color:rgba(255,255,255,.8) !important}
+.sec.has-cms-bg h1,.sec.has-cms-bg h2,.sec.has-cms-bg h3{color:#fff}
+.sec.has-cms-bg .btn{background:#fff;color:var(--azul);border-color:#fff}
+.sec.has-cms-bg .btn:hover{background:transparent;color:#fff}
+.sec.has-cms-bg .btn.ghost{color:#fff;border-color:rgba(255,255,255,.4)}
+.sec.has-cms-bg .btn.ghost:hover{border-color:#fff}
+/* .bizline é um cartão opaco (fundo próprio) mesmo dentro de uma seção
+   com fundo customizado — nunca deve virar texto claro sobre cartão claro */
+.sec.has-cms-bg .bizline h3{color:var(--tinta)}
+.sec.has-cms-bg .bizline p{color:var(--tinta-60) !important}
 .blue .btn{background:var(--creme);color:var(--azul);border-color:var(--creme)}
 .blue .btn:hover{background:transparent;color:var(--creme);box-shadow:0 10px 22px rgba(0,0,0,.18)}
 .blue .filt{border-color:rgba(242,237,230,.35);color:rgba(242,237,230,.75)}

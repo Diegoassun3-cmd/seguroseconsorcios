@@ -8,7 +8,12 @@
      data-cms="chave"                         → aplica o valor
      data-cms-media="bg"                      → o elemento é um fundo
                                                  (imagem OU vídeo OU
-                                                 embed do YouTube/Vimeo)
+                                                 embed do YouTube/Vimeo) —
+                                                 numa <section class="sec">,
+                                                 ganha a classe .has-cms-bg
+                                                 (camada escura + texto
+                                                 claro, ver site.css) e some
+                                                 se o campo for esvaziado
      (sem data-cms-media, tag <img>)          → define o "src"
      data-cms-tipo="toggle"                   → mostra/esconde o elemento
      data-cms-tipo="alinhamento"              → define text-align do elemento
@@ -35,8 +40,20 @@ function paraEmbed(u){
 }
 
 function aplicarMidiaFundo(el, url){
-  if(!url) return;
   el.querySelectorAll(":scope > video, :scope > iframe.cms-embed").forEach(n=> n.remove());
+  // "sec-bg" é um plano de fundo dedicado dentro de uma <section class="sec">
+  // (não pode reaproveitar o data-cms da própria seção, que já é o toggle de
+  // mostrar/esconder) — quando é o caso, a seção também ganha a classe, pra
+  // forçar texto claro por cima da foto (ver .sec.has-cms-bg em site.css)
+  const secao = el.classList.contains("sec-bg") ? el.closest(".sec") : null;
+  if(!url){
+    el.style.backgroundImage = "";
+    el.classList.remove("has-cms-bg");
+    if(secao) secao.classList.remove("has-cms-bg");
+    return;
+  }
+  el.classList.add("has-cms-bg");
+  if(secao) secao.classList.add("has-cms-bg");
   const embed = paraEmbed(url);
   if(ehVideoUrl(url)){
     el.style.backgroundImage = "none";

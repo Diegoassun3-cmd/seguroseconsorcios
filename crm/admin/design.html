@@ -22,20 +22,26 @@
   .icon-preview{width:44px;height:44px;flex:none;border-radius:8px;background:var(--creme-2);display:flex;align-items:center;justify-content:center;color:var(--tinta)}
   .icon-preview svg{width:24px;height:24px}
 
-  /* ---------- ferramentas do topo (contador + expandir/recolher) ---------- */
-  .design-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-  .toolbar-count{font-size:12.5px;color:var(--tinta-45)}
-
-  /* ---------- grupos recolhíveis ---------- */
-  .design-grupo{margin-bottom:14px;overflow:hidden}
-  .design-grupo .grupo-hd{cursor:pointer;user-select:none;transition:background .15s}
-  .design-grupo .grupo-hd:hover{background:var(--creme-2)}
-  .design-grupo .card-bd{display:none}
-  .design-grupo.open .card-bd{display:block}
-  .grupo-meta{display:flex;align-items:center;gap:10px;color:var(--tinta-45)}
-  .grupo-count{background:var(--creme-2);padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:700;letter-spacing:.02em}
-  .chev{width:14px;height:14px;flex:none;transition:transform .2s}
-  .design-grupo.open .chev{transform:rotate(180deg)}
+  /* ---------- layout mestre-detalhe: grupos à esquerda, campos à direita ---------- */
+  .design-layout{display:grid;grid-template-columns:240px 1fr;gap:20px;align-items:start}
+  .design-nav{background:#fff;border:1px solid var(--linha);border-radius:var(--raio);overflow:hidden;position:sticky;top:20px}
+  .design-nav-search{padding:10px;border-bottom:1px solid var(--linha)}
+  .design-nav-search input{width:100%;box-sizing:border-box;border:1px solid var(--linha-forte);border-radius:8px;padding:8px 10px;font-size:12.5px;outline:none}
+  .design-nav-search input:focus{border-color:var(--azul)}
+  .design-nav-item{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;padding:12px 14px;border:none;border-bottom:1px solid var(--linha);background:#fff;cursor:pointer;font-size:13px;color:var(--tinta-60);transition:background .15s,color .15s}
+  .design-nav-item:last-child{border-bottom:none}
+  .design-nav-item:hover{background:var(--creme-2)}
+  .design-nav-item.on{background:var(--azul-fundo);color:var(--azul);font-weight:600;box-shadow:inset 3px 0 0 var(--azul)}
+  .dn-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .dn-meta{display:flex;align-items:center;gap:6px;flex:none;color:inherit;opacity:.7}
+  .dn-meta svg{width:13px;height:13px}
+  .dn-count{background:rgba(0,0,0,.06);padding:2px 7px;border-radius:99px;font-size:10.5px;font-weight:700}
+  .design-nav-item.on .dn-count{background:rgba(0,75,165,.14)}
+  .design-panel{background:#fff;border:1px solid var(--linha);border-radius:var(--raio);box-shadow:var(--sombra);min-width:0}
+  .design-grupo-panel{padding:20px 22px}
+  .dp-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--linha)}
+  .dp-hd h3{font-size:16px}
+  .dp-count{font-size:12px;color:var(--tinta-45)}
 
   /* ---------- rótulo + controle de tamanho de texto (A- / A+) ---------- */
   .field-label-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
@@ -54,11 +60,17 @@
   .switch input:checked + .switch-track{background:var(--azul)}
   .switch input:checked + .switch-track::before{transform:translateX(16px)}
 
+  @media(max-width:860px){
+    .design-layout{grid-template-columns:1fr}
+    .design-nav{position:static;display:flex;flex-wrap:wrap;padding:6px}
+    .design-nav-search{flex:1 1 100%;border-bottom:none}
+    .design-nav-item{width:auto;flex:1 1 auto;border-bottom:none;border-radius:8px;justify-content:center}
+    .design-nav-item.on{box-shadow:none}
+  }
   @media(max-width:480px){
     .midia-row{flex-direction:column}
     .midia-preview{width:100%;height:110px}
     .field-label-row{flex-direction:column;align-items:flex-start;gap:8px}
-    .design-toolbar{flex-wrap:wrap}
   }
 </style>
 <script defer src="../../assets/js/branding.js"></script>
@@ -69,18 +81,17 @@
   <aside class="sidebar" id="sidebar"></aside>
   <div class="main">
     <header class="topbar" id="topbar"></header>
-    <main class="content content-narrow">
+    <main class="content">
 
       <div class="card" style="margin-bottom:16px">
         <div class="card-bd" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <span style="font-size:13px;color:var(--tinta-60)">Editor visual do site público: troque qualquer texto, foto ou vídeo por página, sem código. Salvo no banco real (D1), aplicado para todo mundo.</span>
+          <span style="font-size:13px;color:var(--tinta-60)">Editor visual do site público: troque qualquer texto, foto, vídeo, fundo de seção ou ícone — sem código. Salvo no banco real (D1), aplicado para todo mundo. Escolha uma página nas abas, depois um grupo na lista à esquerda.</span>
           <span class="spacer"></span>
           <span id="apiStatus"></span>
         </div>
       </div>
 
       <div class="tabs" id="pageTabs"></div>
-      <div class="design-toolbar" id="pageToolbar"></div>
       <div id="pageForms"></div>
 
       <div class="demo-hint" style="margin:16px 0">Fotos pequenas (até ~200KB) podem ser enviadas direto pelo botão de arquivo. Para vídeos, ou imagens maiores, cole um link — de um arquivo <code>.mp4</code>/<code>.webm</code> hospedado, ou de um vídeo do YouTube/Vimeo.</div>

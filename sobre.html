@@ -23,7 +23,7 @@
 <section class="hero-photo" style="min-height:50vh" id="heroSobre">
   <div class="slide on" data-cms="sobre.hero.midia" data-cms-media="bg" style="background-image:url('https://picsum.photos/seed/solua-sobre-hero/1800/1000')"></div>
   <div class="scrim"></div>
-  <div class="in">
+  <div class="in" data-cms="sobre.hero.alinhamento" data-cms-tipo="alinhamento">
     <span class="lbl">/ Desde 2001 · Campinas</span>
     <h1 style="font-size:clamp(38px,7vw,84px)" data-cms="sobre.hero.titulo">Uma corretora de bairro<br>com estrutura de mercado.</h1>
   </div>
@@ -61,20 +61,22 @@
 </section>
 
 <section id="equipe" class="sec" style="background:var(--papel)" data-cms="sobre.equipe.visivel" data-cms-tipo="toggle">
+  <div class="sec-bg" data-cms="sobre.equipe.fundo" data-cms-media="bg"></div>
   <div class="wrap rev">
     <div class="sec-head">
-      <div><span class="num">/ Equipe</span><h2>Quem cuida do seu atendimento.</h2></div>
-      <p class="side">Um consultor dedicado por área — sem revezamento, sem call center.</p>
+      <div><span class="num" data-cms="sobre.equipe.numero">/ Equipe</span><h2 data-cms="sobre.equipe.titulo">Quem cuida do seu atendimento.</h2></div>
+      <p class="side" data-cms="sobre.equipe.texto">Um consultor dedicado por área — sem revezamento, sem call center.</p>
     </div>
     <div class="team-grid" id="teamGrid"></div>
   </div>
 </section>
 
-<section class="sec blue" style="text-align:center">
+<section class="sec blue" style="text-align:center" data-cms="sobre.ctafinal.visivel" data-cms-tipo="toggle">
+  <div class="sec-bg" data-cms="sobre.ctafinal.fundo" data-cms-media="bg"></div>
   <div class="wrap rev">
     <span class="lbl">/ Fale com a gente</span>
-    <h2 style="font-size:clamp(30px,5vw,56px);margin:18px auto 26px;max-width:16ch">Vamos cuidar do seu próximo passo.</h2>
-    <a class="btn lg" href="contato.html">Fale com um consultor</a>
+    <h2 style="font-size:clamp(30px,5vw,56px);margin:18px auto 26px;max-width:16ch" data-cms="sobre.ctafinal.titulo">Vamos cuidar do seu próximo passo.</h2>
+    <a class="btn lg" href="contato.html" data-cms="sobre.ctafinal.botao">Fale com um consultor</a>
   </div>
 </section>
 
