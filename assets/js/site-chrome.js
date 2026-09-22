@@ -50,15 +50,43 @@ function renderHeader(){
   hd.classList.toggle("solid", scrollY>40);
 }
 
+const MOB_GROUPS = [
+  {titulo:"Produtos", itens:[
+    {href:"imoveis.html", page:"imoveis", label:"Imóveis"},
+    {href:"seguros.html", page:"seguros", label:"Seguros"},
+    {href:"consorcios.html", page:"consorcios", label:"Consórcios"}
+  ]},
+  {titulo:"Institucional", itens:[
+    {href:"sobre.html", page:"sobre", label:"A Solua"},
+    {href:"sobre.html#equipe", page:null, label:"Equipe"},
+    {href:"index.html#blog", page:null, label:"Blog"}
+  ]},
+  {titulo:"Contato", itens:[
+    {href:"contato.html", page:"contato", label:"Fale conosco"}
+  ]}
+];
+
 function renderMobile(){
   const mob = document.getElementById("mob");
   if(!mob) return;
   const active = page();
   mob.innerHTML = `
-  <nav>
-    ${NAV_LINKS.map(l=>`<a href="${l.href}" data-close class="${l.page===active?"on":""}">${l.label}</a>`).join("")}
+  <nav class="mob-nav">
+    ${MOB_GROUPS.map(g=>`
+      <div class="mob-group">
+        <h4>${g.titulo}</h4>
+        <div class="sub">
+          ${g.itens.map(it=>`<a href="${it.href}" data-close class="${it.page===active?"on":""}">${it.label}</a>`).join("")}
+        </div>
+      </div>`).join("")}
   </nav>
-  <a class="btn lg" style="width:100%;text-align:center" href="contato.html" data-close>Fale com um consultor</a>`;
+  <div class="mob-rule"></div>
+  <div class="mob-cta-block">
+    <span class="lbl">/ Vamos conversar?</span>
+    <a class="email" href="mailto:contato@solua.com.br" id="mobEmail">contato@solua.com.br</a>
+    <a class="wpp-link" href="#" id="mobWpp" target="_blank" rel="noopener" data-close>Conversar no WhatsApp →</a>
+  </div>
+  <a class="btn lg" style="width:100%;text-align:center;margin-top:24px" href="contato.html" data-close>Fale com um consultor</a>`;
   const bg = document.getElementById("bg");
   const closeMob = ()=>{ mob.classList.remove("on"); bg.classList.remove("on"); document.body.style.overflow=""; };
   if(bg){
@@ -114,10 +142,20 @@ function renderWppFloat(){
 }
 
 function refreshWppLinks(){
-  ["wppFix","wppFoot"].forEach(id=>{ const el=document.getElementById(id); if(el) el.href = wppMsg(); });
+  ["wppFix","wppFoot","mobWpp"].forEach(id=>{ const el=document.getElementById(id); if(el) el.href = wppMsg(); });
 }
 
 window.SoluaSite = { setWhatsapp(numero){ if(numero){ WPP = numero; refreshWppLinks(); } }, wppLink: wppMsg };
+
+// e-mail de contato exibido no rodapé e no menu mobile — Personalização sobrescreve via /api/settings
+document.addEventListener("solua:branding", e=>{
+  const email = e.detail && e.detail.emailRemetente;
+  if(!email) return;
+  ["footEmail","mobEmail"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el){ el.textContent = email; if(el.tagName==="A") el.href = "mailto:"+email; }
+  });
+});
 
 // ---------- reveal on scroll ----------
 const io = new IntersectionObserver(es=> es.forEach(e=> e.isIntersecting && e.target.classList.add("in")), {threshold:.08});
