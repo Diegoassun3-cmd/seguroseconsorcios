@@ -19,6 +19,8 @@
     <header class="topbar" id="topbar"></header>
     <main class="content">
 
+      <div class="page-hd" id="pageHd"></div>
+
       <div class="kpis" id="kpis"></div>
 
       <div class="two-col">
@@ -36,8 +38,8 @@
           <div class="card">
             <div class="card-hd"><h3>Imóveis × Seguros × Consórcios</h3></div>
             <div class="card-bd">
-              <div id="splitBars"></div>
-              <a class="btn sm ghost block" style="margin-top:14px" href="pipeline-imoveis.html">Ver pipeline de Imóveis →</a>
+              <div class="barchart" id="splitBars"></div>
+              <a class="btn sm ghost block" style="margin-top:18px" href="pipeline-imoveis.html">Ver pipeline de Imóveis →</a>
               <a class="btn sm ghost block" style="margin-top:8px" href="pipeline-seguros.html">Ver pipeline de Seguros →</a>
               <a class="btn sm ghost block" style="margin-top:8px" href="pipeline-consorcios.html">Ver pipeline de Consórcios →</a>
             </div>
@@ -62,27 +64,61 @@
 const DB = window.SoluaDB;
 const iconFor = t=>({lead_criado:"👤",estagio_alterado:"↗️",nota:"📝",campanha_enviada:"📣",usuario_login:"🔑",automacao:"🤖"}[t]||"•");
 
+// ícones simples (mesma linha visual dos outros SVGs à mão do site: stroke,
+// sem preenchimento) — um por KPI, só decorativo
+const KPI_ICOS = {
+  funil: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-6 8v5l-4 2v-7z"/></svg>`,
+  check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5"/></svg>`,
+  cifrao: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M16 7.5c0-1.9-1.8-3-4-3s-4 1.1-4 2.8c0 3.7 8 1.9 8 5.7 0 1.7-1.8 3-4 3s-4-1.1-4-3"/></svg>`,
+  camadas: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg>`
+};
+
+// resolve o consultor por trás de uma atividade (via o lead ligado a ela, ou
+// direto quando a própria atividade já é de um usuário) pra mostrar o avatar
+// de verdade — sem inventar autor pra atividades sem um responsável claro
+function avatarPara(a){
+  let user = null;
+  if(a.leadId){ const lead = DB.getLead(a.leadId); if(lead && lead.consultorId) user = DB.getUsuario(lead.consultorId); }
+  else if(a.usuarioId){ user = DB.getUsuario(a.usuarioId); }
+  if(user) return `<span class="avatar" style="background:${user.avatarBg||"#004BA5"}">${DB.iniciais(user.nome)}</span>`;
+  return `<span class="avatar" style="background:var(--creme-2);color:var(--tinta-45)">${iconFor(a.tipo)}</span>`;
+}
+
 function renderDashboard(){
+  const me = DB.currentUser();
+  const primeiroNome = (me && me.nome ? me.nome.split(" ")[0] : "");
+  document.getElementById("pageHd").innerHTML = `
+    <h1>Bem-vindo${primeiroNome?`, <em>${DB.esc(primeiroNome)}</em>`:""}.</h1>
+    <p>Um resumo rápido do funil e da atividade dos últimos dias.</p>`;
+
   const s = DB.dashboardStats();
   document.getElementById("kpis").innerHTML = `
-    <div class="kpi"><span class="lbl">Leads no funil</span><b>${s.abertos}</b><span class="delta">${s.novos7d} novos nos últimos 7 dias</span></div>
-    <div class="kpi"><span class="lbl">Fechados (apólice / contemplado)</span><b>${s.ganhos}</b><span class="delta up">${s.taxaConversao}% de conversão total</span></div>
-    <div class="kpi"><span class="lbl">Valor em negociação</span><b>${DB.formatBRL(s.valorEmAberto)}</b><span class="delta">soma dos leads em aberto</span></div>
-    <div class="kpi"><span class="lbl">Base total</span><b>${s.total}</b><span class="delta">${s.imovel} imóveis · ${s.seguro} seguros · ${s.consorcio} consórcios</span></div>
+    <div class="kpi accent"><span class="kpi-ico">${KPI_ICOS.funil}</span><span class="lbl">Leads no funil</span><b>${s.abertos}</b><span class="delta">${s.novos7d} novos nos últimos 7 dias</span></div>
+    <div class="kpi"><span class="kpi-ico">${KPI_ICOS.check}</span><span class="lbl">Fechados (apólice / contemplado)</span><b>${s.ganhos}</b><span class="delta up">${s.taxaConversao}% de conversão total</span></div>
+    <div class="kpi"><span class="kpi-ico">${KPI_ICOS.cifrao}</span><span class="lbl">Valor em negociação</span><b>${DB.formatBRL(s.valorEmAberto)}</b><span class="delta">soma dos leads em aberto</span></div>
+    <div class="kpi"><span class="kpi-ico">${KPI_ICOS.camadas}</span><span class="lbl">Base total</span><b>${s.total}</b><span class="delta">${s.imovel} imóveis · ${s.seguro} seguros · ${s.consorcio} consórcios</span></div>
   `;
 
+  // cores checadas com o validador de paleta da skill de dataviz (contraste
+  // e distinção pra daltonismo) na MESMA ordem em que as linhas aparecem —
+  // trocar a ordem das linhas exige revalidar o par adjacente
   const max = Math.max(s.imovel, s.seguro, s.consorcio, 1);
-  const barra = (label, valor, cor)=>`
-    <div style="margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px"><span>${label}</span><b>${valor}</b></div>
-      <div style="height:8px;border-radius:100px;background:var(--creme-2)"><div style="height:100%;border-radius:100px;width:${(valor/max)*100}%;background:${cor}"></div></div>
+  const linha = (label, valor, cor)=>{
+    const pct = s.total ? Math.round((valor/s.total)*100) : 0;
+    return `<div class="bc-row">
+      <div class="bc-hd">
+        <span class="bc-name">${label}</span>
+        <span class="bc-nums"><b>${valor}</b><span class="bc-pct">${pct}% da base</span></span>
+      </div>
+      <div class="bc-track"><div class="bc-fill" style="width:${(valor/max)*100}%;background:${cor}"></div></div>
     </div>`;
+  };
   document.getElementById("splitBars").innerHTML =
-    barra("Imóveis", s.imovel, "#7A4FB5") + barra("Seguros", s.seguro, "var(--azul)") + barra("Consórcios", s.consorcio, "var(--amarelo)").replace('margin-bottom:14px','margin-bottom:0');
+    linha("Imóveis", s.imovel, "var(--roxo-vivo)") + linha("Seguros", s.seguro, "var(--azul)") + linha("Consórcios", s.consorcio, "var(--amarelo)");
 
   document.getElementById("feed").innerHTML = DB.getActivity(14).map(a=>`
-    <div class="feed-item"><span class="feed-dot"></span>
-      <div><p>${iconFor(a.tipo)} ${DB.esc(a.descricao)}</p><time>${DB.timeAgo(a.data)}</time></div>
+    <div class="feed-item">${avatarPara(a)}
+      <div><p>${DB.esc(a.descricao)}</p><time>${DB.timeAgo(a.data)}</time></div>
     </div>`).join("") || `<div class="empty">${window.SoluaUI.emptyState("Sem atividade ainda.")}</div>`;
 }
 renderDashboard();

@@ -366,6 +366,24 @@ prevista (percentual estimado por produto — ajustável no topo de
 partir dos negócios já fechados no CRM — não existe ainda um sistema
 financeiro/contábil por trás.
 
+### Hierarquia visual do CRM (Dashboard, Financeiro, Disparos)
+
+O Dashboard (`crm/dashboard.html`) ganhou uma saudação no topo, um
+cartão de destaque com cor sólida (a métrica mais importante da tela) e
+um ícone por indicador — mesmo padrão aplicado em Financeiro e Disparos
+(classes `.kpi.accent` e `.kpi-ico` em `assets/css/crm.css`). O gráfico
+de barras "Imóveis × Seguros × Consórcios" (e o equivalente em
+Financeiro, "Vendas por produto") usa um componente novo (`.barchart`
+/`.bc-row`) com rótulo direto, valor e participação percentual em cada
+linha. As cores categóricas (Imóveis/Seguros/Consórcios) foram checadas
+com o validador de paleta da skill de dataviz do Claude Code
+(`validate_palette.js`) — a combinação antiga (roxo `--roxo` + azul da
+marca) não passava no teste de daltonismo por ficarem próximas demais;
+o gráfico usa `--roxo-vivo` (só ali, não nos badges) para resolver isso.
+A atividade recente do Dashboard agora mostra o avatar de verdade do
+consultor responsável pelo lead relacionado a cada evento (sem inventar
+autor quando não há um consultor associado).
+
 ## Para produção (multiusuário completo)
 
 ### 1. Migrar leads/equipe/templates/campanhas/catálogo de imóveis para D1

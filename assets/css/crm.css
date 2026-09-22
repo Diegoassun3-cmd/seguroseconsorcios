@@ -10,6 +10,10 @@
   --linha:rgba(21,24,28,.12); --linha-forte:rgba(21,24,28,.2);
   --verde:#1E8E5A; --verde-fundo:#E7F5EE; --amarelo:#B8862B; --amarelo-fundo:#FBF1E1; --vermelho:#B0453D; --vermelho-fundo:#FBEAE8;
   --roxo:#7A4FB5; --roxo-fundo:color-mix(in srgb, #7A4FB5 12%, white);
+  /* tom usado só no gráfico de barras do dashboard (nunca nos badges .imovel,
+     que ficam com --roxo) — mais afastado de --azul pra continuar distinguível
+     por quem tem daltonismo (checado com scripts/validate_palette.js) */
+  --roxo-vivo:#9B5DE5;
   --sombra:0 1px 2px rgba(21,24,28,.04), 0 8px 24px -12px rgba(21,24,28,.12);
   --sombra-lg:0 20px 60px -20px rgba(21,24,28,.28);
   --raio:10px; --raio-sm:7px;
@@ -97,24 +101,51 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:400;letter-spacing:-.02e
 .content{padding:26px;flex:1}
 .content-narrow{max-width:920px}
 
+/* ---------- CABEÇALHO DE PÁGINA (saudação) ---------- */
+.page-hd{margin-bottom:22px}
+.page-hd h1{font-size:clamp(22px,3vw,28px)}
+.page-hd h1 em{color:var(--azul);font-style:normal}
+.page-hd p{font-size:13.5px;color:var(--tinta-45);margin-top:4px}
+
 /* ---------- KPI / CARDS ---------- */
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
-.kpi{background:#fff;border:1px solid var(--linha);border-radius:var(--raio);padding:18px 20px;box-shadow:var(--sombra)}
-.kpi .lbl{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-45);font-weight:600}
-.kpi b{display:block;font-family:var(--font-display);font-weight:400;font-size:30px;letter-spacing:-.02em;margin-top:8px}
+.kpi{position:relative;background:#fff;border:1px solid var(--linha);border-radius:var(--raio);padding:18px 20px;box-shadow:var(--sombra);overflow:hidden}
+.kpi-ico{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--azul-fundo);color:var(--azul)}
+.kpi-ico svg{width:17px;height:17px}
+.kpi .lbl{display:block;max-width:calc(100% - 44px);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-45);font-weight:600}
+.kpi b{display:block;font-family:var(--font-display);font-weight:400;font-size:32px;letter-spacing:-.02em;margin-top:10px}
 .kpi .delta{font-size:12px;margin-top:6px;color:var(--tinta-45)}
 .kpi .delta.up{color:var(--verde)}
+.kpi.accent{background:var(--azul);border-color:var(--azul)}
+.kpi.accent .lbl{color:rgba(255,255,255,.7)}
+.kpi.accent b{color:#fff}
+.kpi.accent .delta{color:rgba(255,255,255,.65)}
+.kpi.accent .delta.up{color:#BFE7D2}
+.kpi.accent .kpi-ico{background:rgba(255,255,255,.16);color:#fff}
 .card{background:#fff;border:1px solid var(--linha);border-radius:var(--raio);box-shadow:var(--sombra)}
 .card .card-hd{padding:18px 20px;border-bottom:1px solid var(--linha);display:flex;justify-content:space-between;align-items:center;gap:12px}
 .card .card-hd h3{font-size:15px}
 .card .card-bd{padding:20px}
 .two-col{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;align-items:start}
 
+/* ---------- GRÁFICO DE BARRAS (Imóveis × Seguros × Consórcios) ---------- */
+.barchart{display:flex;flex-direction:column;gap:16px}
+.bc-row{display:block;width:100%;text-align:left;background:none;border:none;padding:6px 8px;margin:0 -8px;border-radius:8px;cursor:default;transition:background .15s}
+.bc-row:hover,.bc-row:focus-visible{background:var(--creme-2)}
+.bc-hd{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;margin-bottom:7px}
+.bc-hd .bc-name{color:var(--tinta);font-weight:600}
+.bc-hd .bc-nums{display:flex;align-items:baseline;gap:6px}
+.bc-hd b{font-family:var(--font-display);font-weight:400;font-size:15px}
+.bc-hd .bc-pct{color:var(--tinta-45);font-size:11.5px}
+.bc-track{height:10px;border-radius:100px;background:var(--creme-2);overflow:hidden}
+.bc-fill{height:100%;border-radius:100px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+
 /* ---------- FEED / TIMELINE ---------- */
 .feed{display:flex;flex-direction:column}
 .feed-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--linha)}
 .feed-item:last-child{border-bottom:none}
 .feed-dot{width:8px;height:8px;border-radius:50%;background:var(--azul);margin-top:6px;flex:none}
+.feed-item .avatar{width:32px;height:32px;font-size:11px;flex:none}
 .feed-item p{font-size:13.5px}
 .feed-item time{font-size:11.5px;color:var(--tinta-35)}
 

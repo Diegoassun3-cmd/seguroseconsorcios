@@ -73,11 +73,17 @@ function renderKpis(){
   const totalAbertos = enviadas.reduce((s,c)=>s+c.metrics.abertos,0);
   const totalRespostas = enviadas.reduce((s,c)=>s+c.metrics.respostas,0);
   const taxa = totalEnviados ? Math.round((totalAbertos/totalEnviados)*100) : 0;
+  const ICO = {
+    megafone: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4a1 1 0 001 1h2l5 4V5L6 9H4a1 1 0 00-1 1z"/><path d="M16 8a4 4 0 010 8M19 5a8 8 0 010 14"/></svg>`,
+    pessoas: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M2.5 20a6.5 6.5 0 0113 0"/><circle cx="17.5" cy="9" r="2.3"/><path d="M15.5 20a5 5 0 015.5-5"/></svg>`,
+    abrir: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>`,
+    resposta: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 11-3.3-6.4"/><path d="M21 4v5h-5"/></svg>`
+  };
   document.getElementById("dispKpis").innerHTML = `
-    <div class="kpi"><span class="lbl">Campanhas enviadas</span><b>${enviadas.length}</b><span class="delta">${camps.length-enviadas.length} em rascunho/agendadas</span></div>
-    <div class="kpi"><span class="lbl">Contatos alcançados</span><b>${totalEnviados}</b><span class="delta">somando todos os envios</span></div>
-    <div class="kpi"><span class="lbl">Taxa média de abertura</span><b>${taxa}%</b><span class="delta up">e-mail + WhatsApp</span></div>
-    <div class="kpi"><span class="lbl">Respostas geradas</span><b>${totalRespostas}</b><span class="delta">leads reativados por disparo</span></div>`;
+    <div class="kpi accent"><span class="kpi-ico">${ICO.megafone}</span><span class="lbl">Campanhas enviadas</span><b>${enviadas.length}</b><span class="delta">${camps.length-enviadas.length} em rascunho/agendadas</span></div>
+    <div class="kpi"><span class="kpi-ico">${ICO.pessoas}</span><span class="lbl">Contatos alcançados</span><b>${totalEnviados}</b><span class="delta">somando todos os envios</span></div>
+    <div class="kpi"><span class="kpi-ico">${ICO.abrir}</span><span class="lbl">Taxa média de abertura</span><b>${taxa}%</b><span class="delta up">e-mail + WhatsApp</span></div>
+    <div class="kpi"><span class="kpi-ico">${ICO.resposta}</span><span class="lbl">Respostas geradas</span><b>${totalRespostas}</b><span class="delta">leads reativados por disparo</span></div>`;
 }
 
 function openDetail(id){
