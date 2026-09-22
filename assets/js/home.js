@@ -24,7 +24,6 @@ if(heroEl){
     s.style.backgroundImage = `url("${url}")`;
     heroEl.insertBefore(s, scrimEl);
   });
-  heroEl.insertAdjacentHTML("beforeend", window.SoluaChrome.renderSelo({cmsKey:"home.hero.selo", texto:"25 ANOS SOLUA DESDE 2001", pos:"br"}));
   const dots = document.getElementById("heroDots");
   dots.innerHTML = heroPhotos.map((_,i)=>`<button data-i="${i}" class="${i===0?"on":""}"></button>`).join("");
   let idx = 0;
@@ -54,16 +53,17 @@ if(propEl){
         <div class="specs"><span>${i.quartos} dorm.</span><span>${i.vagas} vaga(s)</span><span>${i.areaM2} m²</span></div>
       </div>
     </a>`).join("");
-  if(destaques.length) propEl.insertAdjacentHTML("beforeend", window.SoluaChrome.renderFloatCard({
-    icone:"🏠", titulo:`${DB.getImoveis().length} imóveis`, texto:"no catálogo completo, com filtros por tipo e preço.", pos:"corner-br"
-  }));
 }
 
-/* CARTÃO FLUTUANTE — bloco editorial de Seguros */
-const edSeguros = document.getElementById("edSeguros");
-if(edSeguros) edSeguros.insertAdjacentHTML("beforeend", window.SoluaChrome.renderFloatCard({
-  icone:"✓", titulo:"+15 seguradoras", texto:"comparadas antes de você decidir.", pos:"corner-br"
-}));
+/* CARTÕES FLUTUANTES — nos vãos entre seções, nunca sobre foto/texto */
+const gapCard1 = document.getElementById("gapCard1");
+if(gapCard1) gapCard1.innerHTML = window.SoluaChrome.renderGapCard({
+  align:"center", icone:"🏠", titulo:`${DB.getImoveis().length} imóveis`, texto:"no catálogo completo, com filtros por tipo e preço."
+});
+const gapCard2 = document.getElementById("gapCard2");
+if(gapCard2) gapCard2.innerHTML = window.SoluaChrome.renderGapCard({
+  align:"right", icone:"✓", titulo:"+15 seguradoras", texto:"comparadas antes de você decidir."
+});
 
 /* MARQUEE DE PARCEIROS */
 const marcas = ["Porto Seguro","Bradesco Seguros","SulAmérica","Allianz","HDI","Tokio Marine","Azul Seguros","Porto Bank","Ademicon","Mapfre","Zurich","Liberty"];

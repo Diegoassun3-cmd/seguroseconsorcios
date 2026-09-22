@@ -94,23 +94,19 @@
 .team-card span{font-size:13px;color:var(--tinta-60)}
 @media(max-width:860px){ .team-grid{grid-template-columns:repeat(2,1fr)} }
 
-/* ---------- cartão flutuante (pop-in, entre a foto e o espaço em branco) ---------- */
-.float-card{position:absolute;z-index:4;background:var(--creme);border-radius:14px;box-shadow:0 18px 40px -12px rgba(21,24,28,.28);padding:16px 18px;max-width:230px;display:flex;gap:12px;align-items:flex-start;
+/* ---------- cartão flutuante (pop-in, no vão entre duas seções) ---------- */
+.gap-band{padding:6px 0 44px;display:flex}
+.gap-band.center{justify-content:center;text-align:left}
+.gap-band.left{justify-content:flex-start}
+.gap-band.right{justify-content:flex-end}
+.float-card{max-width:280px;background:var(--creme);border-radius:14px;box-shadow:0 14px 34px -14px rgba(21,24,28,.3);padding:16px 18px;display:flex;gap:12px;align-items:flex-start;
   opacity:0;transform:scale(.85) translateY(10px);transition:opacity .5s cubic-bezier(.2,.8,.3,1.1),transform .5s cubic-bezier(.2,.8,.3,1.1)}
-.float-card.in{opacity:1;transform:scale(1) translateY(0)}
+.float-card.in{opacity:1;transform:none}
 .float-card .ico{width:34px;height:34px;border-radius:50%;background:var(--azul);color:var(--creme);display:flex;align-items:center;justify-content:center;font-size:15px;flex:none}
 .float-card b{display:block;font-size:13.5px;letter-spacing:-.01em;margin-bottom:2px}
 .float-card span{font-size:12px;color:var(--tinta-60);line-height:1.4;display:block}
-.float-card.corner-br{right:-18px;bottom:-24px}
-.float-card.corner-bl{left:-18px;bottom:-24px}
-.float-card.corner-tr{right:-18px;top:-24px}
-.float-card.edge-r{right:-40px;top:50%;transform:translateY(-50%) scale(.85)}
-.float-card.edge-r.in{transform:translateY(-50%) scale(1)}
-@media(max-width:960px){
-  .float-card{max-width:190px;padding:13px 14px;font-size:12px}
-  .float-card.corner-br,.float-card.corner-bl{right:10px;left:auto;bottom:-18px}
-  .float-card.edge-r{position:static;transform:none;margin-top:14px;box-shadow:var(--sombra,0 8px 24px -12px rgba(21,24,28,.18))}
-  .float-card.edge-r.in{transform:none}
+@media(max-width:640px){
+  .float-card{max-width:none;width:100%}
 }
 
 /* ---------- busca do site ---------- */
@@ -138,17 +134,6 @@ header.solid .search-trigger,.blue .search-trigger{border-color:rgba(21,24,28,.2
   .search-box{max-width:none;height:100%;max-height:none;border-radius:0}
 }
 
-/* ---------- selo giratório (figurinha sobre as fotos) ---------- */
-.selo{position:absolute;width:118px;height:118px;z-index:3;pointer-events:none;filter:drop-shadow(0 4px 14px rgba(0,0,0,.25))}
-.selo.br{right:calc(var(--pad) - 10px);bottom:26px}
-.selo.bl{left:calc(var(--pad) - 10px);bottom:26px}
-.selo.tr{right:calc(var(--pad) - 10px);top:26px}
-.selo svg.selo-anel{width:100%;height:100%;animation:selo-girar 17s linear infinite}
-.selo text{fill:var(--creme);font-family:var(--font-body);font-weight:700;text-transform:uppercase}
-.selo-centro{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.selo-centro span{width:38px;height:38px;border-radius:50%;background:var(--azul);color:var(--creme);display:flex;align-items:center;justify-content:center;font-size:16px}
-@keyframes selo-girar{to{transform:rotate(360deg)}}
-@media(max-width:640px){.selo{width:88px;height:88px}.selo-centro span{width:28px;height:28px;font-size:12px}}
 
 /* ---------- contato ---------- */
 .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}

@@ -9,9 +9,6 @@ const consorcios = [
 ];
 window.SoluaProductList.render(consorcios, "conList", "conTabs");
 
-const heroCon = document.getElementById("heroConsorcios");
-if(heroCon) heroCon.insertAdjacentHTML("beforeend", window.SoluaChrome.renderSelo({cmsKey:"consorcios.hero.selo", texto:"SEM JUROS PORTO BANK ADEMICON", pos:"br"}));
-
 const faqs = [
  ["Qual a diferença entre consórcio e financiamento?","No financiamento você paga juros ao banco e leva o bem na hora. No consórcio não há juros — apenas taxa de administração — e o bem vem na contemplação, por sorteio ou lance. Consórcio é para quem pode planejar; financiamento, para quem tem pressa."],
  ["Posso usar o FGTS no consórcio de imóvel?","Sim, em muitos casos. O FGTS pode ser usado para dar lance, complementar a carta de crédito ou amortizar parcelas, respeitando as regras da Caixa e da administradora. Analisamos seu caso antes de qualquer contratação."],

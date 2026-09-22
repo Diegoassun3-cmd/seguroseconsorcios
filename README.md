@@ -231,27 +231,23 @@ Para adicionar um novo campo editável (ex.: mais um bloco de texto):
    foto/vídeo, ou `data-cms-tipo="toggle"` se for mostrar/esconder algo).
 Não precisa mexer no Worker — o blob `conteudo` é livre.
 
-### Selo giratório (figurinha sobre as fotos)
-
-Um selo circular animado (texto girando ao redor de um ícone fixo,
-`assets/js/site-chrome.js` → `renderSelo()`) aparece sobre as fotos de
-capa da Home, Seguros, Consórcios e Sobre — o mesmo efeito de "carimbo"
-usado em sites de produto, adaptado à identidade mais sóbria da Solua. O
-texto de cada selo é editável em Design (ex.: `home.hero.selo`).
-
 ### Cartões flutuantes ("pop-ups" que aparecem e ficam parados)
 
-`assets/js/site-chrome.js` → `renderFloatCard()` gera um cartãozinho
-branco (ícone + título curto + texto) que aparece com uma animação de
-"pop" (escala + opacidade, via `IntersectionObserver` — mesma lista
-`.rev`/`.float-card` observada em `observeReveals()`) quando a seção
-entra na tela, e depois **fica parado** — sem nenhuma animação contínua.
-Fica posicionado no limite entre uma imagem e o espaço em branco ao
-lado, tipo um aviso ou destaque rápido. Hoje aparece na Home (vitrine de
-imóveis e bloco de Seguros) e no catálogo de imóveis; para adicionar em
-outro lugar, chame `window.SoluaChrome.renderFloatCard({icone, titulo,
-texto, pos})` (`pos`: `corner-br`, `corner-bl`, `corner-tr` ou `edge-r`)
-e insira o HTML dentro de um contêiner com `position:relative`.
+`assets/js/site-chrome.js` → `renderGapCard({icone, titulo, texto,
+align})` gera um cartãozinho branco (ícone + título curto + texto) e o
+posiciona num "vão" — um `<div>` vazio colocado entre duas `<section>`
+no HTML (ex.: `<div id="gapCard1"></div>` entre a seção de imóveis em
+destaque e a de Seguros), nunca por cima de uma foto ou texto. Ele
+aparece com uma animação de "pop" (escala + opacidade, via
+`IntersectionObserver`, mesma lista `.float-card` observada em
+`observeReveals()`) quando o vão entra na tela, e depois **fica
+parado** — sem nenhuma animação contínua. `align` controla o lado
+(`left`, `center` ou `right`); no mobile o cartão sempre vira largura
+cheia. Hoje aparece duas vezes na Home e uma no catálogo de imóveis;
+para adicionar em outro lugar, marque um `<div id="meuGap"></div>`
+entre duas seções no HTML e, no JS da página, faça
+`document.getElementById("meuGap").innerHTML =
+window.SoluaChrome.renderGapCard({...})`.
 
 ### Busca do site
 

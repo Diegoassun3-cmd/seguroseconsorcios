@@ -56,9 +56,6 @@ function aplicarConteudo(conteudo){
     const val = conteudo[key];
     if(el.dataset.cmsTipo === "toggle"){
       el.style.display = (val === false) ? "none" : "";
-    } else if(el.dataset.cmsTipo === "selo"){
-      const tp = el.querySelector("textPath");
-      if(tp && val) tp.textContent = "• " + val + " ";
     } else if(el.dataset.cmsTipo === "banner"){
       el.textContent = val || "";
       el.style.display = val ? "block" : "none";

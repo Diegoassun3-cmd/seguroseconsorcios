@@ -193,32 +193,20 @@ document.addEventListener("DOMContentLoaded", ()=>{
   animateCounters();
 });
 
-// ---------- selo giratório (figurinha decorativa sobre fotos) ----------
-let seloSeq = 0;
-function renderSelo(opts){
-  opts = opts || {};
-  const id = "seloPath"+(seloSeq++);
-  const texto = opts.texto || "SOLUA";
-  const pos = opts.pos || "br";
-  const icone = opts.icone || "★";
-  return `<div class="selo ${pos}" data-cms="${opts.cmsKey||""}" data-cms-tipo="selo" aria-hidden="true">
-    <svg class="selo-anel" viewBox="0 0 120 120">
-      <defs><path id="${id}" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs>
-      <text font-size="9" letter-spacing="2"><textPath href="#${id}" startOffset="0%">• ${texto} </textPath></text>
-    </svg>
-    <span class="selo-centro"><span>${icone}</span></span>
-  </div>`;
-}
-
 // ---------- cartão flutuante (pop-in, aparece conforme o scroll e fica parado) ----------
+// Fica dentro de um "vão" (gap-band) entre duas seções — nunca sobre uma
+// foto ou texto — para não sobrepor conteúdo em nenhuma largura de tela.
 function renderFloatCard(opts){
   opts = opts || {};
-  const pos = opts.pos || "corner-br";
-  return `<div class="float-card ${pos}">
+  return `<div class="float-card">
     <span class="ico">${opts.icone||"★"}</span>
     <span><b>${opts.titulo||""}</b><span>${opts.texto||""}</span></span>
   </div>`;
 }
+function renderGapCard(opts){
+  const align = (opts && opts.align) || "center";
+  return `<div class="wrap"><div class="gap-band ${align}">${renderFloatCard(opts)}</div></div>`;
+}
 
-window.SoluaChrome = { observeReveals, animateCounters, page, renderSelo, renderFloatCard };
+window.SoluaChrome = { observeReveals, animateCounters, page, renderFloatCard, renderGapCard };
 })();

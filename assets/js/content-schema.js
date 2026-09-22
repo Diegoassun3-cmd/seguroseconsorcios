@@ -22,8 +22,7 @@
 
 const SCHEMA = [
   { id:"home", label:"Home", grupos:[
-    { titulo:"Selo e hero (topo)", campos:[
-      {key:"home.hero.selo", label:"Texto do selo giratório", tipo:"texto", placeholder:"★ 25 ANOS • DESDE 2001 • SOLUA •"},
+    { titulo:"Hero (topo)", campos:[
       {key:"home.hero.titulo", label:"Título principal", tipo:"texto", placeholder:"25 anos ao seu lado."},
       {key:"home.hero.subtitulo", label:"Subtítulo", tipo:"textarea", placeholder:"Imóveis, seguros e consórcios para cada etapa da sua vida…"},
       {key:"home.hero.midia1", label:"Foto ou vídeo de fundo 1", tipo:"midia"},
@@ -66,8 +65,7 @@ const SCHEMA = [
     ]}
   ]},
   { id:"seguros", label:"Seguros", grupos:[
-    { titulo:"Selo e hero", campos:[
-      {key:"seguros.hero.selo", label:"Texto do selo giratório", tipo:"texto"},
+    { titulo:"Hero", campos:[
       {key:"seguros.hero.titulo", label:"Título", tipo:"texto"},
       {key:"seguros.hero.subtitulo", label:"Subtítulo", tipo:"textarea"},
       {key:"seguros.hero.midia", label:"Foto ou vídeo de fundo", tipo:"midia"}
@@ -79,8 +77,7 @@ const SCHEMA = [
     ]}
   ]},
   { id:"consorcios", label:"Consórcios", grupos:[
-    { titulo:"Selo e hero", campos:[
-      {key:"consorcios.hero.selo", label:"Texto do selo giratório", tipo:"texto"},
+    { titulo:"Hero", campos:[
       {key:"consorcios.hero.titulo", label:"Título", tipo:"texto"},
       {key:"consorcios.hero.subtitulo", label:"Subtítulo", tipo:"textarea"},
       {key:"consorcios.hero.midia", label:"Foto ou vídeo de fundo", tipo:"midia"}
@@ -90,8 +87,7 @@ const SCHEMA = [
     ]}
   ]},
   { id:"sobre", label:"Sobre", grupos:[
-    { titulo:"Selo e hero", campos:[
-      {key:"sobre.hero.selo", label:"Texto do selo giratório", tipo:"texto"},
+    { titulo:"Hero", campos:[
       {key:"sobre.hero.titulo", label:"Título", tipo:"texto"},
       {key:"sobre.hero.midia", label:"Foto ou vídeo de fundo", tipo:"midia"}
     ]},

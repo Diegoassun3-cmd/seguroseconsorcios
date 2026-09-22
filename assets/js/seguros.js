@@ -13,9 +13,6 @@ const seguros = [
 ];
 window.SoluaProductList.render(seguros, "segList", "segTabs");
 
-const heroSeg = document.getElementById("heroSeguros");
-if(heroSeg) heroSeg.insertAdjacentHTML("beforeend", window.SoluaChrome.renderSelo({cmsKey:"seguros.hero.selo", texto:"CONSULTORIA HUMANA SEM ROBÔ", pos:"br"}));
-
 const faqs = [
  ["Vocês cobram alguma taxa pela cotação?","Não. A cotação e a consultoria são gratuitas. A corretora é remunerada pela seguradora quando você contrata — e isso não encarece sua apólice."],
  ["Por que cotar com uma corretora e não direto no site da seguradora?","Porque no site você vê uma proposta; com a gente você vê o mercado. Comparamos coberturas, franquias e condições entre várias companhias e explicamos as diferenças que a tabela não mostra — além de estarmos ao seu lado na hora do sinistro."],
