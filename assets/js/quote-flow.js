@@ -31,7 +31,6 @@ function shellHtml(ramo){
   <div class="form-shell">
     <aside class="form-aside">
       <div>
-        <span class="lbl">/ Simulador Solua</span>
         <div class="prog" id="qProg">
           <div data-s="1"><i>01</i> ${seg?"Seu seguro":"Seu consórcio"}</div>
           <div data-s="2"><i>02</i> Seus dados</div>

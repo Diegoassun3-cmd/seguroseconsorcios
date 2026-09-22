@@ -133,7 +133,6 @@ const SCHEMA = [
     { titulo:"Administradoras parceiras", campos:[
       {key:"consorcios.administradoras.visivel", label:"Mostrar este bloco", tipo:"toggle"},
       {key:"consorcios.administradoras.fundo", label:"Fundo da seção", tipo:"midia"},
-      {key:"consorcios.administradoras.numero", label:"Rótulo pequeno", tipo:"texto", placeholder:"/ Administradoras parceiras"},
       {key:"consorcios.administradoras.titulo", label:"Título", tipo:"texto", placeholder:"Quem administra o seu grupo."},
       {key:"consorcios.administradoras.porto.titulo", label:"Porto Bank — título", tipo:"texto"},
       {key:"consorcios.administradoras.porto.texto", label:"Porto Bank — texto", tipo:"textarea"},
@@ -172,7 +171,6 @@ const SCHEMA = [
     { titulo:"Equipe", campos:[
       {key:"sobre.equipe.visivel", label:"Mostrar a seção de equipe", tipo:"toggle"},
       {key:"sobre.equipe.fundo", label:"Fundo da seção", tipo:"midia"},
-      {key:"sobre.equipe.numero", label:"Rótulo pequeno", tipo:"texto", placeholder:"/ Equipe"},
       {key:"sobre.equipe.titulo", label:"Título", tipo:"texto", placeholder:"Quem cuida do seu atendimento."},
       {key:"sobre.equipe.texto", label:"Texto", tipo:"textarea", placeholder:"Um consultor dedicado por área…"}
     ]},
@@ -185,9 +183,7 @@ const SCHEMA = [
   ]},
   { id:"contato", label:"Contato", grupos:[
     { titulo:"Hero", campos:[
-      {key:"contato.hero.titulo", label:"Título", tipo:"texto", placeholder:"Vamos conversar."},
-      {key:"contato.hero.rotulo1", label:"Rótulo esquerdo", tipo:"texto", placeholder:"/ Contato"},
-      {key:"contato.hero.rotulo2", label:"Rótulo direito", tipo:"texto", placeholder:"/ Resposta em até 1 dia útil"}
+      {key:"contato.hero.titulo", label:"Título", tipo:"texto", placeholder:"Vamos conversar."}
     ]},
     { titulo:"Informações de contato", campos:[
       {key:"contato.info.endereco", label:"Endereço", tipo:"texto"},

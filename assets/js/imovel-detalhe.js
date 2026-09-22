@@ -67,7 +67,7 @@ body.innerHTML = `
   ${galleryHtml()}
   <div class="prop-detail-grid">
     <div>
-      <span class="num">/ ${imovel.tipo}</span>
+      <span class="num">${imovel.tipo}</span>
       <h1 style="font-size:clamp(30px,4.4vw,50px);letter-spacing:-.03em;margin:10px 0 6px">${DB.esc(imovel.titulo)}</h1>
       <p style="color:var(--tinta-60);margin-bottom:22px">${DB.esc(imovel.bairro)}, ${DB.esc(imovel.cidade)}</p>
       <div style="font-family:var(--font-display);font-size:32px;color:var(--azul);margin-bottom:26px">${imovel.finalidade==="locacao"?DB.formatBRL(imovel.valor)+"/mês":DB.formatBRL(imovel.valor)}</div>

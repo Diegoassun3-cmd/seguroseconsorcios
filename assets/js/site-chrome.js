@@ -98,7 +98,6 @@ function renderMobile(){
   </nav>
   <div class="mob-rule"></div>
   <div class="mob-cta-block">
-    <span class="lbl">/ Vamos conversar?</span>
     <a class="email" href="mailto:contato@solua.com.br" id="mobEmail">contato@solua.com.br</a>
     <a class="wpp-link" href="#" id="mobWpp" target="_blank" rel="noopener" data-close>Conversar no WhatsApp →</a>
   </div>

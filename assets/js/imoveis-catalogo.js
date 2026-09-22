@@ -25,7 +25,7 @@ function renderGrid(){
   const itens = DB.filterImoveis(filtro);
   document.getElementById("propGrid").innerHTML = itens.map(cardHtml).join("");
   document.getElementById("propEmpty").style.display = itens.length ? "none" : "block";
-  document.getElementById("propCountLbl").textContent = `/ ${itens.length} imóve${itens.length===1?"l":"is"}`;
+  document.getElementById("propCountLbl").textContent = `${itens.length} imóve${itens.length===1?"l":"is"}`;
   window.SoluaChrome.observeReveals();
 }
 
