@@ -62,7 +62,6 @@ const SCHEMA = [
     ]},
     { titulo:"Seção Imóveis em destaque", campos:[
       {key:"home.imoveis.visivel", label:"Mostrar esta seção na Home", tipo:"toggle"},
-      {key:"home.imoveis.numero", label:"Rótulo pequeno", tipo:"texto", placeholder:"/ 01 — Imóveis"},
       {key:"home.imoveis.titulo", label:"Título", tipo:"texto", placeholder:"Selecionados para você."},
       {key:"home.imoveis.texto", label:"Texto", tipo:"textarea", placeholder:"Uma amostra do catálogo…"},
       {key:"home.imoveis.botao", label:"Botão — texto", tipo:"texto", placeholder:"Ver catálogo completo"}

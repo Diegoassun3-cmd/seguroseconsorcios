@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendário — CRM Solua</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23004BA5'/></svg>">
+<link rel="preload" href="../assets/fonts/Nyata-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/crm.css">
+<script defer src="../assets/js/branding.js"></script>
+</head>
+<body data-base="./" data-active="calendario" data-title="Calendário" data-crumbs="CRM Solua">
+
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar" id="topbar"></header>
+    <main class="content">
+
+      <div class="demo-hint" style="margin-bottom:16px">Mostra os leads com uma data de "Próximo contato" marcada (defina no drawer de cada lead). Sincronizar com o Google Agenda exigiria conectar credenciais reais do Google (OAuth) — ver README, seção "Calendário e Google Agenda".</div>
+
+      <div class="cal-layout">
+        <div class="card">
+          <div class="card-hd cal-header">
+            <button class="btn ghost sm" id="btnMesAnterior" aria-label="Mês anterior">←</button>
+            <h3 id="calTitulo" style="flex:1;text-align:center"></h3>
+            <button class="btn ghost sm" id="btnMesProximo" aria-label="Próximo mês">→</button>
+            <button class="btn sm" id="btnHoje" style="margin-left:10px">Hoje</button>
+          </div>
+          <div class="card-bd">
+            <div class="cal-grid" id="calGrid"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h3 id="calDetalheTitulo">Selecione um dia</h3></div>
+          <div class="card-bd"><div id="calDetalhe"></div></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="../assets/js/crm-data.js"></script>
+<script src="../assets/js/crm-ui.js"></script>
+<script src="../assets/js/crm-leaddrawer.js"></script>
+<script src="../assets/js/crm-calendario.js"></script>
+</body>
+</html>

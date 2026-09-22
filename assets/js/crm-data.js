@@ -136,6 +136,8 @@
   // migração leve: contas a pagar/receber é uma seção nova — começa vazia de
   // propósito (é dado financeiro real, nunca fictício), só garante o array.
   if(!Array.isArray(STATE.contasFinanceiras)){ STATE.contasFinanceiras = []; save(STATE); }
+  // migração leve: mural de avisos é uma seção nova — começa vazia.
+  if(!Array.isArray(STATE.avisos)){ STATE.avisos = []; save(STATE); }
 
   function uid(prefix){ return (prefix||"id")+"_"+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4); }
   function nowISO(){ return new Date().toISOString(); }
@@ -196,7 +198,7 @@
         rodape:"Resposta em até 1 dia útil", botoes:[{tipo:"resposta_rapida", texto:"Pode mandar"}]}
     ];
 
-    return { leads:[], templates, campaigns:[], equipe: EQUIPE_SEED, imoveis: IMOVEIS_SEED.map(i=>Object.assign({},i)), contasFinanceiras:[], activity:[], session:null };
+    return { leads:[], templates, campaigns:[], equipe: EQUIPE_SEED, imoveis: IMOVEIS_SEED.map(i=>Object.assign({},i)), contasFinanceiras:[], avisos:[], activity:[], session:null };
   }
 
   function labelEstagio(produto, estagioId){
@@ -354,6 +356,27 @@
   }
   function deleteConta(id){
     STATE.contasFinanceiras = STATE.contasFinanceiras.filter(c=>c.id!==id); save(STATE);
+  }
+
+  // -------------------- MURAL DE AVISOS --------------------
+  // Quadro compartilhado, visível pra toda a equipe — qualquer pessoa
+  // logada pode postar um aviso ou anotação; fixado sobe pro topo.
+  function getAvisos(){
+    return STATE.avisos.slice().sort((a,b)=>{
+      if(!!b.fixado !== !!a.fixado) return (b.fixado?1:0)-(a.fixado?1:0);
+      return new Date(b.criadoEm) - new Date(a.criadoEm);
+    });
+  }
+  function addAviso(data){
+    const a = Object.assign({id:uid("aviso"), autorId:null, texto:"", fixado:false, criadoEm:nowISO()}, data);
+    STATE.avisos.unshift(a); save(STATE); return a;
+  }
+  function updateAviso(id, patch){
+    const a = STATE.avisos.find(x=>x.id===id); if(!a) return null;
+    Object.assign(a, patch); save(STATE); return a;
+  }
+  function deleteAviso(id){
+    STATE.avisos = STATE.avisos.filter(a=>a.id!==id); save(STATE);
   }
 
   // -------------------- TEMPLATES --------------------
@@ -631,6 +654,7 @@
     getEquipe, getUsuario, addUsuario, updateUsuario, deleteUsuario,
     getImoveis, getImovel, addImovel, updateImovel, deleteImovel, filterImoveis,
     getContas, getConta, addConta, updateConta, deleteConta,
+    getAvisos, addAviso, updateAviso, deleteAviso,
     getTemplates, getTemplate, addTemplate, updateTemplate, deleteTemplate,
     getAudience, getCampaigns, getCampaign, addCampaign, updateCampaign, deleteCampaign, sendCampaignNow,
     login, logout, currentUser, requireAuth,

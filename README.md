@@ -414,6 +414,43 @@ pista visual; agora cada card mostra um ícone de "alça" ao passar o
 mouse e a barra de filtros lembra que dá pra arrastar ou clicar no card
 para mudar a etapa manualmente.
 
+### Mural de avisos (Dashboard)
+
+No topo do Dashboard (`crm/dashboard.html`) tem um mural compartilhado,
+visível pra toda a equipe: qualquer pessoa loga e escreve um aviso ou
+anotação (reunião, lembrete, recado geral), com opção de "fixar no
+topo". Cada aviso mostra o avatar e nome de quem escreveu e há quanto
+tempo, e pode ser apagado por quem escreveu ou por um Administrador.
+Guardado em `STATE.avisos` (mesma camada de `localStorage` do resto do
+CRM, funções `getAvisos/addAviso/updateAviso/deleteAviso` em
+`assets/js/crm-data.js`) — como é local ao navegador, "visível pra toda
+a equipe" hoje significa "visível pra quem usa o mesmo navegador/perfil
+de demonstração"; num ambiente multiusuário de verdade (ver seção
+"Para produção" abaixo, item 1), os avisos migram para D1 junto com o
+resto e passam a aparecer de fato pra todo mundo, em qualquer
+dispositivo.
+
+### Calendário e Google Agenda
+
+Nova página `crm/calendario.html` (item "Calendário" no menu lateral):
+um calendário de mês normal, com o dia de hoje destacado, navegação por
+mês anterior/próximo e um atalho "Hoje". Cada dia mostra um "chip" com
+o nome dos leads que têm aquela data marcada como **"Próximo contato"**
+(o mesmo campo usado na agenda do Dashboard, editável no drawer de
+qualquer lead) — clicar num dia abre um painel de detalhe com os
+contatos daquele dia, e clicar num contato abre o lead direto.
+
+**Sobre "conectar com o Google"**: o calendário acima é 100% real,
+construído em cima dos dados que já existem no CRM — não é uma
+maquete. Uma sincronização de verdade com o Google Agenda (importar
+eventos do Google, ou exportar os "Próximos contatos" pra lá) exigiria
+configurar credenciais OAuth reais do Google Cloud (client ID/secret,
+tela de consentimento, escopo `calendar`) e um fluxo de autorização por
+usuário — isso depende de credenciais que só o dono do projeto pode
+criar (não é algo que dá pra simular sem inventar uma integração que
+não funciona de verdade). Não foi implementado por esse motivo; é um
+passo natural a seguir se quiser essa integração de verdade.
+
 ## Para produção (multiusuário completo)
 
 ### 1. Migrar leads/equipe/templates/campanhas/catálogo de imóveis para D1

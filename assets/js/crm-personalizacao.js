@@ -57,17 +57,17 @@ function preencher(s){
 
 function logoPreview(url){
   const el = document.getElementById("logoPreview");
-  el.innerHTML = url ? `<img src="${url}" alt="Logo" style="max-height:48px;max-width:200px">` : `<span style="color:var(--tinta-45);font-size:13px">Sem logo — o site usa o texto "solua"</span>`;
+  el.innerHTML = url ? `<img src="${url}" alt="Logo" style="max-height:48px;max-width:200px">` : `<span style="color:var(--tinta-45);font-size:13px">Sem logo</span>`;
 }
 
 function logoEscuroPreview(url){
   const el = document.getElementById("logoEscuroPreview");
-  el.innerHTML = url ? `<img src="${url}" alt="Logo (fundo escuro)" style="max-height:48px;max-width:200px">` : `<span style="color:rgba(242,237,230,.6);font-size:13px">Sem versão escura — usa a mesma logo/texto</span>`;
+  el.innerHTML = url ? `<img src="${url}" alt="Logo (fundo escuro)" style="max-height:48px;max-width:200px">` : `<span style="color:rgba(242,237,230,.6);font-size:13px">Sem versão escura</span>`;
 }
 
 function faviconPreview(url){
   const el = document.getElementById("faviconPreview");
-  el.innerHTML = url ? `<img src="${url}" alt="Favicon" style="max-height:32px;max-width:32px">` : `<span style="color:var(--tinta-45);font-size:13px">Sem ícone customizado — usa o padrão da marca</span>`;
+  el.innerHTML = url ? `<img src="${url}" alt="Favicon" style="max-height:32px;max-width:32px">` : `<span style="color:var(--tinta-45);font-size:13px">Sem ícone</span>`;
 }
 
 function atualizarPreviewCor(hex){

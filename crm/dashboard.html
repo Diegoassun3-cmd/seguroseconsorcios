@@ -21,6 +21,17 @@
 
       <div class="page-hd" id="pageHd"></div>
 
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-hd">
+          <h3>Mural de avisos</h3>
+          <span class="badge neutro">visível pra toda a equipe</span>
+        </div>
+        <div class="card-bd">
+          <div class="mural-form" id="muralForm"></div>
+          <div class="mural-list" id="muralList"></div>
+        </div>
+      </div>
+
       <div class="kpis" id="kpis"></div>
 
       <div class="card" style="margin-bottom:16px">
@@ -97,12 +108,72 @@ function avatarPara(a){
   return `<span class="avatar" style="background:var(--creme-2);color:var(--tinta-45)">${iconFor(a.tipo)}</span>`;
 }
 
+// ---------- Mural de avisos (compartilhado, visível pra toda a equipe) ----------
+function renderMuralForm(){
+  const me = DB.currentUser();
+  document.getElementById("muralForm").innerHTML = `
+    <div class="field" style="margin-bottom:10px">
+      <textarea id="muralTexto" rows="2" placeholder="Escreva um aviso ou anotação pra equipe…"></textarea>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tinta-60);cursor:pointer">
+        <input type="checkbox" id="muralFixar" style="width:15px;height:15px;accent-color:var(--azul)"> Fixar no topo
+      </label>
+      <span class="spacer"></span>
+      <button class="btn sm" id="btnPublicarAviso">Publicar aviso</button>
+    </div>`;
+  document.getElementById("btnPublicarAviso").onclick = ()=>{
+    const campo = document.getElementById("muralTexto");
+    const texto = campo.value.trim();
+    if(!texto) return;
+    DB.addAviso({texto, autorId: me?me.id:null, fixado: document.getElementById("muralFixar").checked});
+    campo.value = "";
+    document.getElementById("muralFixar").checked = false;
+    renderMuralList();
+    window.SoluaUI.toast("Aviso publicado pra equipe.","ok");
+  };
+}
+function renderMuralList(){
+  const me = DB.currentUser();
+  const avisos = DB.getAvisos();
+  const el = document.getElementById("muralList");
+  if(!avisos.length){
+    el.innerHTML = `<div class="empty" style="padding:16px 10px">${window.SoluaUI.emptyState("Nenhum aviso ainda — seja o primeiro a publicar algo pra equipe.")}</div>`;
+    return;
+  }
+  el.innerHTML = avisos.map(a=>{
+    const autor = a.autorId ? DB.getUsuario(a.autorId) : null;
+    const avatar = autor
+      ? `<span class="avatar" style="background:${autor.avatarBg||"#004BA5"}">${DB.iniciais(autor.nome)}</span>`
+      : `<span class="avatar" style="background:var(--creme-2);color:var(--tinta-45)">?</span>`;
+    const podeExcluir = me && (me.papel==="Administrador" || a.autorId===me.id);
+    return `<div class="mural-item ${a.fixado?"fixado":""}">
+      ${avatar}
+      <div class="mural-body">
+        <div class="mural-hd">
+          <b>${autor?DB.esc(autor.nome):"Alguém da equipe"}</b>
+          ${a.fixado?'<span class="tagchip">📌 Fixado</span>':""}
+          <time>${DB.timeAgo(a.criadoEm)}</time>
+        </div>
+        <p>${DB.esc(a.texto)}</p>
+      </div>
+      ${podeExcluir?`<button class="mural-del" data-delaviso="${a.id}" title="Remover aviso" aria-label="Remover aviso">×</button>`:""}
+    </div>`;
+  }).join("");
+  el.querySelectorAll("[data-delaviso]").forEach(btn=>{
+    btn.onclick = ()=>{ DB.deleteAviso(btn.dataset.delaviso); renderMuralList(); };
+  });
+}
+
 function renderDashboard(){
   const me = DB.currentUser();
   const primeiroNome = (me && me.nome ? me.nome.split(" ")[0] : "");
   document.getElementById("pageHd").innerHTML = `
     <h1>Bem-vindo${primeiroNome?`, <em>${DB.esc(primeiroNome)}</em>`:""}.</h1>
     <p>Um resumo rápido do funil e da atividade dos últimos dias.</p>`;
+
+  renderMuralForm();
+  renderMuralList();
 
   const s = DB.dashboardStats();
   document.getElementById("kpis").innerHTML = `

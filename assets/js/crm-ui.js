@@ -29,14 +29,16 @@ const ICO = {
   logout:'<path d="M8 3H4.5A1.5 1.5 0 003 4.5v11A1.5 1.5 0 004.5 17H8M13 14l4-4-4-4M7 10h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
   search:'<circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M17 17l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
   menu:'<path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
-  empty:'<path d="M3 8l2.5-4h9L17 8M3 8v8a1 1 0 001 1h12a1 1 0 001-1V8M3 8h4.2c.3 1.2 1.4 2 2.8 2s2.5-.8 2.8-2H17" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>'
+  empty:'<path d="M3 8l2.5-4h9L17 8M3 8v8a1 1 0 001 1h12a1 1 0 001-1V8M3 8h4.2c.3 1.2 1.4 2 2.8 2s2.5-.8 2.8-2H17" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>',
+  calendario:'<rect x="3" y="4" width="14" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 8h14M6.5 2.5v3M13.5 2.5v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="7" cy="11.5" r="1" fill="currentColor" stroke="none"/><circle cx="10" cy="11.5" r="1" fill="currentColor" stroke="none"/><circle cx="13" cy="11.5" r="1" fill="currentColor" stroke="none"/>'
 };
 function svg(name){ return `<svg viewBox="0 0 20 20">${ICO[name]||""}</svg>`; }
 
 const isAdmin = ME && ME.papel === "Administrador";
 const NAV = [
   {group:"Visão geral", items:[
-    {href:"dashboard.html", key:"dashboard", label:"Dashboard", ico:"dash"}
+    {href:"dashboard.html", key:"dashboard", label:"Dashboard", ico:"dash"},
+    {href:"calendario.html", key:"calendario", label:"Calendário", ico:"calendario"}
   ]},
   {group:"Pipelines", items:[
     {href:"pipeline-imoveis.html", key:"pipeline-imoveis", label:"Imóveis", ico:"imovel", count:()=>DB.getLeadsByProduto("imovel").filter(l=>l.estagio!=="perdido"&&l.estagio!=="fechado").length},

@@ -140,6 +140,37 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:400;letter-spacing:-.02e
 .bc-track{height:10px;border-radius:100px;background:var(--creme-2);overflow:hidden}
 .bc-fill{height:100%;border-radius:100px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
 
+/* ---------- CALENDÁRIO ---------- */
+.cal-layout{display:grid;grid-template-columns:2fr 1fr;gap:16px;align-items:start}
+.cal-header{gap:8px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--linha);border:1px solid var(--linha);border-radius:var(--raio-sm);overflow:hidden}
+.cal-dow{background:var(--creme);padding:8px 4px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--tinta-45)}
+.cal-day{background:#fff;border:none;min-height:88px;padding:8px 6px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:5px;font:inherit;transition:background .15s}
+.cal-day:hover{background:var(--creme-2)}
+.cal-day.outro-mes{background:var(--papel);color:var(--tinta-35)}
+.cal-day.outro-mes:hover{background:var(--creme-2)}
+.cal-daynum{font-size:13px;font-weight:600;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.cal-day.hoje .cal-daynum{background:var(--azul);color:#fff}
+.cal-day.sel{box-shadow:inset 0 0 0 2px var(--azul)}
+.cal-chips{display:flex;flex-direction:column;gap:2px}
+.cal-chip{font-size:10.5px;padding:2px 6px;border-radius:4px;background:var(--azul-fundo);color:var(--azul);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-chip-more{font-size:10.5px;color:var(--tinta-45)}
+@media(max-width:1180px){ .cal-layout{grid-template-columns:1fr} }
+@media(max-width:640px){ .cal-day{min-height:60px} .cal-chips{display:none} }
+
+/* ---------- MURAL DE AVISOS ---------- */
+.mural-item{display:flex;gap:12px;padding:12px 4px;border-bottom:1px solid var(--linha);position:relative}
+.mural-item:last-child{border-bottom:none}
+.mural-item.fixado{background:var(--azul-fundo);border-radius:8px;padding:12px;margin-bottom:6px;border-bottom:none}
+.mural-item .avatar{flex:none}
+.mural-body{flex:1;min-width:0;padding-right:26px}
+.mural-hd{display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap}
+.mural-hd b{font-size:13.5px}
+.mural-hd time{font-size:11.5px;color:var(--tinta-35);margin-left:auto}
+.mural-body p{font-size:13.5px;color:var(--tinta-60);white-space:pre-wrap;line-height:1.5}
+.mural-del{position:absolute;top:8px;right:4px;width:22px;height:22px;border-radius:50%;border:none;background:transparent;color:var(--tinta-35);font-size:16px;line-height:1;cursor:pointer}
+.mural-del:hover{background:var(--creme-2);color:var(--vermelho)}
+
 /* ---------- AGENDA (próximos contatos) ---------- */
 .agenda{display:flex;flex-direction:column}
 .agenda-row{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--linha);cursor:pointer;transition:background .15s}
