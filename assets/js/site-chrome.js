@@ -27,6 +27,20 @@ const NAV_LINKS = [
 
 function page(){ return document.body.dataset.page || "home"; }
 
+function temFotoTopo(){
+  const primeira = document.body.querySelector(":scope > section");
+  return !!(primeira && primeira.classList.contains("hero-photo"));
+}
+
+function refreshHeaderLogo(){
+  const hd = document.getElementById("hd");
+  if(!hd) return;
+  const mark = hd.querySelector("[data-brand-logo]");
+  if(!mark || !window.SoluaAplicarLogoContexto) return;
+  const fundoEscuro = hd.classList.contains("on-photo") && !hd.classList.contains("solid");
+  window.SoluaAplicarLogoContexto(mark, fundoEscuro);
+}
+
 function renderHeader(){
   const hd = document.getElementById("hd");
   if(!hd) return;
@@ -46,8 +60,10 @@ function renderHeader(){
     <a class="btn hdr" href="contato.html">Fale com um consultor</a>
     <button class="burger" id="bg" aria-label="Menu"><i></i><i></i></button>
   </div>`;
-  addEventListener("scroll", ()=> hd.classList.toggle("solid", scrollY>40));
-  hd.classList.toggle("solid", scrollY>40);
+  hd.classList.toggle("on-photo", temFotoTopo());
+  const atualizar = ()=>{ hd.classList.toggle("solid", scrollY>40); refreshHeaderLogo(); };
+  addEventListener("scroll", atualizar);
+  atualizar();
 }
 
 const MOB_GROUPS = [
@@ -208,5 +224,5 @@ function renderGapCard(opts){
   return `<div class="wrap"><div class="gap-band ${align}">${renderFloatCard(opts)}</div></div>`;
 }
 
-window.SoluaChrome = { observeReveals, animateCounters, page, renderFloatCard, renderGapCard };
+window.SoluaChrome = { observeReveals, animateCounters, page, renderFloatCard, renderGapCard, refreshHeaderLogo };
 })();

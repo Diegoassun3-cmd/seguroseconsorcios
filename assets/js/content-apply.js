@@ -11,6 +11,9 @@
                                                  embed do YouTube/Vimeo)
      (sem data-cms-media, tag <img>)          → define o "src"
      data-cms-tipo="toggle"                   → mostra/esconde o elemento
+     data-cms-tipo="alinhamento"              → define text-align do elemento
+     data-cms-tipo="icone"                    → troca o miolo de um <svg> por
+                                                 um ícone de assets/js/icon-library.js
      (nenhum dos casos acima)                 → define o texto (textContent)
    =========================================================== */
 (function(){
@@ -59,6 +62,11 @@ function aplicarConteudo(conteudo){
     } else if(el.dataset.cmsTipo === "banner"){
       el.textContent = val || "";
       el.style.display = val ? "block" : "none";
+    } else if(el.dataset.cmsTipo === "alinhamento"){
+      if(val) el.style.textAlign = val;
+    } else if(el.dataset.cmsTipo === "icone"){
+      const icone = window.SoluaIcons && window.SoluaIcons[val];
+      if(icone) el.innerHTML = icone.svg;
     } else if(el.dataset.cmsMedia === "bg"){
       aplicarMidiaFundo(el, val);
     } else if(el.tagName === "IMG"){

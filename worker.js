@@ -68,6 +68,19 @@ async function migrate(env) {
   // coluna do Painel de Design/Conteúdo: um único blob JSON com todos os textos e
   // mídias (foto/vídeo) editáveis do site público, chaveado por assets/js/content-schema.js
   try { await env.DB.prepare("ALTER TABLE settings ADD COLUMN conteudo_json TEXT").run(); } catch (e) { /* coluna já existe — ok */ }
+  // colunas adicionadas depois: segunda versão do logo (para fundo escuro), favicon,
+  // título/descrição do site e o modo de manutenção
+  const novasColunas = [
+    "ALTER TABLE settings ADD COLUMN logo_url_escuro TEXT",
+    "ALTER TABLE settings ADD COLUMN favicon_url TEXT",
+    "ALTER TABLE settings ADD COLUMN site_titulo TEXT",
+    "ALTER TABLE settings ADD COLUMN site_descricao TEXT",
+    "ALTER TABLE settings ADD COLUMN manutencao_ativa INTEGER DEFAULT 0",
+    "ALTER TABLE settings ADD COLUMN manutencao_mensagem TEXT"
+  ];
+  for (const sql of novasColunas) {
+    try { await env.DB.prepare(sql).run(); } catch (e) { /* coluna já existe — ok */ }
+  }
 }
 
 function parseConteudo(json_) {
@@ -78,7 +91,11 @@ function rowToSettings(row) {
   if (!row) return null;
   return {
     logoUrl: row.logo_url || null,
+    logoUrlEscuro: row.logo_url_escuro || null,
     heroImageUrl: row.hero_image_url || null,
+    faviconUrl: row.favicon_url || null,
+    siteTitulo: row.site_titulo || null,
+    siteDescricao: row.site_descricao || null,
     corPrimaria: row.cor_primaria || "#004BA5",
     corTexto: row.cor_texto || "#15181C",
     whatsappNumero: row.whatsapp_numero || "5519999999999",
@@ -86,6 +103,8 @@ function rowToSettings(row) {
     nomeRemetente: row.nome_remetente || "Solua",
     automacaoEmailAtiva: !!row.automacao_email_ativa,
     automacaoWhatsappAtiva: !!row.automacao_whatsapp_ativa,
+    manutencaoAtiva: !!row.manutencao_ativa,
+    manutencaoMensagem: row.manutencao_mensagem || null,
     conteudo: parseConteudo(row.conteudo_json),
     atualizadoEm: row.atualizado_em || null
   };
@@ -118,7 +137,11 @@ async function handlePutSettings(request, env) {
   const conteudo = has("conteudo") ? (body.conteudo && typeof body.conteudo === "object" ? body.conteudo : {}) : atual.conteudo;
   const fields = {
     logo_url: has("logoUrl") ? (body.logoUrl ?? null) : atual.logoUrl,
+    logo_url_escuro: has("logoUrlEscuro") ? (body.logoUrlEscuro ?? null) : atual.logoUrlEscuro,
     hero_image_url: has("heroImageUrl") ? (body.heroImageUrl ?? null) : atual.heroImageUrl,
+    favicon_url: has("faviconUrl") ? (body.faviconUrl ?? null) : atual.faviconUrl,
+    site_titulo: has("siteTitulo") ? ((body.siteTitulo || "").slice(0, 160) || null) : atual.siteTitulo,
+    site_descricao: has("siteDescricao") ? ((body.siteDescricao || "").slice(0, 320) || null) : atual.siteDescricao,
     cor_primaria: has("corPrimaria") ? (body.corPrimaria || "#004BA5") : atual.corPrimaria,
     cor_texto: has("corTexto") ? (body.corTexto || "#15181C") : atual.corTexto,
     whatsapp_numero: has("whatsappNumero") ? (body.whatsappNumero || "5519999999999") : atual.whatsappNumero,
@@ -126,11 +149,13 @@ async function handlePutSettings(request, env) {
     nome_remetente: has("nomeRemetente") ? (body.nomeRemetente || "Solua") : atual.nomeRemetente,
     automacao_email_ativa: has("automacaoEmailAtiva") ? (body.automacaoEmailAtiva ? 1 : 0) : (atual.automacaoEmailAtiva ? 1 : 0),
     automacao_whatsapp_ativa: has("automacaoWhatsappAtiva") ? (body.automacaoWhatsappAtiva ? 1 : 0) : (atual.automacaoWhatsappAtiva ? 1 : 0),
+    manutencao_ativa: has("manutencaoAtiva") ? (body.manutencaoAtiva ? 1 : 0) : (atual.manutencaoAtiva ? 1 : 0),
+    manutencao_mensagem: has("manutencaoMensagem") ? ((body.manutencaoMensagem || "").slice(0, 500) || null) : atual.manutencaoMensagem,
     conteudo_json: JSON.stringify(conteudo)
   };
   // proteção simples contra imagens gigantes (D1 tem limite de linha ~1MB;
   // aqui limitamos bem mais baixo pra manter a resposta rápida em qualquer plano)
-  for (const k of ["logo_url", "hero_image_url"]) {
+  for (const k of ["logo_url", "logo_url_escuro", "hero_image_url", "favicon_url"]) {
     if (fields[k] && fields[k].length > 350000) {
       return json({ ok: false, erro: `Imagem em "${k}" está grande demais (>350KB em base64). Use uma imagem mais leve ou um link (URL) em vez de anexar o arquivo.` }, 413);
     }
@@ -140,13 +165,17 @@ async function handlePutSettings(request, env) {
   }
 
   await env.DB.prepare(`UPDATE settings SET
-      logo_url=?, hero_image_url=?, cor_primaria=?, cor_texto=?, whatsapp_numero=?,
+      logo_url=?, logo_url_escuro=?, hero_image_url=?, favicon_url=?, site_titulo=?, site_descricao=?,
+      cor_primaria=?, cor_texto=?, whatsapp_numero=?,
       email_remetente=?, nome_remetente=?, automacao_email_ativa=?, automacao_whatsapp_ativa=?,
+      manutencao_ativa=?, manutencao_mensagem=?,
       conteudo_json=?, atualizado_em=datetime('now')
     WHERE id = 1`)
-    .bind(fields.logo_url, fields.hero_image_url, fields.cor_primaria, fields.cor_texto,
+    .bind(fields.logo_url, fields.logo_url_escuro, fields.hero_image_url, fields.favicon_url, fields.site_titulo, fields.site_descricao,
+      fields.cor_primaria, fields.cor_texto,
       fields.whatsapp_numero, fields.email_remetente, fields.nome_remetente,
-      fields.automacao_email_ativa, fields.automacao_whatsapp_ativa, fields.conteudo_json)
+      fields.automacao_email_ativa, fields.automacao_whatsapp_ativa,
+      fields.manutencao_ativa, fields.manutencao_mensagem, fields.conteudo_json)
     .run();
 
   const row = await env.DB.prepare("SELECT * FROM settings WHERE id = 1").first();
@@ -352,6 +381,33 @@ async function handleGetDispatchLog(request, env) {
   return json({ ok: true, itens: results || [] });
 }
 
+// -------------------- MODO MANUTENÇÃO --------------------
+// Liga/desliga em Personalização (crm/admin/personalizacao.html). Quando
+// ativo, qualquer visitante do SITE PÚBLICO vê a página de aviso abaixo —
+// mas o CRM (/crm/*), a API (/api/*) e os arquivos estáticos (/assets/*,
+// fontes, favicon) continuam acessíveis, senão ninguém conseguiria entrar
+// no CRM para desligar a manutenção de novo.
+function manutencaoHtml(mensagem) {
+  const msg = (mensagem || "Voltamos já. Estamos com o site em manutenção rápida — tente novamente em alguns minutos.")
+    .replace(/[&<>]/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[m]));
+  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manutenção — Solua</title>
+<style>
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#F2EDE6;color:#15181C;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;text-align:center;padding:40px 20px;box-sizing:border-box}
+  .box{max-width:480px}
+  h1{font-size:32px;letter-spacing:-.03em;margin:0 0 16px;color:#004BA5}
+  p{font-size:16px;line-height:1.6;color:rgba(21,24,28,.65);margin:0}
+</style></head>
+<body><div class="box"><h1>solua</h1><p>${msg}</p></div></body></html>`;
+}
+async function checkManutencao(env) {
+  await ensureSchema(env);
+  const row = await env.DB.prepare("SELECT manutencao_ativa, manutencao_mensagem FROM settings WHERE id = 1").first();
+  return { ativa: !!(row && row.manutencao_ativa), mensagem: row && row.manutencao_mensagem };
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -366,6 +422,18 @@ export default {
     if (url.pathname === "/api/documentos/download" && request.method === "GET") return handleGetDocumentoDownload(request, env);
 
     if (url.pathname.startsWith("/api/")) return json({ ok: false, erro: "Rota não encontrada." }, 404);
+
+    // site público em manutenção: bloqueia só o front público — CRM, API e
+    // assets estáticos (CSS/JS/fontes, usados pelo CRM) continuam de pé.
+    const rotaProtegida = url.pathname.startsWith("/crm/") || url.pathname.startsWith("/assets/") || url.pathname === "/favicon.ico";
+    if (!rotaProtegida) {
+      try {
+        const { ativa, mensagem } = await checkManutencao(env);
+        if (ativa) {
+          return new Response(manutencaoHtml(mensagem), { status: 503, headers: { "content-type": "text/html; charset=utf-8", "retry-after": "1800" } });
+        }
+      } catch (e) { /* se o D1 falhar aqui, serve o site normalmente em vez de derrubar tudo */ }
+    }
 
     // qualquer outra rota: serve o site estático normalmente
     return env.ASSETS.fetch(request);

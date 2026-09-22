@@ -231,6 +231,50 @@ Para adicionar um novo campo editável (ex.: mais um bloco de texto):
    foto/vídeo, ou `data-cms-tipo="toggle"` se for mostrar/esconder algo).
 Não precisa mexer no Worker — o blob `conteudo` é livre.
 
+Além de texto/foto/vídeo/visibilidade, dois tipos a mais de campo:
+- **`alinhamento`** — três botões (Esquerda / Centro / Direita) que
+  aplicam `text-align` no bloco correspondente do site (hero, blocos
+  editoriais de Seguros/Consórcios/Institucional, CTA final).
+- **`icone`** — um seletor com pré-visualização que troca o ícone SVG de
+  um elemento (hoje, os três ícones das "3 frentes de negócio" na Home)
+  por um de um conjunto fixo em `assets/js/icon-library.js`
+  (`window.SoluaIcons`) — por segurança, só esses ícones pré-aprovados
+  podem ser injetados, nunca HTML arbitrário colado por alguém.
+
+Também dá pra **mostrar/esconder** bem mais seções agora: as "3 frentes
+de negócio", os blocos de Seguros/Consórcios/Institucional/CTA final na
+Home, o bloco "Como funciona" em Seguros, "Administradoras parceiras" em
+Consórcios, e a linha do tempo e a equipe em Sobre.
+
+### Identidade visual, manutenção e SEO básico (Personalização)
+
+Em `crm/admin/personalizacao.html`, além de logo e cor:
+
+- **Duas versões de logo ao mesmo tempo** — uma para fundo claro (usada
+  quando o cabeçalho já rolou/está sólido) e outra para fundo escuro
+  (usada no rodapé, que é sempre escuro, e no cabeçalho enquanto ele
+  ainda está transparente sobre uma foto). O site troca sozinho, ao
+  rolar a página, qual versão mostrar (`assets/js/site-chrome.js` decide
+  se o cabeçalho está `.on-photo`/`.solid`; `assets/js/branding.js`
+  aplica a logo certa via `window.SoluaAplicarLogoContexto`). Se só uma
+  versão for cadastrada, ela é usada nos dois contextos.
+- **Favicon customizado** — ícone da aba do navegador.
+- **Título e descrição do site** — usados na Home (as páginas internas
+  mantêm seus próprios títulos, já otimizados por página).
+- **Modo manutenção** — um botão liga/desliga um aviso que substitui
+  **o site inteiro** para os visitantes (checado no próprio Worker, em
+  `worker.js`, antes de servir qualquer página pública). O **CRM nunca
+  fica bloqueado**: `/crm/*`, `/assets/*` e `/api/*` continuam
+  funcionando normalmente mesmo com o site em manutenção, então dá
+  sempre pra entrar e desligar de novo.
+
+### Página de erro 404
+
+`404.html`, na raiz do projeto — usa o mesmo cabeçalho/rodapé/busca do
+site público (não é uma página solta). O Cloudflare já está configurado
+para servir ela sozinho (`not_found_handling: "404-page"` em
+`wrangler.jsonc`) em qualquer URL que não exista.
+
 ### Cartões flutuantes ("pop-ups" que aparecem e ficam parados)
 
 `assets/js/site-chrome.js` → `renderGapCard({icone, titulo, texto,

@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="assets/css/fonts.css">
 <link rel="stylesheet" href="assets/css/site.css">
 <link rel="stylesheet" href="assets/css/editorial.css">
+<script defer src="assets/js/icon-library.js"></script>
 <script defer src="assets/js/content-apply.js"></script>
 <script defer src="assets/js/branding.js"></script>
 </head>
@@ -22,7 +23,7 @@
 <section class="hero-photo" style="min-height:56vh" id="heroSeguros">
   <div class="slide on" data-cms="seguros.hero.midia" data-cms-media="bg" style="background-image:url('https://picsum.photos/seed/solua-seguros-hero/1800/1000')"></div>
   <div class="scrim"></div>
-  <div class="in">
+  <div class="in" data-cms="seguros.hero.alinhamento" data-cms-tipo="alinhamento">
     <span class="lbl">/ Seguros · pessoa física e empresas</span>
     <h1 style="font-size:clamp(38px,7vw,90px)" data-cms="seguros.hero.titulo">Proteção sem<br>enrolação.</h1>
     <p data-cms="seguros.hero.subtitulo">Cotamos com as principais seguradoras do país e entregamos o comparativo pronto — coberturas, franquias e preços lado a lado.</p>
@@ -41,11 +42,11 @@
   </div>
 </section>
 
-<section class="sec" style="background:var(--papel);padding-top:0">
+<section class="sec" style="background:var(--papel);padding-top:0" data-cms="seguros.processo.visivel" data-cms-tipo="toggle">
   <div class="wrap rev">
     <div class="ed-block" style="border-top:1px solid var(--linha)">
       <div class="ph"><img data-cms="seguros.processo.midia" src="https://picsum.photos/seed/solua-seguros-processo/900/720" alt="Consultor Solua explicando apólice" loading="lazy"></div>
-      <div>
+      <div data-cms="seguros.processo.alinhamento" data-cms-tipo="alinhamento">
         <span class="num">/ Como funciona</span>
         <h3 data-cms="seguros.processo.titulo">Quatro passos. Nenhuma surpresa.</h3>
         <p data-cms="seguros.processo.texto">Você conta o que precisa, cotamos no mercado com as seguradoras parceiras, explicamos cobertura por cobertura em português e cuidamos da contratação, do sinistro e da renovação junto com você.</p>

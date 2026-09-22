@@ -51,6 +51,31 @@ function campoHtml(campo, val){
       </div>
     </div>`;
   }
+  if(campo.tipo === "alinhamento"){
+    const atualVal = val || "left";
+    const opcoes = [["left","Esquerda"],["center","Centro"],["right","Direita"]];
+    return `<div class="field" style="margin-bottom:14px">
+      <label>${label}</label>
+      <div class="align-row" data-aligngroup="${campo.key}">
+        ${opcoes.map(([v,l])=>`<button type="button" data-alignval="${v}" class="${v===atualVal?"on":""}">${l}</button>`).join("")}
+      </div>
+      <input type="hidden" data-key="${campo.key}" data-tipo="alinhamento" value="${DB.esc(atualVal)}">
+    </div>`;
+  }
+  if(campo.tipo === "icone"){
+    const icones = window.SoluaIcons || {};
+    const atualVal = val || Object.keys(icones)[0] || "";
+    const svg = icones[atualVal] ? icones[atualVal].svg : "";
+    return `<div class="field" style="margin-bottom:14px">
+      <label>${label}</label>
+      <div class="icon-row">
+        <div class="icon-preview" id="iconprev__${campo.key}"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5">${svg}</svg></div>
+        <select data-key="${campo.key}" data-tipo="icone" style="flex:1">
+          ${Object.keys(icones).map(k=>`<option value="${k}" ${k===atualVal?"selected":""}>${DB.esc(icones[k].label)}</option>`).join("")}
+        </select>
+      </div>
+    </div>`;
+  }
   // texto
   return `<div class="field" style="margin-bottom:14px"><label>${label}</label><input data-key="${campo.key}" data-tipo="texto" placeholder="${DB.esc(campo.placeholder||"")}" value="${DB.esc(val||"")}"></div>`;
 }
@@ -108,6 +133,25 @@ function ligarCampos(){
     input.oninput = ()=>{
       const prev = document.getElementById("prev__"+input.dataset.key);
       if(prev) prev.innerHTML = previewHtml(input.value.trim());
+    };
+  });
+  document.querySelectorAll("[data-aligngroup]").forEach(grupo=>{
+    const key = grupo.dataset.aligngroup;
+    const hidden = document.querySelector(`input[type="hidden"][data-key="${CSS.escape(key)}"]`);
+    grupo.querySelectorAll("[data-alignval]").forEach(btn=>{
+      btn.onclick = ()=>{
+        grupo.querySelectorAll("[data-alignval]").forEach(b=> b.classList.remove("on"));
+        btn.classList.add("on");
+        if(hidden) hidden.value = btn.dataset.alignval;
+      };
+    });
+  });
+  document.querySelectorAll('select[data-tipo="icone"]').forEach(select=>{
+    select.onchange = ()=>{
+      const icones = window.SoluaIcons || {};
+      const icone = icones[select.value];
+      const prev = document.getElementById("iconprev__"+select.dataset.key);
+      if(prev && icone) prev.innerHTML = `<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5">${icone.svg}</svg>`;
     };
   });
 }

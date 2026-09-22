@@ -30,13 +30,31 @@
         <div class="card-bd">
           <div class="grid2">
             <div class="field">
-              <label>Logo (opcional — sem logo, o site usa o texto "solua" na fonte da marca)</label>
+              <label>Logo para fundo claro (opcional — sem logo, o site usa o texto "solua" na fonte da marca)</label>
               <div id="logoPreview" style="margin-bottom:10px;min-height:48px;display:flex;align-items:center"></div>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <input type="file" id="fLogoFile" accept="image/png,image/svg+xml,image/jpeg,image/webp" style="min-width:0;width:100%;box-sizing:border-box">
                 <button class="btn ghost sm" id="btnRemoverLogo" type="button">Remover</button>
               </div>
-              <p style="font-size:12px;color:var(--tinta-45);margin-top:6px">PNG ou SVG com fundo transparente, até 250KB. Aparece no cabeçalho do site público.</p>
+              <p style="font-size:12px;color:var(--tinta-45);margin-top:6px">PNG ou SVG com fundo transparente, até 250KB. Usada quando o cabeçalho está sobre fundo branco/claro.</p>
+            </div>
+            <div class="field">
+              <label>Logo para fundo escuro</label>
+              <div id="logoEscuroPreview" style="margin-bottom:10px;min-height:48px;display:flex;align-items:center;background:var(--tinta);border-radius:8px;padding:6px 10px"></div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <input type="file" id="fLogoEscuroFile" accept="image/png,image/svg+xml,image/jpeg,image/webp" style="min-width:0;width:100%;box-sizing:border-box">
+                <button class="btn ghost sm" id="btnRemoverLogoEscuro" type="button">Remover</button>
+              </div>
+              <p style="font-size:12px;color:var(--tinta-45);margin-top:6px">Versão clara/branca da logo, até 250KB. Usada no cabeçalho sobre foto/vídeo e no rodapé escuro.</p>
+            </div>
+            <div class="field">
+              <label>Ícone do site (favicon)</label>
+              <div id="faviconPreview" style="margin-bottom:10px;min-height:32px;display:flex;align-items:center"></div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <input type="file" id="fFaviconFile" accept="image/png,image/svg+xml,image/x-icon" style="min-width:0;width:100%;box-sizing:border-box">
+                <button class="btn ghost sm" id="btnRemoverFavicon" type="button">Remover</button>
+              </div>
+              <p style="font-size:12px;color:var(--tinta-45);margin-top:6px">Ícone quadrado (PNG ou SVG), até 100KB. Aparece na aba do navegador.</p>
             </div>
             <div class="field">
               <label>Cor principal da marca</label>
@@ -48,6 +66,27 @@
               <p style="font-size:12px;color:var(--tinta-45);margin-top:6px">Usada em botões, links e destaques no site e no CRM.</p>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-hd"><h3>SEO e título do site</h3></div>
+        <div class="card-bd">
+          <div class="grid2">
+            <div class="field"><label>Título do site (aba do navegador e buscadores)</label><input id="fSiteTitulo" maxlength="160" placeholder="Solua — Imóveis, Seguros e Consórcios"></div>
+            <div class="field full"><label>Descrição do site (buscadores e compartilhamento)</label><textarea id="fSiteDescricao" maxlength="320" rows="2" placeholder="Imobiliária, corretora de seguros e consórcios em Campinas há 25 anos."></textarea></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-hd"><h3>Manutenção do site</h3></div>
+        <div class="card-bd">
+          <label style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;font-size:13.5px">
+            <input type="checkbox" id="fManutencaoAtiva" style="width:16px;height:16px;margin-top:2px;accent-color:var(--azul)">
+            <span><b>Colocar o site em manutenção</b><br><span style="color:var(--tinta-45);font-size:12.5px">Desativa o site público inteiro para os visitantes, mostrando uma página de aviso. O CRM continua acessível normalmente para você, sempre.</span></span>
+          </label>
+          <div class="field"><label>Mensagem exibida aos visitantes</label><textarea id="fManutencaoMsg" maxlength="500" rows="2" placeholder="Voltamos já. Estamos com o site em manutenção rápida — tente novamente em alguns minutos."></textarea></div>
         </div>
       </div>
 

@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="assets/css/fonts.css">
 <link rel="stylesheet" href="assets/css/site.css">
 <link rel="stylesheet" href="assets/css/editorial.css">
+<script defer src="assets/js/icon-library.js"></script>
 <script defer src="assets/js/content-apply.js"></script>
 <script defer src="assets/js/branding.js"></script>
 </head>
@@ -26,7 +27,7 @@
 <section class="hero-photo" id="heroPhoto">
   <div class="scrim"></div>
   <div class="hero-dots" id="heroDots"></div>
-  <div class="in">
+  <div class="in" data-cms="home.hero.alinhamento" data-cms-tipo="alinhamento">
     <span class="lbl">/ Imobiliária · corretora de seguros e consórcios · Campinas · desde 2001</span>
     <h1 data-cms="home.hero.titulo">25 anos ao<br>seu lado.</h1>
     <p data-cms="home.hero.subtitulo">Imóveis, seguros e consórcios para cada etapa da sua vida — com um consultor dedicado do primeiro contato ao pós-venda, nunca um robô ou uma fila.</p>
@@ -38,7 +39,7 @@
 </section>
 
 <!-- 3 FRENTES -->
-<section class="sec" style="padding-bottom:0">
+<section class="sec" style="padding-bottom:0" data-cms="home.bizlines.visivel" data-cms-tipo="toggle">
   <div class="wrap rev">
     <div class="sec-head" style="margin-bottom:34px">
       <div>
@@ -49,19 +50,19 @@
     </div>
     <div class="bizline-grid">
       <a class="bizline" href="imoveis.html">
-        <svg class="ico" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12l10-8 10 8M6 11v12h16V11" stroke-linejoin="round"/><path d="M11 23v-7h6v7" stroke-linejoin="round"/></svg>
+        <svg class="ico" data-cms="home.bizline.imoveis.icone" data-cms-tipo="icone" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12l10-8 10 8M6 11v12h16V11" stroke-linejoin="round"/><path d="M11 23v-7h6v7" stroke-linejoin="round"/></svg>
         <h3 data-cms="home.bizline.imoveis.titulo">Imóveis</h3>
         <p data-cms="home.bizline.imoveis.texto">Venda e locação em Campinas e região, com catálogo atualizado, filtros e ficha técnica completa de cada imóvel.</p>
         <span class="go">Ver catálogo <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
       </a>
       <a class="bizline" href="seguros.html">
-        <svg class="ico" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3l10 4.4v6.6c0 7-4.4 12-10 14-5.6-2-10-7-10-14V7.4L14 3z" stroke-linejoin="round"/></svg>
+        <svg class="ico" data-cms="home.bizline.seguros.icone" data-cms-tipo="icone" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3l10 4.4v6.6c0 7-4.4 12-10 14-5.6-2-10-7-10-14V7.4L14 3z" stroke-linejoin="round"/></svg>
         <h3 data-cms="home.bizline.seguros.titulo">Seguros</h3>
         <p data-cms="home.bizline.seguros.texto">Auto, residencial, vida, empresarial e mais — comparativo entre as principais seguradoras do país, sem letra miúda.</p>
         <span class="go">Simular agora <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
       </a>
       <a class="bizline" href="consorcios.html">
-        <svg class="ico" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="14" cy="14" r="10"/><path d="M14 8v6l4.5 2.6"/></svg>
+        <svg class="ico" data-cms="home.bizline.consorcios.icone" data-cms-tipo="icone" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="14" cy="14" r="10"/><path d="M14 8v6l4.5 2.6"/></svg>
         <h3 data-cms="home.bizline.consorcios.titulo">Consórcios</h3>
         <p data-cms="home.bizline.consorcios.texto">Imóvel, automóvel e pesados com Porto Bank e Ademicon — poder de compra sem juros, com parcela que cabe no seu mês.</p>
         <span class="go">Simular parcela <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
@@ -85,11 +86,11 @@
 <div id="gapCard1"></div>
 
 <!-- SEGUROS (editorial) -->
-<section class="sec" style="background:var(--papel)">
+<section class="sec" style="background:var(--papel)" data-cms="home.seguros.visivel" data-cms-tipo="toggle">
   <div class="wrap rev">
     <div class="ed-block" id="edSeguros" style="border-top:none;padding-top:0">
       <div class="ph"><img data-cms="home.seguros.midia" src="https://picsum.photos/seed/solua-seguro-home/900/720" alt="Família protegida por um seguro Solua" loading="lazy"></div>
-      <div>
+      <div data-cms="home.seguros.alinhamento" data-cms-tipo="alinhamento">
         <span class="num">/ 02 — Seguros</span>
         <h3 data-cms="home.seguros.titulo">Proteção para o que você levou anos construindo.</h3>
         <p data-cms="home.seguros.texto">Trabalhamos com as maiores seguradoras do país e entregamos o comparativo pronto — coberturas, franquias e preços lado a lado, para você decidir com informação.</p>
@@ -102,11 +103,11 @@
 <div id="gapCard2" style="background:var(--papel)"></div>
 
 <!-- CONSÓRCIOS (editorial, invertido) -->
-<section class="sec blue">
+<section class="sec blue" data-cms="home.consorcios.visivel" data-cms-tipo="toggle">
   <div class="wrap rev">
     <div class="ed-block rev-order" style="border-top:1px solid rgba(242,237,230,.22);padding-top:clamp(50px,7vw,90px)">
       <div class="ph"><img data-cms="home.consorcios.midia" src="https://picsum.photos/seed/solua-consorcio-home/900/720" alt="Chaves de um imóvel adquirido por consórcio" loading="lazy"></div>
-      <div>
+      <div data-cms="home.consorcios.alinhamento" data-cms-tipo="alinhamento">
         <span class="num" style="color:rgba(242,237,230,.5)">/ 03 — Consórcios</span>
         <h3 data-cms="home.consorcios.titulo">A forma mais inteligente de comprar sem juros.</h3>
         <p style="color:rgba(242,237,230,.75)" data-cms="home.consorcios.texto">Operamos com Porto Bank e Ademicon. Consórcio é planejamento: você compra poder de compra, não dívida — sem juros, com parcela que cabe no seu mês.</p>
@@ -132,10 +133,10 @@
 </section>
 
 <!-- INSTITUCIONAL -->
-<section class="sec" style="padding-top:0">
+<section class="sec" style="padding-top:0" data-cms="home.institucional.visivel" data-cms-tipo="toggle">
   <div class="wrap rev">
     <div class="ed-block" style="border-top:1px solid var(--linha)">
-      <div>
+      <div data-cms="home.institucional.alinhamento" data-cms-tipo="alinhamento">
         <span class="num">/ A Solua</span>
         <h3 data-cms="home.institucional.titulo">Uma corretora de bairro com estrutura de mercado.</h3>
         <p data-cms="home.institucional.texto">Nascemos em 2001 em Campinas como corretora de seguros. Em 2010 abrimos a imobiliária e, mais recentemente, passamos a atuar também com consórcios. A ideia nunca mudou: ficar do lado de quem contrata, não de quem vende.</p>
@@ -159,8 +160,8 @@
 </section>
 
 <!-- CTA FINAL -->
-<section class="sec" style="text-align:center;padding:clamp(70px,9vw,130px) 0">
-  <div class="wrap rev">
+<section class="sec" style="text-align:center;padding:clamp(70px,9vw,130px) 0" data-cms="home.ctafinal.visivel" data-cms-tipo="toggle">
+  <div class="wrap rev" data-cms="home.ctafinal.alinhamento" data-cms-tipo="alinhamento">
     <span class="lbl">/ Vamos começar</span>
     <h2 class="display" style="font-size:clamp(36px,7vw,90px);margin:22px auto 26px;max-width:16ch" data-cms="home.ctafinal.titulo">Fale com um consultor Solua hoje.</h2>
     <p style="color:var(--tinta-60);max-width:46ch;margin:0 auto 34px" data-cms="home.ctafinal.texto">Dois minutos agora podem significar anos de tranquilidade — e a parcela ou apólice certa no fim do mês.</p>

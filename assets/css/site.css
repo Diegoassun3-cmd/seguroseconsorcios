@@ -39,6 +39,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 /* ---------- NAV ---------- */
 header{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .4s,border-color .4s;border-bottom:1px solid transparent}
 header.solid{background:rgba(242,237,230,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom-color:var(--linha)}
+header.on-photo:not(.solid) .brand .mark{color:#fff}
+header.on-photo:not(.solid) .brand .desc{color:rgba(255,255,255,.8)}
 .nav{display:flex;align-items:center;justify-content:space-between;gap:24px;height:78px}
 .brand{display:flex;align-items:baseline;gap:12px}
 .brand .mark{font-family:var(--font-display);font-weight:400;font-size:27px;color:var(--azul);letter-spacing:-.045em;line-height:1}
@@ -46,10 +48,11 @@ header.solid{background:rgba(242,237,230,.88);backdrop-filter:blur(14px);-webkit
 .menu{display:flex;align-items:center;gap:34px}
 .menu a{font-size:13.5px;letter-spacing:.01em;color:var(--tinta-60);transition:color .25s;position:relative}
 .menu a:hover{color:var(--tinta)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:13px 26px;border-radius:100px;border:1px solid var(--azul);background:var(--azul);color:var(--creme);font-size:13.5px;letter-spacing:.01em;cursor:pointer;transition:background .3s,color .3s,transform .3s;white-space:nowrap}
-.btn:hover{background:transparent;color:var(--azul);transform:translateY(-1px)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:13px 26px;border-radius:100px;border:1px solid var(--azul);background:var(--azul);color:var(--creme);font-size:13.5px;letter-spacing:.01em;cursor:pointer;transition:background .3s,color .3s,border-color .3s,transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .3s;white-space:nowrap}
+.btn:hover{background:transparent;color:var(--azul);transform:translateY(-2px);box-shadow:0 10px 22px color-mix(in srgb, var(--azul) 22%, transparent)}
+.btn:active{transform:translateY(0);box-shadow:none}
 .btn.ghost{background:transparent;color:var(--tinta);border-color:var(--linha)}
-.btn.ghost:hover{border-color:var(--tinta);color:var(--tinta)}
+.btn.ghost:hover{border-color:var(--tinta);color:var(--tinta);box-shadow:0 10px 22px rgba(21,24,28,.1)}
 .btn.lg{padding:17px 34px;font-size:15px}
 .burger{display:none;width:42px;height:42px;border:1px solid var(--linha);border-radius:50%;background:none;cursor:pointer;position:relative}
 .burger i{position:absolute;left:12px;width:18px;height:1px;background:var(--tinta);transition:.3s}
@@ -135,7 +138,7 @@ section{position:relative}
 .blue .rule,.blue .sec-head{border-color:rgba(242,237,230,.22)}
 .blue .sec-head .side{color:rgba(242,237,230,.72)}
 .blue .btn{background:var(--creme);color:var(--azul);border-color:var(--creme)}
-.blue .btn:hover{background:transparent;color:var(--creme)}
+.blue .btn:hover{background:transparent;color:var(--creme);box-shadow:0 10px 22px rgba(0,0,0,.18)}
 .blue .filt{border-color:rgba(242,237,230,.35);color:rgba(242,237,230,.75)}
 .blue .filt:hover{border-color:rgba(242,237,230,.6)}
 .blue .filt.on{background:var(--creme);color:var(--azul);border-color:var(--creme)}
