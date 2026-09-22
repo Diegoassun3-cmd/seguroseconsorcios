@@ -23,6 +23,11 @@
 
       <div class="kpis" id="kpis"></div>
 
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-hd"><h3>Novos leads — últimos 14 dias</h3></div>
+        <div class="card-bd"><div id="trendChart"></div></div>
+      </div>
+
       <div class="two-col">
         <div class="card">
           <div class="card-hd">
@@ -35,6 +40,13 @@
         </div>
 
         <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card">
+            <div class="card-hd">
+              <h3>Próximos contatos</h3>
+              <span class="badge neutro">agenda</span>
+            </div>
+            <div class="card-bd"><div class="agenda" id="agenda"></div></div>
+          </div>
           <div class="card">
             <div class="card-hd"><h3>Imóveis × Seguros × Consórcios</h3></div>
             <div class="card-bd">
@@ -60,6 +72,7 @@
 
 <script src="../assets/js/crm-data.js"></script>
 <script src="../assets/js/crm-ui.js"></script>
+<script src="../assets/js/crm-leaddrawer.js"></script>
 <script>
 const DB = window.SoluaDB;
 const iconFor = t=>({lead_criado:"👤",estagio_alterado:"↗️",nota:"📝",campanha_enviada:"📣",usuario_login:"🔑",automacao:"🤖"}[t]||"•");
@@ -120,6 +133,79 @@ function renderDashboard(){
     <div class="feed-item">${avatarPara(a)}
       <div><p>${DB.esc(a.descricao)}</p><time>${DB.timeAgo(a.data)}</time></div>
     </div>`).join("") || `<div class="empty">${window.SoluaUI.emptyState("Sem atividade ainda.")}</div>`;
+
+  renderAgenda();
+  renderTrend();
+}
+
+// ---------- Próximos contatos (agenda real, a partir do campo
+// "proximoContato" de cada lead — nada decorativo/inventado) ----------
+const PRODUTO_BADGE = {seguro:"seguro", consorcio:"consorcio", imovel:"imovel"};
+function parseDataLocal(dateStr){ return new Date(dateStr+"T12:00:00"); }
+function agendaRotulo(dateStr){
+  const hoje = new Date(); hoje.setHours(12,0,0,0);
+  const d = parseDataLocal(dateStr);
+  const diffDias = Math.round((d-hoje)/86400000);
+  if(diffDias < 0) return {texto:`Atrasado · ${Math.abs(diffDias)}d`, tom:"atrasado"};
+  if(diffDias === 0) return {texto:"Hoje", tom:"hoje"};
+  if(diffDias === 1) return {texto:"Amanhã", tom:"prox"};
+  return {texto: d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}), tom:"prox"};
+}
+function renderAgenda(){
+  const itens = DB.getProximosContatos(8);
+  const el = document.getElementById("agenda");
+  if(!itens.length){ el.innerHTML = `<div class="empty" style="padding:20px 10px">${window.SoluaUI.emptyState("Nenhum contato agendado. Marque a data em “Próximo contato” no lead.")}</div>`; return; }
+  el.innerHTML = itens.map(l=>{
+    const r = agendaRotulo(l.proximoContato);
+    return `<div class="agenda-row" data-leadid="${l.id}">
+      <span class="ag-tag ag-${r.tom}">${r.texto}</span>
+      <span class="ag-nome">${DB.esc(l.nome)}</span>
+      <span class="badge ${PRODUTO_BADGE[l.produto]||""}">${PRODUTO_BADGE[l.produto]||l.produto}</span>
+    </div>`;
+  }).join("");
+  el.querySelectorAll("[data-leadid]").forEach(row=>{
+    row.onclick = ()=> window.SoluaLead && window.SoluaLead.open(row.dataset.leadid, {onChange: renderDashboard});
+  });
+}
+
+// ---------- Tendência de novos leads (14 dias, gráfico de linha em SVG) ----------
+function renderTrend(){
+  const dias = 14;
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const buckets = [];
+  for(let i=dias-1;i>=0;i--){ const d = new Date(hoje); d.setDate(d.getDate()-i); buckets.push({data:d, total:0}); }
+  DB.getLeads().forEach(l=>{
+    const c = new Date(l.criadoEm); c.setHours(0,0,0,0);
+    const b = buckets.find(bk=> bk.data.getTime()===c.getTime());
+    if(b) b.total++;
+  });
+  const max = Math.max(...buckets.map(b=>b.total), 1);
+  const W = 600, H = 120, PAD = 8;
+  const x = i => PAD + (i/(dias-1))*(W-PAD*2);
+  const y = v => H-PAD - (v/max)*(H-PAD*2-14);
+  const pts = buckets.map((b,i)=>[x(i), y(b.total)]);
+  const linePath = pts.map((p,i)=> (i===0?"M":"L")+p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ");
+  const areaPath = linePath + ` L${x(dias-1).toFixed(1)},${(H-PAD).toFixed(1)} L${x(0).toFixed(1)},${(H-PAD).toFixed(1)} Z`;
+  const totalPeriodo = buckets.reduce((a,b)=>a+b.total,0);
+  const dots = buckets.map((b,i)=>{
+    const [px,py] = pts[i];
+    const rotulo = `${b.data.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}: ${b.total} lead${b.total===1?"":"s"}`;
+    return `<circle cx="${px}" cy="${py}" r="10" fill="transparent"><title>${rotulo}</title></circle>`
+      + (i===dias-1 ? `<circle cx="${px}" cy="${py}" r="4" fill="var(--azul)" stroke="#fff" stroke-width="2"/>` : "");
+  }).join("");
+  const labelIdx = [0, Math.floor((dias-1)/2), dias-1];
+  const xLabels = labelIdx.map(i=> `<text x="${x(i)}" y="${H-1}" font-size="9.5" fill="var(--tinta-35)" text-anchor="${i===0?"start":i===dias-1?"end":"middle"}">${buckets[i].data.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}</text>`).join("");
+  document.getElementById("trendChart").innerHTML = `
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px">
+      <b style="font-family:var(--font-display);font-weight:400;font-size:26px">${totalPeriodo}</b>
+      <span style="font-size:12.5px;color:var(--tinta-45)">lead${totalPeriodo===1?"":"s"} novo${totalPeriodo===1?"":"s"} no período</span>
+    </div>
+    <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:${H}px;overflow:visible" role="img" aria-label="Novos leads por dia nos últimos 14 dias">
+      <path d="${areaPath}" fill="var(--azul)" opacity=".08" stroke="none"/>
+      <path d="${linePath}" fill="none" stroke="var(--azul)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      ${dots}
+      ${xLabels}
+    </svg>`;
 }
 renderDashboard();
 

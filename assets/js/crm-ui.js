@@ -68,14 +68,14 @@ function renderSidebar(){
       <h6>${g.group}</h6>
       ${g.items.map(it=>`
         <a class="sb-link ${activeKey()===it.key?"on":""}" href="${b}${it.href}">
-          ${svg(it.ico)}<span>${it.label}</span>${it.count?`<span class="badge-count badge" style="margin-left:auto;background:rgba(255,255,255,.14);color:#fff;padding:2px 8px">${it.count()}</span>`:""}
+          ${svg(it.ico)}<span>${it.label}</span>${it.count?`<span class="badge-count badge">${it.count()}</span>`:""}
         </a>`).join("")}
     </div>`).join("");
   const initials = DB.iniciais(ME.nome);
   return `
   <div class="sb-brand">
-    <span class="mark" style="color:#fff">solua</span>
-    <span class="badge neutro" style="background:rgba(242,237,230,.14);color:#fff">CRM</span>
+    <span class="mark">solua</span>
+    <span class="badge neutro">CRM</span>
   </div>
   <nav class="sb-nav">${linksHtml}
     <div class="sb-group">

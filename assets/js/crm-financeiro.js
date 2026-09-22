@@ -11,6 +11,7 @@
 (function(){
 "use strict";
 const DB = window.SoluaDB;
+const UI = window.SoluaUI;
 const COMISSAO_PCT = { seguro: 0.20, consorcio: 0.015, imovel: 0.05 };
 const PRODUTO_LABEL = { seguro:"Seguros", consorcio:"Consórcios", imovel:"Imóveis" };
 // imovel usa --roxo-vivo (não o --roxo dos badges) pra ficar distinguível de
@@ -116,4 +117,146 @@ document.getElementById("btnExportarCsv").onclick = ()=>{
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=> URL.revokeObjectURL(url), 4000);
 };
+
+/* ============================================================
+   CONTAS A PAGAR E A RECEBER — lançamentos manuais, com anexo
+   opcional (comprovante/boleto). Ver nota na tela sobre por que
+   a extração automática de valores do arquivo não está aqui.
+   ============================================================ */
+const MAX_ANEXO = 300000; // bytes — cabe folgado num localStorage típico (5-10MB)
+function fileParaDataUrl(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=> resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+function formatBytes(n){
+  if(!n) return "—";
+  if(n < 1024) return n+" B";
+  if(n < 1024*1024) return (n/1024).toFixed(0)+" KB";
+  return (n/1024/1024).toFixed(1)+" MB";
+}
+function parseDataLocalFin(dateStr){ return new Date(dateStr+"T12:00:00"); }
+function contaRotulo(dateStr){
+  if(!dateStr) return {texto:"Sem data", tom:"prox"};
+  const hoje = new Date(); hoje.setHours(12,0,0,0);
+  const d = parseDataLocalFin(dateStr);
+  const diffDias = Math.round((d-hoje)/86400000);
+  if(diffDias < 0) return {texto:`Atrasado · ${Math.abs(diffDias)}d`, tom:"atrasado"};
+  if(diffDias === 0) return {texto:"Vence hoje", tom:"hoje"};
+  if(diffDias === 1) return {texto:"Amanhã", tom:"prox"};
+  return {texto: d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"}), tom:"prox"};
+}
+
+function renderContaForm(){
+  document.getElementById("contaForm").innerHTML = `
+    <div class="grid3">
+      <div class="field"><label>Tipo</label><select id="cfTipo"><option value="saida">Saída (a pagar)</option><option value="entrada">Entrada (a receber)</option></select></div>
+      <div class="field" style="grid-column:span 2"><label>Descrição</label><input id="cfDescricao" placeholder="Ex.: Aluguel da sala, comissão da Ana, fornecedor X…"></div>
+      <div class="field"><label>Valor (R$)</label><input id="cfValor" type="number" min="0" step="0.01" placeholder="0,00"></div>
+      <div class="field"><label>Categoria</label><input id="cfCategoria" placeholder="Ex.: Aluguel, Salários, Impostos…"></div>
+      <div class="field"><label>Vencimento</label><input id="cfVencimento" type="date"></div>
+    </div>
+    <div class="field">
+      <label>Anexo (comprovante, boleto, nota fiscal — opcional)</label>
+      <input type="file" id="cfAnexo" accept="image/*,.pdf">
+      <span id="cfAnexoInfo" style="font-size:12px;color:var(--tinta-45)"></span>
+    </div>
+    <button class="btn sm" id="btnAddConta">Adicionar lançamento</button>
+  `;
+  let anexoData = null, anexoNome = null;
+  document.getElementById("cfAnexo").onchange = async (e)=>{
+    const f = e.target.files[0];
+    const info = document.getElementById("cfAnexoInfo");
+    if(!f){ anexoData = null; anexoNome = null; info.textContent = ""; return; }
+    if(f.size > MAX_ANEXO){
+      UI.toast("Arquivo grande demais (limite de ~300KB).","err");
+      e.target.value = ""; anexoData = null; anexoNome = null; info.textContent = "";
+      return;
+    }
+    anexoData = await fileParaDataUrl(f);
+    anexoNome = f.name;
+    info.textContent = `${f.name} — ${formatBytes(f.size)}`;
+  };
+  document.getElementById("btnAddConta").onclick = ()=>{
+    const descricao = document.getElementById("cfDescricao").value.trim();
+    const valor = Number(document.getElementById("cfValor").value)||0;
+    if(!descricao || !valor){ UI.toast("Preencha ao menos a descrição e o valor.","err"); return; }
+    DB.addConta({
+      tipo: document.getElementById("cfTipo").value,
+      descricao, valor,
+      categoria: document.getElementById("cfCategoria").value.trim() || "Outros",
+      vencimento: document.getElementById("cfVencimento").value || "",
+      anexoUrl: anexoData, anexoNome: anexoNome
+    });
+    UI.toast("Lançamento adicionado.","ok");
+    renderContas();
+    renderContaForm();
+  };
+}
+
+function renderContas(){
+  const contas = DB.getContas();
+  const pendentes = contas.filter(c=>c.status!=="pago");
+  const hojeStr = new Date().toISOString().slice(0,10);
+  const venceHoje = pendentes.filter(c=>c.vencimento===hojeStr);
+  const atrasadas = pendentes.filter(c=> c.vencimento && c.vencimento < hojeStr);
+  const totalPagar = pendentes.filter(c=>c.tipo==="saida").reduce((s,c)=>s+Number(c.valor||0),0);
+  const totalReceber = pendentes.filter(c=>c.tipo==="entrada").reduce((s,c)=>s+Number(c.valor||0),0);
+
+  document.getElementById("contaResumo").innerHTML = `
+    <div class="kpis" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+      <div class="kpi ${venceHoje.length?"accent":""}"><span class="lbl">Vence hoje</span><b>${venceHoje.length}</b><span class="delta">${DB.formatBRL(venceHoje.reduce((s,c)=>s+Number(c.valor||0),0))}</span></div>
+      <div class="kpi"><span class="lbl">Atrasadas</span><b style="${atrasadas.length?"color:var(--vermelho)":""}">${atrasadas.length}</b><span class="delta">${DB.formatBRL(atrasadas.reduce((s,c)=>s+Number(c.valor||0),0))}</span></div>
+      <div class="kpi"><span class="lbl">A pagar (pendente)</span><b>${DB.formatBRL(totalPagar)}</b><span class="delta">${pendentes.filter(c=>c.tipo==="saida").length} lançamento(s)</span></div>
+      <div class="kpi"><span class="lbl">A receber (pendente)</span><b>${DB.formatBRL(totalReceber)}</b><span class="delta up">${pendentes.filter(c=>c.tipo==="entrada").length} lançamento(s)</span></div>
+    </div>`;
+
+  const ordenadas = contas.slice().sort((a,b)=> (a.vencimento||"9999").localeCompare(b.vencimento||"9999"));
+  const el = document.getElementById("contaList");
+  if(!ordenadas.length){
+    el.innerHTML = `<div class="empty">${UI.emptyState("Nenhum lançamento ainda. Use o formulário acima para adicionar contas a pagar ou a receber.")}</div>`;
+    return;
+  }
+  el.innerHTML = `<div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>Vencimento</th><th>Tipo</th><th>Descrição</th><th>Categoria</th><th>Valor</th><th>Status</th><th>Anexo</th><th></th></tr></thead>
+    <tbody>
+      ${ordenadas.map(c=>{
+        const r = contaRotulo(c.vencimento);
+        return `<tr style="${c.status==="pago"?"opacity:.5":""}">
+          <td><span class="ag-tag ag-${c.status==="pago"?"prox":r.tom}">${c.status==="pago"?DB.formatDate(parseDataLocalFin(c.vencimento||hojeStr)):r.texto}</span></td>
+          <td><span class="badge ${c.tipo==="entrada"?"ganho":"perdido"}">${c.tipo==="entrada"?"Entrada":"Saída"}</span></td>
+          <td>${DB.esc(c.descricao)}</td>
+          <td>${DB.esc(c.categoria||"—")}</td>
+          <td><b>${DB.formatBRL(c.valor)}</b></td>
+          <td><button class="btn ${c.status==="pago"?"ghost":""} sm" data-toggle="${c.id}">${c.status==="pago"?"Reabrir":"Marcar como pago"}</button></td>
+          <td>${c.anexoUrl?`<a href="${c.anexoUrl}" download="${DB.esc(c.anexoNome||"anexo")}" style="color:var(--azul)">Ver anexo</a>`:"—"}</td>
+          <td class="rowactions"><button class="btn danger ghost sm" data-delconta="${c.id}">Excluir</button></td>
+        </tr>`;
+      }).join("")}
+    </tbody>
+  </table></div>`;
+
+  el.querySelectorAll("[data-toggle]").forEach(btn=>{
+    btn.onclick = ()=>{
+      const c = DB.getConta(btn.dataset.toggle);
+      DB.updateConta(c.id, {status: c.status==="pago" ? "pendente" : "pago"});
+      renderContas();
+    };
+  });
+  el.querySelectorAll("[data-delconta]").forEach(btn=>{
+    btn.onclick = ()=>{
+      UI.confirmAction("Excluir este lançamento definitivamente?", ()=>{
+        DB.deleteConta(btn.dataset.delconta);
+        renderContas();
+        UI.toast("Lançamento excluído.","err");
+      });
+    };
+  });
+}
+
+renderContaForm();
+renderContas();
 })();

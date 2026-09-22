@@ -36,6 +36,7 @@ function fieldsHtml(l){
     <div class="field"><label>Origem</label><select data-f="origem">${DB.ORIGENS.map(o=>`<option ${o===l.origem?"selected":""}>${o}</option>`).join("")}</select></div>
     <div class="field"><label>Consultor</label><select data-f="consultorId"><option value="">— sem atribuição —</option>${equipe.map(u=>`<option value="${u.id}" ${u.id===l.consultorId?"selected":""}>${esc(u.nome)}${u.ativo?"":" (inativo)"}</option>`).join("")}</select></div>
     <div class="field"><label>${l.produto==="seguro"?"Prêmio estimado (R$/ano)":l.produto==="imovel"?"Valor do negócio (R$)":"Valor da carta (R$)"}</label><input data-f="valor" type="number" value="${Number(l.valor)||0}"></div>
+    <div class="field"><label>Próximo contato</label><input data-f="proximoContato" type="date" value="${l.proximoContato||""}"></div>
   </div>
   <div class="field">
     <label>Etiquetas</label>

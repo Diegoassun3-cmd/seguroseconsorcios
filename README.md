@@ -366,6 +366,21 @@ prevista (percentual estimado por produto — ajustável no topo de
 partir dos negócios já fechados no CRM — não existe ainda um sistema
 financeiro/contábil por trás.
 
+**Contas a pagar e a receber** (mesma tela): lançamentos manuais com
+tipo (entrada/saída), descrição, valor, categoria livre, vencimento e
+status (pendente/pago), com um resumo no topo — quanto vence hoje,
+quanto está atrasado, total a pagar e a receber em aberto — sempre
+calculado ao vivo a partir dos lançamentos reais. Cada lançamento aceita
+um **anexo opcional** (comprovante, boleto, nota fiscal — até ~300KB,
+guardado como os outros uploads do projeto). **O que isso não faz:**
+preencher o valor/vencimento sozinho a partir do arquivo anexado. Isso
+exigiria um serviço real de leitura de documentos (OCR ou um modelo com
+visão, como a API da Claude) processando o anexo no servidor — não é
+algo que dá pra simular sem inventar dados, e este projeto não tem hoje
+esse serviço conectado. Se quiser essa extração automática de verdade,
+é um passo natural a seguir (precisa de uma chave de API e de um
+endpoint no Worker para processar o upload).
+
 ### Hierarquia visual do CRM (Dashboard, Financeiro, Disparos)
 
 O Dashboard (`crm/dashboard.html`) ganhou uma saudação no topo, um
@@ -383,6 +398,21 @@ o gráfico usa `--roxo-vivo` (só ali, não nos badges) para resolver isso.
 A atividade recente do Dashboard agora mostra o avatar de verdade do
 consultor responsável pelo lead relacionado a cada evento (sem inventar
 autor quando não há um consultor associado).
+
+O Dashboard também ganhou um **gráfico de linha** ("Novos leads —
+últimos 14 dias", em SVG, dados reais a partir da data de criação de
+cada lead) e uma **agenda real** ("Próximos contatos"): qualquer lead
+pode receber uma data de "Próximo contato" (novo campo no drawer do
+lead), e o Dashboard lista os mais próximos, com destaque para os
+atrasados e os que vencem hoje — clicar num item abre o lead direto.
+
+**A barra lateral do CRM virou branca** (era escura) — mesma estrutura
+e ícones, cores adaptadas para fundo claro, item ativo em azul sólido.
+No quadro Kanban (`crm/pipeline-*.html`), o **arrastar-e-soltar entre
+colunas já existia** (não era um bug faltando) — só não tinha nenhuma
+pista visual; agora cada card mostra um ícone de "alça" ao passar o
+mouse e a barra de filtros lembra que dá pra arrastar ou clicar no card
+para mudar a etapa manualmente.
 
 ## Para produção (multiusuário completo)
 

@@ -27,11 +27,14 @@ function leadsFiltrados(){
   });
 }
 
+const GRIP_ICO = `<svg class="kcard-grip" viewBox="0 0 20 20" fill="currentColor"><circle cx="7" cy="5" r="1.3"/><circle cx="13" cy="5" r="1.3"/><circle cx="7" cy="10" r="1.3"/><circle cx="13" cy="10" r="1.3"/><circle cx="7" cy="15" r="1.3"/><circle cx="13" cy="15" r="1.3"/></svg>`;
+
 function cardHtml(l){
   const cons = DB.getUsuario(l.consultorId);
   const valorLabel = produto==="seguro" ? DB.formatBRL(l.valor)+"/ano" : DB.formatBRL(l.valor);
   return `
-  <div class="kcard" draggable="true" data-id="${l.id}">
+  <div class="kcard" draggable="true" data-id="${l.id}" title="Arraste para outra coluna para mudar a etapa">
+    ${GRIP_ICO}
     <b>${DB.esc(l.nome)}</b>
     <div class="sub">${DB.esc(l.tipo)||"—"} · ${DB.esc(l.cidade)||"—"}</div>
     ${(l.tags||[]).length ? `<div style="margin-top:7px;display:flex;gap:5px">${(l.tags||[]).map(t=>`<span class="tagchip">${t==="prioridade"?"⭐ prioridade":"🔄 renovação"}</span>`).join("")}</div>` : ""}
@@ -94,7 +97,8 @@ function renderFilters(){
     <select class="pill" id="fConsultor" style="border-radius:8px"><option value="">Todos os consultores</option>${equipe.map(u=>`<option value="${u.id}">${DB.esc(u.nome)}</option>`).join("")}</select>
     <select class="pill" id="fTipo" style="border-radius:8px"><option value="">Todos os tipos</option>${tipos.map(t=>`<option>${t}</option>`).join("")}</select>
     <span class="spacer"></span>
-    <span id="fCount" style="font-size:12.5px;color:var(--tinta-45)"></span>`;
+    <span id="fCount" style="font-size:12.5px;color:var(--tinta-45)"></span>
+    <span style="font-size:12.5px;color:var(--tinta-35)">· arraste um card ou clique nele para mudar a etapa</span>`;
   document.getElementById("fq").oninput = e=>{ filtro.q = e.target.value; renderBoard(); updateCount(); };
   document.getElementById("fConsultor").onchange = e=>{ filtro.consultor = e.target.value; renderBoard(); updateCount(); };
   document.getElementById("fTipo").onchange = e=>{ filtro.tipo = e.target.value; renderBoard(); updateCount(); };

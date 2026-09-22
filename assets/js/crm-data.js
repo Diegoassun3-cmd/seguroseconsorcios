@@ -133,6 +133,9 @@
   // migração leve: quem já tinha um estado salvo (v2) antes da linha de Imóveis
   // existir ganha o catálogo de exemplo na primeira carga, sem perder leads/equipe/modelos reais.
   if(!Array.isArray(STATE.imoveis)){ STATE.imoveis = IMOVEIS_SEED.map(i=>Object.assign({},i)); save(STATE); }
+  // migração leve: contas a pagar/receber é uma seção nova — começa vazia de
+  // propósito (é dado financeiro real, nunca fictício), só garante o array.
+  if(!Array.isArray(STATE.contasFinanceiras)){ STATE.contasFinanceiras = []; save(STATE); }
 
   function uid(prefix){ return (prefix||"id")+"_"+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4); }
   function nowISO(){ return new Date().toISOString(); }
@@ -193,7 +196,7 @@
         rodape:"Resposta em até 1 dia útil", botoes:[{tipo:"resposta_rapida", texto:"Pode mandar"}]}
     ];
 
-    return { leads:[], templates, campaigns:[], equipe: EQUIPE_SEED, imoveis: IMOVEIS_SEED.map(i=>Object.assign({},i)), activity:[], session:null };
+    return { leads:[], templates, campaigns:[], equipe: EQUIPE_SEED, imoveis: IMOVEIS_SEED.map(i=>Object.assign({},i)), contasFinanceiras:[], activity:[], session:null };
   }
 
   function labelEstagio(produto, estagioId){
@@ -217,7 +220,7 @@
       id: uid("lead"),
       nome:"", email:"", telefone:"", cidade:"",
       produto:"seguro", tipo:"", estagio:"novo",
-      origem:"Site", consultorId:null, valor:0, tags:[],
+      origem:"Site", consultorId:null, valor:0, tags:[], proximoContato:null,
       criadoEm: nowISO(), atualizadoEm: nowISO(), notas:[]
     }, data);
     // atribuição automática simples por produto (round-robin entre consultores ativos do produto)
@@ -326,6 +329,31 @@
       if(f.precoMax!=null && i.valor > Number(f.precoMax)) return false;
       return true;
     });
+  }
+
+  // -------------------- CONTAS A PAGAR E A RECEBER --------------------
+  // Lançamentos manuais (entrada/saída), com vencimento, categoria e um anexo
+  // opcional (comprovante/boleto) guardado como o mesmo tipo de link/base64 já
+  // usado em outras telas. Não existe extração automática de valor a partir do
+  // arquivo anexado — isso exigiria um serviço real de OCR/IA de documentos,
+  // que este projeto não tem hoje (ver comentário na tela de Financeiro).
+  function getContas(){ return STATE.contasFinanceiras.slice(); }
+  function getConta(id){ return STATE.contasFinanceiras.find(c=>c.id===id) || null; }
+  function addConta(data){
+    const c = Object.assign({
+      id: uid("cta"), tipo:"saida", descricao:"", valor:0, categoria:"Outros",
+      vencimento:"", status:"pendente", anexoUrl:null, anexoNome:null, criadoEm: nowISO()
+    }, data);
+    STATE.contasFinanceiras.unshift(c);
+    save(STATE);
+    return c;
+  }
+  function updateConta(id, patch){
+    const c = getConta(id); if(!c) return null;
+    Object.assign(c, patch); save(STATE); return c;
+  }
+  function deleteConta(id){
+    STATE.contasFinanceiras = STATE.contasFinanceiras.filter(c=>c.id!==id); save(STATE);
   }
 
   // -------------------- TEMPLATES --------------------
@@ -476,6 +504,16 @@
   }
   function getActivity(limit){ return STATE.activity.slice(0, limit||30); }
 
+  // Agenda real (não decorativa): leads com uma data de "próximo contato"
+  // marcada, ordenados por data — inclui os atrasados (data no passado, lead
+  // ainda em aberto) primeiro, pra aparecerem em destaque no Dashboard.
+  function getProximosContatos(limit){
+    return STATE.leads
+      .filter(l=> l.proximoContato && l.estagio!=="perdido" && !ESTAGIOS_GANHOS.has(l.estagio))
+      .sort((a,b)=> new Date(a.proximoContato) - new Date(b.proximoContato))
+      .slice(0, limit||8);
+  }
+
   // -------------------- FORMATAÇÃO --------------------
   function formatBRL(v){
     return (Number(v)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0});
@@ -592,10 +630,11 @@
     getLeads, getLead, getLeadsByProduto, addLead, updateLead, deleteLead, addNota,
     getEquipe, getUsuario, addUsuario, updateUsuario, deleteUsuario,
     getImoveis, getImovel, addImovel, updateImovel, deleteImovel, filterImoveis,
+    getContas, getConta, addConta, updateConta, deleteConta,
     getTemplates, getTemplate, addTemplate, updateTemplate, deleteTemplate,
     getAudience, getCampaigns, getCampaign, addCampaign, updateCampaign, deleteCampaign, sendCampaignNow,
     login, logout, currentUser, requireAuth,
-    dashboardStats, getActivity, labelEstagio,
+    dashboardStats, getActivity, getProximosContatos, labelEstagio,
     formatBRL, formatDate, formatDateTime, formatPhone, iniciais, timeAgo, fillTemplate,
     escapeHtml, esc: escapeHtml,
     BLOCO_LABELS, novoBloco, blocksParaTexto, renderEmailBlocks, renderWhatsappBubble,
