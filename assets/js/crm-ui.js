@@ -30,7 +30,8 @@ const ICO = {
   search:'<circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M17 17l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
   menu:'<path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
   empty:'<path d="M3 8l2.5-4h9L17 8M3 8v8a1 1 0 001 1h12a1 1 0 001-1V8M3 8h4.2c.3 1.2 1.4 2 2.8 2s2.5-.8 2.8-2H17" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>',
-  calendario:'<rect x="3" y="4" width="14" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 8h14M6.5 2.5v3M13.5 2.5v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="7" cy="11.5" r="1" fill="currentColor" stroke="none"/><circle cx="10" cy="11.5" r="1" fill="currentColor" stroke="none"/><circle cx="13" cy="11.5" r="1" fill="currentColor" stroke="none"/>'
+  calendario:'<rect x="3" y="4" width="14" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 8h14M6.5 2.5v3M13.5 2.5v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="7" cy="11.5" r="1" fill="currentColor" stroke="none"/><circle cx="10" cy="11.5" r="1" fill="currentColor" stroke="none"/><circle cx="13" cy="11.5" r="1" fill="currentColor" stroke="none"/>',
+  blog:'<path d="M4 3.5h9L17 7.5V16a1 1 0 01-1 1H4a1 1 0 01-1-1V4.5a1 1 0 011-1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M13 3.5V7h4" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5.5 10.5h6M5.5 13h9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>'
 };
 function svg(name){ return `<svg viewBox="0 0 20 20">${ICO[name]||""}</svg>`; }
 
@@ -54,6 +55,7 @@ const NAV_ADMIN = {group:"Administração", items:[
   {href:"admin/modelos.html", key:"admin-modelos", label:"Modelos", ico:"modelos"},
   {href:"admin/equipe.html", key:"admin-equipe", label:"Equipe", ico:"equipe"},
   {href:"admin/design.html", key:"admin-design", label:"Design", ico:"site"},
+  {href:"admin/blog.html", key:"admin-blog", label:"Blog", ico:"blog"},
   {href:"admin/documentos.html", key:"admin-documentos", label:"Documentos", ico:"documentos"},
   {href:"admin/financeiro.html", key:"admin-financeiro", label:"Financeiro", ico:"financeiro"},
   {href:"admin/personalizacao.html", key:"admin-personalizacao", label:"Personalização", ico:"personalizar"}

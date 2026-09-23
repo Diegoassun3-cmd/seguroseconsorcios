@@ -16,6 +16,7 @@ global.SoluaSearchIndex = [
   {tipo:"Página", titulo:"Consórcios", url:"consorcios.html", texto:"Linhas de consórcio, Porto Bank, Ademicon e simulador."},
   {tipo:"Página", titulo:"A Solua", url:"sobre.html", texto:"Nossa história, linha do tempo e equipe."},
   {tipo:"Página", titulo:"Contato", url:"contato.html", texto:"Fale com um consultor, endereço e WhatsApp."},
+  {tipo:"Página", titulo:"Blog", url:"blog.html", texto:"Artigos sobre seguros, consórcios, imóveis e planejamento."},
 
   // -------- seguros --------
   {tipo:"Seguro", titulo:"Seguro Auto", url:"seguros.html", texto:"Cobertura para colisão, roubo, furto, incêndio e terceiros, com assistência 24h e carro reserva."},
@@ -39,14 +40,9 @@ global.SoluaSearchIndex = [
   {tipo:"Dúvida", titulo:"O que acontece se eu precisar acionar o seguro?", url:"seguros.html", texto:"Você fala com seu consultor Solua, não com um call center."},
   {tipo:"Dúvida", titulo:"Qual a diferença entre consórcio e financiamento?", url:"consorcios.html", texto:"No financiamento você paga juros; no consórcio, taxa de administração."},
   {tipo:"Dúvida", titulo:"Posso usar o FGTS no consórcio de imóvel?", url:"consorcios.html", texto:"Sim, em muitos casos — lance, complemento ou amortização."},
-  {tipo:"Dúvida", titulo:"O que é lance e como funciona?", url:"consorcios.html", texto:"Livre, fixo ou embutido — antecipa a contemplação."},
+  {tipo:"Dúvida", titulo:"O que é lance e como funciona?", url:"consorcios.html", texto:"Livre, fixo ou embutido — antecipa a contemplação."}
 
-  // -------- artigos do blog (ver assets/js/home.js) --------
-  {tipo:"Artigo", titulo:"Franquia, cobertura e preço no seguro auto", url:"index.html?post=0#blog", texto:"O que realmente muda entre apólices parecidas."},
-  {tipo:"Artigo", titulo:"Consórcio ou financiamento?", url:"index.html?post=1#blog", texto:"A conta que quase ninguém faz."},
-  {tipo:"Artigo", titulo:"Comprar na planta em Campinas", url:"index.html?post=2#blog", texto:"O que verificar antes de assinar."},
-  {tipo:"Artigo", titulo:"Seguro residencial custa menos do que você imagina", url:"index.html?post=3#blog", texto:"O produto mais subestimado do mercado."},
-  {tipo:"Artigo", titulo:"Lance no consórcio: estratégias", url:"index.html?post=4#blog", texto:"Livre, fixo, embutido e com FGTS."},
-  {tipo:"Artigo", titulo:"Checklist antes de renovar o seguro", url:"index.html?post=5#blog", texto:"O que revisar antes do vencimento."}
+  // -------- artigos do blog: indexados dinamicamente por site-search.js,
+  // a partir de DB.getPostsPublicados() (ver assets/js/crm-data.js) --------
 ];
 })(window);

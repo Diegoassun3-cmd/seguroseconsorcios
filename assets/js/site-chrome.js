@@ -21,6 +21,7 @@ const NAV_LINKS = [
   {href:"imoveis.html",    page:"imoveis",    label:"Imóveis",    cms:"nav.imoveis"},
   {href:"seguros.html",    page:"seguros",    label:"Seguros",    cms:"nav.seguros"},
   {href:"consorcios.html", page:"consorcios", label:"Consórcios", cms:"nav.consorcios"},
+  {href:"blog.html",       page:"blog",       label:"Blog",       cms:"nav.blog"},
   {href:"sobre.html",      page:"sobre",      label:"A Solua",    cms:"nav.sobre"},
   {href:"contato.html",    page:"contato",    label:"Contato",    cms:"nav.contato"}
 ];
@@ -70,12 +71,12 @@ const MOB_GROUPS = [
   {titulo:"Produtos", itens:[
     {href:"imoveis.html", page:"imoveis", label:"Imóveis", cms:"nav.imoveis"},
     {href:"seguros.html", page:"seguros", label:"Seguros", cms:"nav.seguros"},
-    {href:"consorcios.html", page:"consorcios", label:"Consórcios", cms:"nav.consorcios"}
+    {href:"consorcios.html", page:"consorcios", label:"Consórcios", cms:"nav.consorcios"},
+    {href:"blog.html", page:"blog", label:"Blog", cms:"nav.blog"}
   ]},
   {titulo:"Institucional", itens:[
     {href:"sobre.html", page:"sobre", label:"A Solua", cms:"nav.sobre"},
-    {href:"sobre.html#equipe", page:null, label:"Equipe"},
-    {href:"index.html#blog", page:null, label:"Blog"}
+    {href:"sobre.html#equipe", page:null, label:"Equipe"}
   ]},
   {titulo:"Contato", itens:[
     {href:"contato.html", page:"contato", label:"Fale conosco"}
@@ -126,6 +127,7 @@ function renderFooter(){
         <a href="imoveis.html" data-cms="nav.imoveis">Imóveis</a>
         <a href="seguros.html" data-cms="nav.seguros">Seguros</a>
         <a href="consorcios.html" data-cms="nav.consorcios">Consórcios</a>
+        <a href="blog.html" data-cms="nav.blog">Blog</a>
       </div>
       <div class="fcol">
         <h5 data-cms="footer.col.institucional">Institucional</h5>

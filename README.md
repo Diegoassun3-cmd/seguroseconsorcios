@@ -24,6 +24,7 @@ imoveis.html                    → catálogo de imóveis (filtros)
 imovel.html                     → detalhe de um imóvel (galeria, ficha, interesse)
 seguros.html                    → linhas de seguro + simulador + FAQ
 consorcios.html                 → linhas de consórcio + parceiras + simulador + FAQ
+blog.html                       → catálogo completo do blog (filtro por categoria)
 sobre.html                      → história (linha do tempo) + equipe pública
 contato.html                    → formulário geral de contato
 worker.js                       → Worker: API /api/* + serve os arquivos estáticos
@@ -38,7 +39,9 @@ assets/css/crm.css              → design do CRM (sidebar, kanban, tabelas, mod
 assets/js/site-chrome.js        → header/menu mobile/rodapé/WhatsApp flutuante (todas as páginas públicas)
 assets/js/quote-flow.js         → simulador de cotação reutilizável (Seguros e Consórcios)
 assets/js/product-list.js       → lista de produtos com sub-abas (Seguros/Consórcios)
-assets/js/home.js               → carrossel do hero, destaques, blog (Home)
+assets/js/home.js               → carrossel do hero, destaques de imóveis e blog (Home)
+assets/js/blog-common.js        → cartão e leitor de artigo compartilhados (Home + blog.html)
+assets/js/blog.js               → filtro por categoria + grade do catálogo completo do blog
 assets/js/imoveis-catalogo.js   → filtros + grade do catálogo de imóveis
 assets/js/imovel-detalhe.js     → página de detalhe de um imóvel
 assets/js/seguros.js            → dados e montagem da página de Seguros
@@ -63,9 +66,12 @@ assets/js/crm-personalizacao.js → lógica da tela de Personalização
 assets/js/crm-design.js         → lógica do Painel de Design
 assets/js/crm-documentos.js     → lógica do repositório de Documentos
 assets/js/crm-financeiro.js     → lógica do painel Financeiro
+assets/js/crm-blog.js           → lógica da tela de Blog (lista + editor em blocos)
+assets/js/crm-calendario.js     → lógica da página de Calendário
 
 crm/login.html                  → tela de login do CRM
-crm/dashboard.html              → visão geral (KPIs, atividade recente)
+crm/dashboard.html              → visão geral (KPIs, atividade recente, mural de avisos)
+crm/calendario.html             → calendário de leads com "próximo contato" marcado
 crm/pipeline-imoveis.html       → funil Kanban de Imóveis
 crm/pipeline-seguros.html       → funil Kanban de Seguros
 crm/pipeline-consorcios.html    → funil Kanban de Consórcios
@@ -73,9 +79,10 @@ crm/contatos.html               → base unificada de leads/clientes (todos os p
 crm/admin/disparos.html         → Central de Disparos + Automações
 crm/admin/modelos.html          → modelos/templates de e-mail e WhatsApp
 crm/admin/equipe.html           → gestão de usuários do CRM
-crm/admin/design.html           → textos e visibilidade de seções da Home
+crm/admin/design.html           → textos, fotos/cor de fundo e visibilidade de seções do site
+crm/admin/blog.html             → escrever, editar e publicar os artigos do blog
 crm/admin/documentos.html       → repositório de documentos internos
-crm/admin/financeiro.html       → vendas, comissão e ranking por consultor
+crm/admin/financeiro.html       → vendas, comissão, ranking por consultor e contas a pagar/receber
 crm/admin/personalizacao.html   → logo, cor da marca, WhatsApp, remetente, automações
 ```
 
@@ -300,6 +307,49 @@ A Solua automaticamente).
 > gerenciador de catálogo de imóveis (criar/editar/remover cada imóvel
 > pelo CRM) é um próximo passo natural, mas é um recurso à parte — não
 > uma extensão do Design.
+
+### Blog (site público + CRM)
+
+O blog deixou de ser um bloco só de texto na Home e virou uma seção de
+verdade, com dados reais (não hardcoded) em `STATE.posts`
+(`assets/js/crm-data.js`, `window.SoluaDB`) e uma tela própria no CRM
+para escrever os artigos — sem precisar mexer em código.
+
+**No site:**
+- A Home mostra os **3 artigos mais recentes** como cartões arredondados
+  (foto, categoria, tempo de leitura calculado de verdade a partir do
+  texto, e um botão "Ler mais" com seta circular), seguidos de um botão
+  "Ver blog completo".
+- `blog.html` é o catálogo completo: filtro por categoria + todos os
+  artigos publicados, no mesmo estilo de cartão. "Blog" entrou no menu
+  principal, no menu mobile, no rodapé e na busca do site (os artigos
+  aparecem nos resultados e abrem direto no artigo certo via
+  `blog.html?post=ID`).
+- O cartão e o leitor em tela cheia são peças compartilhadas
+  (`assets/js/blog-common.js`), usadas tanto pela Home quanto pelo
+  catálogo — não há duas versões do mesmo componente por aí.
+- Cor de cada categoria é automática (`DB.corPost`): as 4 categorias
+  padrão (Seguros, Consórcio, Imóveis, Planejamento) usam a mesma
+  paleta categórica já validada do Dashboard/Financeiro; uma categoria
+  nova digitada na hora cai numa dessas 4 cores por hash, nunca fica
+  sem cor.
+
+**No CRM** (`crm/admin/blog.html`, item "Blog" no menu): uma grade com
+todos os artigos (rascunho ou publicado), e um editor em modal para
+criar ou editar um artigo:
+- **Categoria/tema** — campo livre com sugestões das categorias já
+  usadas (não trava numa lista fixa).
+- **Capa** — mesmo cartão de mídia do Painel de Design (upload direto,
+  colar link, ou remover).
+- **Corpo do artigo em blocos** — Subtítulo, Parágrafo, Lista e Imagem,
+  com adicionar/reordenar/remover, no mesmo formato dos blocos de
+  e-mail dos Modelos. Isso significa que dá pra colocar quantas fotos
+  quiser dentro do próprio texto do artigo, não só a capa.
+- **Rascunho ou Publicado** — um artigo em rascunho fica só no CRM; só
+  aparece no site (Home e blog.html) quando publicado.
+- Pré-visualização ao vivo do artigo montado, e tempo de leitura
+  recalculado sozinho (não é um campo manual que alguém esquece de
+  atualizar).
 
 ### Identidade visual, manutenção e SEO básico (Personalização)
 

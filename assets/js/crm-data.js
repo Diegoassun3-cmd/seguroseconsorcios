@@ -117,6 +117,101 @@
       fotos:[fotoImovel(8,1),fotoImovel(8,2),fotoImovel(8,3),fotoImovel(8,4)]}
   ];
 
+  // -------------------- BLOG (artigos do site público) --------------------
+  // Assim como o catálogo de imóveis, são "produtos" (conteúdo editorial),
+  // não contatos — por isso entram no seed. O corpo de cada artigo é uma
+  // lista de blocos (parágrafo/subtítulo/lista/imagem), no mesmo espírito
+  // dos blocos de e-mail dos modelos — renderPostCorpo() vira HTML escapado.
+  function fotoPost(seed){ return `https://picsum.photos/seed/solua-blog-${seed}/900/700`; }
+  const POSTS_SEED = [
+    {id:"post1", categoria:"Seguros", titulo:"Franquia, cobertura e preço: o que realmente muda no seguro auto",
+      resumo:"Três apólices com o mesmo preço podem proteger de formas completamente diferentes. Entenda o que olhar antes de fechar.",
+      capa: fotoPost("auto"), status:"publicado", autorId:null, criadoEm:"2026-08-12T09:00:00.000Z", publicadoEm:"2026-08-12T09:00:00.000Z",
+      blocos:[
+        {tipo:"paragrafo", texto:"Quando alguém pede uma cotação de seguro auto, quase sempre a primeira pergunta é: quanto custa? É uma pergunta legítima, mas incompleta. Duas apólices com valor parecido podem ter diferenças enormes na hora em que você precisa delas."},
+        {tipo:"titulo2", texto:"1. A franquia não é um detalhe"},
+        {tipo:"paragrafo", texto:"A franquia é o valor que você paga em caso de colisão parcial. Uma apólice mais barata frequentemente tem franquia mais alta — o que significa que o desconto de hoje vira despesa no dia do sinistro. Vale comparar o par preço e franquia, nunca só o preço."},
+        {tipo:"titulo2", texto:"2. Cobertura de terceiros define o seu risco real"},
+        {tipo:"paragrafo", texto:"Danos materiais e corporais a terceiros são a cobertura que protege seu patrimônio de uma ação judicial. Muita gente contrata o mínimo e descobre tarde que o limite não cobria o carro que atingiu."},
+        {tipo:"titulo2", texto:"3. Assistência 24h e carro reserva mudam sua rotina"},
+        {tipo:"paragrafo", texto:"Guincho com quilometragem curta ou carro reserva de sete dias parecem detalhes até você depender deles por duas semanas. Verifique os limites, não apenas se o item existe na apólice."},
+        {tipo:"titulo2", texto:"4. Perfil e uso do veículo"},
+        {tipo:"paragrafo", texto:"O cálculo considera CEP de pernoite, garagem, condutores e uso do carro. Informações imprecisas barateiam a cotação e podem gerar recusa de indenização depois. Melhor informar corretamente desde o início."},
+        {tipo:"paragrafo", texto:"O papel da corretora é justamente colocar essas variáveis lado a lado. Você decide com informação — e não pelo primeiro número que apareceu."}
+      ]},
+    {id:"post2", categoria:"Consórcio", titulo:"Consórcio ou financiamento? A conta que quase ninguém faz",
+      resumo:"Não existe resposta única. Existe a resposta certa para o seu prazo, sua pressa e seu bolso.",
+      capa: fotoPost("consorcio"), status:"publicado", autorId:null, criadoEm:"2026-08-04T09:00:00.000Z", publicadoEm:"2026-08-04T09:00:00.000Z",
+      blocos:[
+        {tipo:"paragrafo", texto:"A comparação entre consórcio e financiamento costuma ser feita de forma rasa: um tem juros, o outro não. Verdade, mas insuficiente para decidir."},
+        {tipo:"titulo2", texto:"O que você está comprando em cada um"},
+        {tipo:"paragrafo", texto:"No financiamento, você compra tempo: leva o bem hoje e paga juros por isso. No consórcio, você compra poder de compra futuro: forma uma poupança coletiva, paga taxa de administração no lugar de juros e recebe a carta de crédito na contemplação — por sorteio ou por lance."},
+        {tipo:"titulo2", texto:"O custo total costuma surpreender"},
+        {tipo:"paragrafo", texto:"Em prazos longos, o custo efetivo de um financiamento imobiliário pode ultrapassar de forma significativa o valor do imóvel. No consórcio, o custo se concentra na taxa de administração e no fundo de reserva, diluídos ao longo do plano."},
+        {tipo:"titulo2", texto:"Quando o consórcio faz mais sentido"},
+        {tipo:"lista", itens:["Você tem um objetivo em 2, 3 ou 5 anos e consegue planejar.","Quer disciplina de poupança com destino definido.","Pretende usar o crédito como pagamento à vista e negociar desconto.","Tem recurso para lance — inclusive FGTS, no caso de imóvel."]},
+        {tipo:"titulo2", texto:"Quando o financiamento faz mais sentido"},
+        {tipo:"paragrafo", texto:"Se você precisa do bem agora — mudança de cidade, nascimento de um filho, fim de contrato de aluguel — pagar juros pode ser o preço justo pela imediatez."},
+        {tipo:"paragrafo", texto:"A pergunta correta não é qual é melhor, e sim: qual é o seu prazo? A partir dessa resposta, a conta se resolve sozinha."}
+      ]},
+    {id:"post3", categoria:"Imóveis", titulo:"Comprar na planta em Campinas: o que verificar antes de assinar",
+      resumo:"Registro de incorporação, memorial descritivo e prazo de tolerância — o que realmente protege quem compra na planta.",
+      capa: fotoPost("planta"), status:"publicado", autorId:null, criadoEm:"2026-08-20T09:00:00.000Z", publicadoEm:"2026-08-20T09:00:00.000Z",
+      blocos:[
+        {tipo:"paragrafo", texto:"Comprar na planta pode significar preço melhor e prazo de pagamento mais longo, mas exige atenção a detalhes que não aparecem no material de venda."},
+        {tipo:"titulo2", texto:"Registro de incorporação"},
+        {tipo:"paragrafo", texto:"Verifique se a incorporação está registrada no cartório de imóveis. Sem esse registro, a incorporadora não pode nem comercializar as unidades legalmente."},
+        {tipo:"titulo2", texto:"Memorial descritivo"},
+        {tipo:"paragrafo", texto:"É o documento que detalha acabamentos, materiais e especificações técnicas prometidas. Guarde-o: é sua referência para conferir a entrega."},
+        {tipo:"titulo2", texto:"Prazo de tolerância"},
+        {tipo:"paragrafo", texto:"A lei permite um atraso de até 180 dias sem multa para a incorporadora, contado a partir da data prevista de entrega. Depois disso, cabe indenização."},
+        {tipo:"paragrafo", texto:"Uma corretora que representa o comprador, não a incorporadora, ajuda a ler esse contrato com outros olhos antes da assinatura."}
+      ]},
+    {id:"post4", categoria:"Seguros", titulo:"Seguro residencial custa menos do que você imagina",
+      resumo:"O produto mais subestimado do mercado brasileiro — e o mais barato por real protegido.",
+      capa: fotoPost("residencial"), status:"publicado", autorId:null, criadoEm:"2026-07-27T09:00:00.000Z", publicadoEm:"2026-07-27T09:00:00.000Z",
+      blocos:[
+        {tipo:"paragrafo", texto:"Existe um descompasso curioso no Brasil: seguramos o carro com naturalidade e deixamos a casa, que costuma valer muito mais, sem qualquer proteção."},
+        {tipo:"titulo2", texto:"O que a apólice cobre de fato"},
+        {tipo:"paragrafo", texto:"Incêndio, queda de raio e explosão são a base obrigatória. A partir daí, você monta: roubo e furto qualificado, danos elétricos — que resolvem geladeira, TV e ar-condicionado queimados por oscilação —, vendaval, impacto de veículos e responsabilidade civil familiar."},
+        {tipo:"titulo2", texto:"A assistência que se usa o ano inteiro"},
+        {tipo:"paragrafo", texto:"Chaveiro, encanador, eletricista, conserto de eletrodomésticos e até desentupimento entram no pacote. Muita gente paga o seguro do ano em uma única visita emergencial de chaveiro em um domingo."},
+        {tipo:"titulo2", texto:"Imóvel alugado também precisa"},
+        {tipo:"paragrafo", texto:"Contratos de locação costumam exigir apólice de incêndio. Mas o inquilino pode — e deve — proteger também o conteúdo: móveis, eletrônicos e bens pessoais não estão cobertos pela apólice do proprietário."},
+        {tipo:"paragrafo", texto:"Comparado ao valor do que protege, é provavelmente o seguro com melhor relação custo-benefício do mercado brasileiro."}
+      ]},
+    {id:"post5", categoria:"Planejamento", titulo:"Lance no consórcio: as estratégias que realmente antecipam a contemplação",
+      resumo:"Livre, fixo, embutido e com FGTS. Entenda cada modalidade antes de dar o seu.",
+      capa: fotoPost("lance"), status:"publicado", autorId:null, criadoEm:"2026-07-18T09:00:00.000Z", publicadoEm:"2026-07-18T09:00:00.000Z",
+      blocos:[
+        {tipo:"paragrafo", texto:"Contemplação por sorteio é sorte. Lance é estratégia. E, na maioria dos grupos, é o lance que define quem antecipa o crédito."},
+        {tipo:"titulo2", texto:"Lance livre"},
+        {tipo:"paragrafo", texto:"Você oferece o percentual que quiser do valor da carta. Vence quem ofertar mais naquela assembleia. Exige acompanhar o histórico do grupo para calibrar a oferta."},
+        {tipo:"titulo2", texto:"Lance fixo"},
+        {tipo:"paragrafo", texto:"A administradora define um percentual único. Se mais de um consorciado ofertar, decide-se por sorteio entre eles. É mais previsível e costuma ser bom para quem tem exatamente aquele valor disponível."},
+        {tipo:"titulo2", texto:"Lance embutido"},
+        {tipo:"paragrafo", texto:"Parte do próprio crédito é usada como lance. Você não desembolsa dinheiro novo, mas recebe uma carta menor. Útil para quem tem pressa e flexibilidade no valor do bem."},
+        {tipo:"titulo2", texto:"FGTS no consórcio de imóvel"},
+        {tipo:"paragrafo", texto:"O saldo do FGTS pode compor lance, complementar a carta ou amortizar parcelas, dentro das regras aplicáveis. É o recurso mais subutilizado por quem está em consórcio imobiliário."},
+        {tipo:"paragrafo", texto:"Antes de ofertar, peça à sua corretora o histórico de contemplações do grupo. Ofertar acima do necessário é dinheiro deixado na mesa."}
+      ]},
+    {id:"post6", categoria:"Planejamento", titulo:"Checklist: o que revisar no seu seguro antes de renovar",
+      resumo:"Renovação automática é conforto — e também a forma mais comum de pagar caro por cobertura errada.",
+      capa: fotoPost("checklist"), status:"publicado", autorId:null, criadoEm:"2026-06-30T09:00:00.000Z", publicadoEm:"2026-06-30T09:00:00.000Z",
+      blocos:[
+        {tipo:"paragrafo", texto:"A renovação costuma chegar quando você está ocupado. Aceitar automaticamente é fácil, mas raramente é a melhor decisão financeira do ano."},
+        {tipo:"titulo2", texto:"1. Mudou alguma coisa na sua vida?"},
+        {tipo:"paragrafo", texto:"Casamento, filho, mudança de endereço, novo condutor no carro, home office, reforma. Cada um desses eventos altera o risco — e, portanto, o preço e a cobertura ideal."},
+        {tipo:"titulo2", texto:"2. O valor segurado ainda corresponde à realidade?"},
+        {tipo:"paragrafo", texto:"Imóveis e bens se valorizam; veículos desvalorizam. Segurar acima do valor de mercado é pagar a mais; abaixo, é receber menos do que precisa."},
+        {tipo:"titulo2", texto:"3. Você usou a apólice?"},
+        {tipo:"paragrafo", texto:"Histórico limpo é argumento de negociação. Vale pedir revisão de bônus e recotação no mercado antes de aceitar o reajuste proposto."},
+        {tipo:"titulo2", texto:"4. As assistências fazem sentido?"},
+        {tipo:"paragrafo", texto:"Serviços que você nunca usou podem sair; os que faltaram no ano devem entrar. É o ajuste mais barato de fazer e o mais esquecido."},
+        {tipo:"paragrafo", texto:"Uma revisão de quinze minutos com seu corretor, trinta dias antes do vencimento, costuma valer mais do que qualquer cupom de desconto."}
+      ]}
+  ];
+
   // -------------------- PERSISTÊNCIA --------------------
   function load(){
     try{
@@ -138,6 +233,9 @@
   if(!Array.isArray(STATE.contasFinanceiras)){ STATE.contasFinanceiras = []; save(STATE); }
   // migração leve: mural de avisos é uma seção nova — começa vazia.
   if(!Array.isArray(STATE.avisos)){ STATE.avisos = []; save(STATE); }
+  // migração leve: blog é uma seção nova — ganha os artigos de exemplo
+  // (mesmo raciocínio do catálogo de imóveis: é conteúdo/produto, não contato).
+  if(!Array.isArray(STATE.posts)){ STATE.posts = POSTS_SEED.map(p=>Object.assign({}, p, {blocos: p.blocos.map(b=>Object.assign({}, b))})); save(STATE); }
 
   function uid(prefix){ return (prefix||"id")+"_"+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4); }
   function nowISO(){ return new Date().toISOString(); }
@@ -198,7 +296,9 @@
         rodape:"Resposta em até 1 dia útil", botoes:[{tipo:"resposta_rapida", texto:"Pode mandar"}]}
     ];
 
-    return { leads:[], templates, campaigns:[], equipe: EQUIPE_SEED, imoveis: IMOVEIS_SEED.map(i=>Object.assign({},i)), contasFinanceiras:[], avisos:[], activity:[], session:null };
+    return { leads:[], templates, campaigns:[], equipe: EQUIPE_SEED, imoveis: IMOVEIS_SEED.map(i=>Object.assign({},i)),
+      posts: POSTS_SEED.map(p=>Object.assign({}, p, {blocos: p.blocos.map(b=>Object.assign({}, b))})),
+      contasFinanceiras:[], avisos:[], activity:[], session:null };
   }
 
   function labelEstagio(produto, estagioId){
@@ -377,6 +477,89 @@
   }
   function deleteAviso(id){
     STATE.avisos = STATE.avisos.filter(a=>a.id!==id); save(STATE);
+  }
+
+  // -------------------- BLOG (CRUD + blocos do corpo) --------------------
+  const CATEGORIAS_POST_PADRAO = ["Seguros","Consórcio","Imóveis","Planejamento"];
+  // mesma paleta categórica já validada (dashboard/financeiro): reaproveita
+  // as cores em vez de inventar uma nova — uma categoria digitada na hora
+  // (fora das 4 padrão) cai numa dessas 4 por hash, nunca sem cor nenhuma.
+  const CATEGORIA_COR_MAP = {"Seguros":"azul", "Consórcio":"dourado", "Imóveis":"roxo", "Planejamento":"verde"};
+  const CORES_POST_CICLO = ["azul","dourado","roxo","verde"];
+  function corPost(categoria){
+    if(CATEGORIA_COR_MAP[categoria]) return CATEGORIA_COR_MAP[categoria];
+    let h = 0;
+    const s = String(categoria||"");
+    for(let i=0;i<s.length;i++) h = (h*31 + s.charCodeAt(i)) % CORES_POST_CICLO.length;
+    return CORES_POST_CICLO[Math.abs(h)];
+  }
+  function getCategoriasPost(){
+    const doEstado = STATE.posts.map(p=>p.categoria).filter(Boolean);
+    return [...new Set([...CATEGORIAS_POST_PADRAO, ...doEstado])];
+  }
+
+  const POST_BLOCO_LABELS = {titulo2:"Subtítulo", paragrafo:"Parágrafo", lista:"Lista", imagem:"Imagem"};
+  function novoBlocoPost(tipo){
+    switch(tipo){
+      case "titulo2": return {tipo:"titulo2", texto:"Subtítulo"};
+      case "lista": return {tipo:"lista", itens:["Item 1","Item 2"]};
+      case "imagem": return {tipo:"imagem", url:"", alt:""};
+      default: return {tipo:"paragrafo", texto:"Escreva aqui…"};
+    }
+  }
+  // HTML de verdade a partir dos blocos — sempre escapado, porque um artigo
+  // pode ser escrito por qualquer pessoa da equipe (não é código confiável).
+  function renderPostCorpo(blocos){
+    return (blocos||[]).map(b=>{
+      switch(b.tipo){
+        case "titulo2":
+          return b.texto ? `<h2>${escapeHtml(b.texto)}</h2>` : "";
+        case "lista":
+          return (b.itens||[]).filter(Boolean).length ? `<ul>${b.itens.filter(Boolean).map(i=>`<li>${escapeHtml(i)}</li>`).join("")}</ul>` : "";
+        case "imagem":
+          return b.url ? `<img src="${escapeHtml(b.url)}" alt="${escapeHtml(b.alt||"")}" style="width:100%;border-radius:16px;margin:8px 0 22px;display:block">` : "";
+        default:
+          return b.texto ? `<p>${escapeHtml(b.texto)}</p>` : "";
+      }
+    }).join("");
+  }
+  function postBlocosParaTexto(blocos){
+    return (blocos||[]).map(b=> b.tipo==="lista" ? (b.itens||[]).join(" ") : (b.texto||"")).filter(Boolean).join(" ");
+  }
+  // tempo de leitura calculado de verdade a partir do texto (≈200 palavras/min)
+  // em vez de um campo manual que ninguém lembra de atualizar
+  function tempoLeituraMin(blocos){
+    const palavras = postBlocosParaTexto(blocos).trim().split(/\s+/).filter(Boolean).length;
+    return Math.max(1, Math.round(palavras/200));
+  }
+
+  function getPosts(){ return STATE.posts.slice().sort((a,b)=> new Date(b.criadoEm)-new Date(a.criadoEm)); }
+  function getPostsPublicados(){
+    return STATE.posts.filter(p=>p.status==="publicado")
+      .sort((a,b)=> new Date(b.publicadoEm||b.criadoEm) - new Date(a.publicadoEm||a.criadoEm));
+  }
+  function getPost(id){ return STATE.posts.find(p=>p.id===id) || null; }
+  function addPost(data){
+    const p = Object.assign({
+      id: uid("post"), categoria:"Planejamento", titulo:"", resumo:"", capa:null,
+      blocos:[novoBlocoPost("paragrafo")], status:"rascunho", autorId:null,
+      criadoEm: nowISO(), publicadoEm: null
+    }, data);
+    if(p.status==="publicado" && !p.publicadoEm) p.publicadoEm = nowISO();
+    STATE.posts.unshift(p);
+    save(STATE);
+    return p;
+  }
+  function updatePost(id, patch){
+    const p = getPost(id); if(!p) return null;
+    const eraPublicado = p.status==="publicado";
+    Object.assign(p, patch);
+    if(p.status==="publicado" && !eraPublicado && !p.publicadoEm) p.publicadoEm = nowISO();
+    save(STATE);
+    return p;
+  }
+  function deletePost(id){
+    STATE.posts = STATE.posts.filter(p=>p.id!==id); save(STATE);
   }
 
   // -------------------- TEMPLATES --------------------
@@ -655,6 +838,8 @@
     getImoveis, getImovel, addImovel, updateImovel, deleteImovel, filterImoveis,
     getContas, getConta, addConta, updateConta, deleteConta,
     getAvisos, addAviso, updateAviso, deleteAviso,
+    getPosts, getPostsPublicados, getPost, addPost, updatePost, deletePost,
+    getCategoriasPost, corPost, POST_BLOCO_LABELS, novoBlocoPost, renderPostCorpo, tempoLeituraMin,
     getTemplates, getTemplate, addTemplate, updateTemplate, deleteTemplate,
     getAudience, getCampaigns, getCampaign, addCampaign, updateCampaign, deleteCampaign, sendCampaignNow,
     login, logout, currentUser, requireAuth,

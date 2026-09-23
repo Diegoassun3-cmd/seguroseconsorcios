@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog — Solua</title>
+<meta name="description" content="Artigos práticos sobre seguros, consórcios, imóveis e planejamento financeiro, escritos pela equipe Solua.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23004BA5'/></svg>">
+<link rel="preload" href="assets/fonts/Nyata-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/editorial.css">
+<script defer src="assets/js/icon-library.js"></script>
+<script defer src="assets/js/content-apply.js"></script>
+<script defer src="assets/js/branding.js"></script>
+</head>
+<body data-page="blog">
+
+<header id="hd"></header>
+<div class="mob" id="mob"></div>
+
+<section class="hero" style="padding-bottom:20px">
+  <div class="wrap">
+    <h1 style="font-size:clamp(40px,8vw,96px)">Para decidir bem,<br><em style="color:var(--azul);font-style:normal">é preciso entender.</em></h1>
+    <p class="hero-lead" style="margin-top:24px">Artigos práticos sobre seguros, consórcios, imóveis e planejamento — escritos por quem faz isso há 25 anos.</p>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:20px">
+  <div class="wrap rev">
+    <div class="filters" id="filters"></div>
+    <div class="blog-grid" id="blogGrid"></div>
+    <p class="prop-empty blog-empty" id="blogEmpty" style="display:none">Nenhum artigo nessa categoria ainda.</p>
+  </div>
+</section>
+
+<section class="sec blue" style="text-align:center">
+  <div class="wrap rev">
+    <h2 style="font-size:clamp(30px,5vw,56px);margin:18px auto 22px;max-width:16ch">Ficou com alguma dúvida?</h2>
+    <p style="max-width:46ch;margin:0 auto 30px;color:rgba(242,237,230,.75)">Um consultor Solua responde sem compromisso — em até 1 dia útil.</p>
+    <a class="btn lg" href="contato.html">Falar com um consultor</a>
+  </div>
+</section>
+
+<footer id="ft"></footer>
+<div id="wppFloat"></div>
+
+<!-- LEITOR DE ARTIGO -->
+<div class="reader" id="reader">
+  <div class="reader-bar"><div class="wrap in">
+    <span class="brand"><span class="mark">solua</span></span>
+    <button class="close-x" id="closeR" aria-label="Fechar"></button>
+  </div></div>
+  <article class="reader-body" id="rbody"></article>
+</div>
+
+<script src="assets/js/crm-data.js"></script>
+<script src="assets/js/site-chrome.js"></script>
+<script src="assets/js/search-index.js"></script>
+<script src="assets/js/site-search.js"></script>
+<script src="assets/js/blog-common.js"></script>
+<script src="assets/js/blog.js"></script>
+</body>
+</html>

@@ -200,6 +200,7 @@ const SCHEMA = [
       {key:"nav.imoveis", label:"Imóveis", tipo:"texto"},
       {key:"nav.seguros", label:"Seguros", tipo:"texto"},
       {key:"nav.consorcios", label:"Consórcios", tipo:"texto"},
+      {key:"nav.blog", label:"Blog", tipo:"texto"},
       {key:"nav.sobre", label:"A Solua", tipo:"texto"},
       {key:"nav.contato", label:"Contato", tipo:"texto"},
       {key:"nav.cta", label:"Botão do cabeçalho — texto", tipo:"texto", placeholder:"Fale com um consultor"}

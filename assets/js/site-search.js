@@ -15,7 +15,10 @@ function indiceCompleto(){
     tipo:"Imóvel", titulo:i.titulo, url:`imovel.html?id=${i.id}`,
     texto:`${i.bairro}, ${i.cidade} — ${i.finalidade==="locacao"?DB.formatBRL(i.valor)+"/mês":DB.formatBRL(i.valor)}`
   }));
-  return [...(window.SoluaSearchIndex||[]), ...imoveis];
+  const artigos = (DB ? DB.getPostsPublicados() : []).map(p=>({
+    tipo:"Artigo", titulo:p.titulo, url:`blog.html?post=${p.id}`, texto:p.resumo
+  }));
+  return [...(window.SoluaSearchIndex||[]), ...imoveis, ...artigos];
 }
 
 function buscar(q){
