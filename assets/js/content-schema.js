@@ -207,10 +207,19 @@ const SCHEMA = [
     ]},
     { titulo:"Rodapé", campos:[
       {key:"footer.descricao", label:"Texto abaixo da marca", tipo:"textarea"},
+      {key:"footer.corFundo", label:"Cor de fundo do rodapé", tipo:"corfundo"},
       {key:"footer.col.produtos", label:"Coluna 1 — título", tipo:"texto", placeholder:"Produtos"},
       {key:"footer.col.institucional", label:"Coluna 2 — título", tipo:"texto", placeholder:"Institucional"},
       {key:"footer.col.contato", label:"Coluna 3 — título", tipo:"texto", placeholder:"Contato"},
       {key:"footer.copyright", label:"Linha de rodapé (depois do © e do ano)", tipo:"texto", placeholder:"Solua Corretora e Imobiliária — CRECI e SUSEP conforme legislação vigente."}
+    ]},
+    { titulo:"Redes sociais (rodapé)", campos:[
+      {key:"footer.social.instagram", label:"Instagram — link (vazio = não mostrar)", tipo:"texto", placeholder:"https://instagram.com/solua"},
+      {key:"footer.social.facebook", label:"Facebook — link (vazio = não mostrar)", tipo:"texto", placeholder:"https://facebook.com/solua"},
+      {key:"footer.social.linkedin", label:"Linkedin — link (vazio = não mostrar)", tipo:"texto", placeholder:"https://linkedin.com/company/solua"}
+    ]},
+    { titulo:"Localização (Contato + mapa do rodapé)", campos:[
+      {key:"contato.info.endereco", label:"Endereço mostrado e usado no mapa", tipo:"texto", placeholder:"Campinas — SP"}
     ]}
   ]}
 ];

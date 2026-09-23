@@ -25,12 +25,28 @@ document.title = `${imovel.titulo} — Solua`;
 
 function galleryHtml(){
   const fotos = imovel.fotos.length ? imovel.fotos : ["https://picsum.photos/seed/solua-imovel-fallback/1200/800"];
-  const thumbs = fotos.slice(1,4);
   return `
   <div class="prop-gallery">
-    <div class="main"><img src="${fotos[0]}" alt="${DB.esc(imovel.titulo)}"></div>
-    ${thumbs.map(f=>`<div class="thumb" style="overflow:hidden;border-radius:2px"><img src="${f}" alt="${DB.esc(imovel.titulo)}" style="width:100%;height:100%;object-fit:cover"></div>`).join("")}
+    <div class="pg-main" id="pgMain">
+      ${fotos.map((f,i)=>`<div class="pg-slide${i===0?" on":""}" style="background-image:url('${f}')" role="img" aria-label="${DB.esc(imovel.titulo)} — foto ${i+1}"></div>`).join("")}
+    </div>
+    ${fotos.length>1 ? `<div class="pg-dots" id="pgDots">${fotos.map((_,i)=>`<button type="button" class="${i===0?"on":""}" data-i="${i}" aria-label="Foto ${i+1}"></button>`).join("")}</div>` : ""}
   </div>`;
+}
+
+function ligarGaleria(){
+  const slides = document.querySelectorAll("#pgMain .pg-slide");
+  const dots = document.querySelectorAll("#pgDots button");
+  if(slides.length<2) return;
+  let idx = 0;
+  function ir(n){
+    idx = n;
+    slides.forEach((s,i)=> s.classList.toggle("on", i===idx));
+    dots.forEach((d,i)=> d.classList.toggle("on", i===idx));
+  }
+  dots.forEach(d=> d.onclick = ()=> ir(+d.dataset.i));
+  let auto = setInterval(()=> ir((idx+1)%slides.length), 6000);
+  document.getElementById("pgMain").addEventListener("mouseenter", ()=> clearInterval(auto));
 }
 
 function fichaHtml(){
@@ -78,6 +94,8 @@ body.innerHTML = `
       ${formHtml()}
     </div>
   </div>`;
+
+ligarGaleria();
 
 document.getElementById("piFone").oninput = e=>{ let v=e.target.value.replace(/\D/g,"").slice(0,11);
   e.target.value = v.length>10 ? v.replace(/(\d{2})(\d{5})(\d{4})/,"($1) $2-$3") : v.length>6 ? v.replace(/(\d{2})(\d{4})(\d{0,4})/,"($1) $2-$3") : v.length>2 ? v.replace(/(\d{2})(\d*)/,"($1) $2") : v; };

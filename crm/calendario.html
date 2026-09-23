@@ -19,7 +19,7 @@
     <header class="topbar" id="topbar"></header>
     <main class="content">
 
-      <div class="demo-hint" style="margin-bottom:16px">Mostra os leads com uma data de "Próximo contato" marcada (defina no drawer de cada lead). Sincronizar com o Google Agenda exigiria conectar credenciais reais do Google (OAuth) — ver README, seção "Calendário e Google Agenda".</div>
+      <div class="demo-hint" style="margin-bottom:16px">Mostra os leads com uma data de "Próximo contato" marcada (defina no drawer de cada lead) e os compromissos cadastrados aqui mesmo, direto no dia. Sincronizar com o Google Agenda exigiria conectar credenciais reais do Google (OAuth) — ver README, seção "Calendário e Google Agenda".</div>
 
       <div class="cal-layout">
         <div class="card">
@@ -35,12 +35,32 @@
         </div>
 
         <div class="card">
-          <div class="card-hd"><h3 id="calDetalheTitulo">Selecione um dia</h3></div>
+          <div class="card-hd">
+            <h3 id="calDetalheTitulo">Selecione um dia</h3>
+            <button class="btn sm" id="btnNovoCompromisso">+ Novo compromisso</button>
+          </div>
           <div class="card-bd"><div id="calDetalhe"></div></div>
         </div>
       </div>
 
     </main>
+  </div>
+</div>
+
+<div class="overlay modal-center" id="compromissoOverlay">
+  <div class="modal" style="width:min(420px,92vw)">
+    <div class="modal-hd"><h3 style="font-size:16px" id="cpmModalTitle">Novo compromisso</h3><button class="x" data-close-overlay="compromissoOverlay"></button></div>
+    <div class="modal-bd">
+      <div class="field"><label>Data</label><input id="cpmData" type="date"></div>
+      <div class="field"><label>Título</label><input id="cpmTitulo" placeholder="Ex.: Reunião com fornecedor"></div>
+      <div class="field"><label>Hora (opcional)</label><input id="cpmHora" type="time"></div>
+      <div class="field"><label>Nota (opcional)</label><textarea id="cpmNota" rows="3"></textarea></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn danger ghost sm" id="btnExcluirCompromisso" style="margin-right:auto;display:none">Excluir</button>
+      <button class="btn ghost sm" data-close-overlay="compromissoOverlay">Cancelar</button>
+      <button class="btn sm" id="btnSalvarCompromisso">Salvar</button>
+    </div>
   </div>
 </div>
 

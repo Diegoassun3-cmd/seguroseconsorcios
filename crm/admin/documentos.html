@@ -78,7 +78,7 @@
 <script src="../../assets/js/crm-data.js"></script>
 <script src="../../assets/js/crm-ui.js"></script>
 <script>
-if(!window.SoluaUI.isAdmin){ window.SoluaUI.toast("Acesso restrito à administração.","err"); location.replace("../dashboard.html"); }
+window.SoluaUI.requirePermission("admin-documentos");
 document.getElementById("docEmpty").innerHTML = window.SoluaUI.emptyState("Nenhum documento nesta categoria ainda.");
 </script>
 <script src="../../assets/js/crm-documentos.js"></script>

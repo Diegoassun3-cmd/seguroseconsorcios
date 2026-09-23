@@ -109,6 +109,16 @@ function campoHtml(campo, conteudo){
       </div>
     </div>`;
   }
+  if(campo.tipo === "corfundo"){
+    const cor = val || "#15181C";
+    return `<div class="field" style="margin-bottom:14px">
+      <label>${label}</label>
+      <div class="bg-cor-row">
+        <input type="color" data-key="${campo.key}" data-tipo="texto" value="${DB.esc(cor)}">
+        <span>Cor de fundo do rodapé</span>
+      </div>
+    </div>`;
+  }
   if(campo.tipo === "imagem" || campo.tipo === "midia"){
     const aceitaVideo = campo.tipo === "midia";
     return `<div class="field" style="margin-bottom:14px">

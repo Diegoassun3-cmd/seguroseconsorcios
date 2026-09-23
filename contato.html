@@ -32,7 +32,7 @@
       <div class="contact-info">
         <div class="row">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s7-6.5 7-12a7 7 0 10-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></svg>
-          <div><b>Endereço</b><span data-cms="contato.info.endereco">Campinas — SP</span></div>
+          <div><b>Endereço</b><span data-cms="contato.info.endereco" data-cms-tipo="endereco" data-mapa-alvo="mapaContato" id="enderecoContato">Campinas — SP</span></div>
         </div>
         <div class="row">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5h16v14H4z"/><path d="M4 6l8 7 8-7"/></svg>
@@ -46,9 +46,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
           <div><b>Horário</b><span data-cms="contato.info.horario">Segunda a sexta, 9h às 18h</span></div>
         </div>
-        <div class="map-ph" style="background-image:url('https://picsum.photos/seed/solua-mapa/900/500')">
-          <svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 00-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 00-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg>
-        </div>
+        <iframe class="map-embed" id="mapaContato" src="https://maps.google.com/maps?q=Campinas%2C%20SP&t=&z=14&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa — localização Solua"></iframe>
       </div>
 
       <div>

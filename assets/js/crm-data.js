@@ -236,6 +236,15 @@
   // migração leve: blog é uma seção nova — ganha os artigos de exemplo
   // (mesmo raciocínio do catálogo de imóveis: é conteúdo/produto, não contato).
   if(!Array.isArray(STATE.posts)){ STATE.posts = POSTS_SEED.map(p=>Object.assign({}, p, {blocos: p.blocos.map(b=>Object.assign({}, b))})); save(STATE); }
+  // migração leve: compromissos do calendário são uma seção nova — começa vazia.
+  if(!Array.isArray(STATE.compromissos)){ STATE.compromissos = []; save(STATE); }
+  // migração leve: checklist de permissões é novo — quem já existia ganha a
+  // lista vazia (Administrador não depende dela; os demais nada muda até
+  // alguém marcar algo no editor de Equipe).
+  if(STATE.equipe.some(u=>!Array.isArray(u.permissoes))){
+    STATE.equipe.forEach(u=>{ if(!Array.isArray(u.permissoes)) u.permissoes = []; });
+    save(STATE);
+  }
 
   function uid(prefix){ return (prefix||"id")+"_"+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4); }
   function nowISO(){ return new Date().toISOString(); }
@@ -298,7 +307,7 @@
 
     return { leads:[], templates, campaigns:[], equipe: EQUIPE_SEED, imoveis: IMOVEIS_SEED.map(i=>Object.assign({},i)),
       posts: POSTS_SEED.map(p=>Object.assign({}, p, {blocos: p.blocos.map(b=>Object.assign({}, b))})),
-      contasFinanceiras:[], avisos:[], activity:[], session:null };
+      contasFinanceiras:[], avisos:[], compromissos:[], activity:[], session:null };
   }
 
   function labelEstagio(produto, estagioId){
@@ -389,10 +398,31 @@
   }
 
   // -------------------- EQUIPE --------------------
+  // Nível de acesso: um checklist de telas administrativas (não Administrador
+  // "livre" nem "sem nada") — cada chave aqui é a mesma usada em NAV_ADMIN
+  // (crm-ui.js), pra filtrar o menu lateral e travar a página certa.
+  const PERMISSOES_DISPONIVEIS = [
+    {key:"admin-disparos", label:"Disparos"},
+    {key:"admin-modelos", label:"Modelos"},
+    {key:"admin-equipe", label:"Equipe"},
+    {key:"admin-design", label:"Design"},
+    {key:"admin-blog", label:"Blog"},
+    {key:"admin-documentos", label:"Documentos"},
+    {key:"admin-financeiro", label:"Financeiro"},
+    {key:"admin-personalizacao", label:"Personalização"}
+  ];
+  // Administrador sempre tem tudo (nunca fica de fora por checklist —
+  // evita alguém travar o próprio acesso por engano); os demais papéis
+  // seguem exatamente o que foi marcado em usuario.permissoes.
+  function temPermissao(usuario, chave){
+    if(!usuario) return false;
+    if(usuario.papel === "Administrador") return true;
+    return (usuario.permissoes||[]).includes(chave);
+  }
   function getEquipe(){ return STATE.equipe.slice(); }
   function getUsuario(id){ return STATE.equipe.find(u=>u.id===id) || null; }
   function addUsuario(data){
-    const u = Object.assign({id:uid("u"), nome:"", email:"", papel:"Consultor", produto:"seguro", ativo:true, avatarBg:"#004BA5"}, data);
+    const u = Object.assign({id:uid("u"), nome:"", email:"", papel:"Consultor", produto:"seguro", ativo:true, avatarBg:"#004BA5", permissoes:[]}, data);
     STATE.equipe.push(u); save(STATE); return u;
   }
   function updateUsuario(id, patch){
@@ -560,6 +590,25 @@
   }
   function deletePost(id){
     STATE.posts = STATE.posts.filter(p=>p.id!==id); save(STATE);
+  }
+
+  // -------------------- COMPROMISSOS (calendário) --------------------
+  // Compromissos avulsos (reunião, ligação, lembrete) — diferente do
+  // "próximo contato" de um lead, que já entra sozinho no calendário.
+  function getCompromissos(){ return STATE.compromissos.slice(); }
+  function getCompromisso(id){ return STATE.compromissos.find(c=>c.id===id) || null; }
+  function addCompromisso(data){
+    const c = Object.assign({id:uid("cpm"), titulo:"", data:"", hora:"", nota:"", autorId:null, criadoEm:nowISO()}, data);
+    STATE.compromissos.unshift(c);
+    save(STATE);
+    return c;
+  }
+  function updateCompromisso(id, patch){
+    const c = getCompromisso(id); if(!c) return null;
+    Object.assign(c, patch); save(STATE); return c;
+  }
+  function deleteCompromisso(id){
+    STATE.compromissos = STATE.compromissos.filter(c=>c.id!==id); save(STATE);
   }
 
   // -------------------- TEMPLATES --------------------
@@ -834,10 +883,11 @@
   global.SoluaDB = {
     PIPELINES, TIPOS, ORIGENS, SEGMENTOS, ESTAGIOS_GANHOS,
     getLeads, getLead, getLeadsByProduto, addLead, updateLead, deleteLead, addNota,
-    getEquipe, getUsuario, addUsuario, updateUsuario, deleteUsuario,
+    getEquipe, getUsuario, addUsuario, updateUsuario, deleteUsuario, PERMISSOES_DISPONIVEIS, temPermissao,
     getImoveis, getImovel, addImovel, updateImovel, deleteImovel, filterImoveis,
     getContas, getConta, addConta, updateConta, deleteConta,
     getAvisos, addAviso, updateAviso, deleteAviso,
+    getCompromissos, getCompromisso, addCompromisso, updateCompromisso, deleteCompromisso,
     getPosts, getPostsPublicados, getPost, addPost, updatePost, deletePost,
     getCategoriasPost, corPost, POST_BLOCO_LABELS, novoBlocoPost, renderPostCorpo, tempoLeituraMin,
     getTemplates, getTemplate, addTemplate, updateTemplate, deleteTemplate,

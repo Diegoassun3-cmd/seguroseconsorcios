@@ -22,16 +22,16 @@ function catIcon(categoria){
 const ARROW_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 15L15 5M8 5h7v7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 function cardHtml(post){
+  // sem capa, a cor da categoria vira o fundo do card (nunca fica sem cor)
   const cor = DB.corPost(post.categoria);
   const min = DB.tempoLeituraMin(post.blocos);
-  const foto = post.capa ? `style="background-image:url('${DB.esc(post.capa)}')"` : `style="background:rgba(255,255,255,.14)"`;
-  return `<a class="blog-card c-${cor}" data-postid="${post.id}" href="javascript:void(0)">
+  const foto = post.capa ? ` style="background-image:url('${DB.esc(post.capa)}')"` : "";
+  return `<a class="blog-card c-${cor}"${foto} data-postid="${post.id}" href="javascript:void(0)">
     <div class="blog-card-top">
       <span class="blog-pill">${DB.esc(post.categoria)}</span>
       <span class="blog-pill">${min} min de leitura</span>
     </div>
     <h3>${DB.esc(post.titulo)}</h3>
-    <div class="blog-card-photo" ${foto}></div>
     <div class="blog-more"><span>Ler mais</span><span class="arrow">${ARROW_SVG}</span></div>
   </a>`;
 }
@@ -41,7 +41,8 @@ function abrirPost(post){
   const reader = document.getElementById("reader");
   const rbody = document.getElementById("rbody");
   if(!reader || !rbody || !post) return;
-  rbody.innerHTML = `<span class="cat">${DB.esc(post.categoria)}</span><h1>${DB.esc(post.titulo)}</h1>
+  const capa = post.capa ? `<div class="reader-capa" style="background-image:url('${DB.esc(post.capa)}')"></div>` : "";
+  rbody.innerHTML = `${capa}<span class="cat">${DB.esc(post.categoria)}</span><h1>${DB.esc(post.titulo)}</h1>
     <div class="meta">${DB.formatDate(post.publicadoEm||post.criadoEm)} · ${DB.tempoLeituraMin(post.blocos)} min de leitura · por Solua</div>
     ${DB.renderPostCorpo(post.blocos)}
     <div class="reader-cta"><h3>Quer aplicar isso ao seu caso?</h3><p>Peça uma cotação sem compromisso e receba a análise de um consultor.</p><a class="btn lg" href="contato.html">Falar com um consultor</a></div>`;

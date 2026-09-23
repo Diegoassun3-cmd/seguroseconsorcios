@@ -151,6 +151,17 @@ function aplicarConteudo(conteudo){
       } else if(el.dataset.cmsTipo === "icone"){
         const icone = window.SoluaIcons && window.SoluaIcons[val];
         if(icone) el.innerHTML = icone.svg;
+      } else if(el.dataset.cmsTipo === "endereco"){
+        el.textContent = val || "";
+        const alvo = el.dataset.mapaAlvo && document.getElementById(el.dataset.mapaAlvo);
+        if(alvo && window.SoluaChrome && window.SoluaChrome.mapaUrl){
+          alvo.src = window.SoluaChrome.mapaUrl(val || el.textContent);
+        }
+      } else if(el.dataset.cmsTipo === "social"){
+        if(val){ el.href = val; el.style.display = ""; }
+        else { el.style.display = "none"; }
+      } else if(el.dataset.cmsTipo === "corfundo"){
+        if(val) el.style.background = val;
       } else if(el.tagName === "IMG"){
         if(val) el.src = val;
       } else if(val != null && val !== ""){

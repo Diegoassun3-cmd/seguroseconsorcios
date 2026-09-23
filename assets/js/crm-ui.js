@@ -60,7 +60,11 @@ const NAV_ADMIN = {group:"Administração", items:[
   {href:"admin/financeiro.html", key:"admin-financeiro", label:"Financeiro", ico:"financeiro"},
   {href:"admin/personalizacao.html", key:"admin-personalizacao", label:"Personalização", ico:"personalizar"}
 ]};
-if(isAdmin) NAV.push(NAV_ADMIN);
+// cada consultor só vê, no menu, as telas administrativas que o
+// Administrador liberou pra ele no checklist de Equipe — Administrador
+// sempre vê todas (DB.temPermissao já trata esse caso)
+NAV_ADMIN.items = NAV_ADMIN.items.filter(it=> DB.temPermissao(ME, it.key));
+if(NAV_ADMIN.items.length) NAV.push(NAV_ADMIN);
 
 function base(){ return document.body.dataset.base || "./"; }
 function activeKey(){ return document.body.dataset.active || ""; }
@@ -197,5 +201,16 @@ function confirmAction(msg, onYes){
 
 function emptyState(text){ return `${svg("empty")}<span>${text}</span>`; }
 
-window.SoluaUI = { toast, openOverlay, closeOverlay, confirmAction, currentUser: ME, isAdmin, svg, emptyState };
+// ---------- permissão por tela administrativa ----------
+// Chame no topo de cada página em admin/*.html no lugar do antigo gate
+// "só Administrador" — deixa entrar quem é Administrador OU tem essa
+// chave marcada no checklist de Equipe; os outros voltam pro Dashboard.
+function requirePermission(chave){
+  if(DB.temPermissao(ME, chave)) return true;
+  toast("Você não tem acesso a esta tela — peça a um Administrador para liberar em Equipe.","err");
+  location.replace(base()+"dashboard.html");
+  return false;
+}
+
+window.SoluaUI = { toast, openOverlay, closeOverlay, confirmAction, currentUser: ME, isAdmin, requirePermission, svg, emptyState };
 })();

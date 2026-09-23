@@ -133,7 +133,7 @@
 <script src="../../assets/js/crm-data.js"></script>
 <script src="../../assets/js/crm-ui.js"></script>
 <script>
-if(!window.SoluaUI.isAdmin){ window.SoluaUI.toast("Acesso restrito à administração.","err"); location.replace("../dashboard.html"); }
+window.SoluaUI.requirePermission("admin-personalizacao");
 </script>
 <script src="../../assets/js/crm-personalizacao.js"></script>
 </body>

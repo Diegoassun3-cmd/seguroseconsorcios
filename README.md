@@ -316,15 +316,19 @@ verdade, com dados reais (não hardcoded) em `STATE.posts`
 para escrever os artigos — sem precisar mexer em código.
 
 **No site:**
-- A Home mostra os **3 artigos mais recentes** como cartões arredondados
-  (foto, categoria, tempo de leitura calculado de verdade a partir do
-  texto, e um botão "Ler mais" com seta circular), seguidos de um botão
-  "Ver blog completo".
+- A Home mostra os **3 artigos mais recentes** como cartões de **foto
+  cheia** (a capa preenche o cartão inteiro, cantos arredondados),
+  com categoria e tempo de leitura em cima da foto e "Ler mais" com
+  seta circular embaixo — sem capa, a cor da categoria vira o fundo do
+  cartão, nunca fica vazio. Depois dos 3 destaques, um botão "Ver blog
+  completo".
 - `blog.html` é o catálogo completo: filtro por categoria + todos os
   artigos publicados, no mesmo estilo de cartão. "Blog" entrou no menu
   principal, no menu mobile, no rodapé e na busca do site (os artigos
   aparecem nos resultados e abrem direto no artigo certo via
   `blog.html?post=ID`).
+- Abrir um artigo mostra a **foto de capa no topo** do leitor, antes do
+  título — antes o leitor era só texto.
 - O cartão e o leitor em tela cheia são peças compartilhadas
   (`assets/js/blog-common.js`), usadas tanto pela Home quanto pelo
   catálogo — não há duas versões do mesmo componente por aí.
@@ -350,6 +354,35 @@ criar ou editar um artigo:
 - Pré-visualização ao vivo do artigo montado, e tempo de leitura
   recalculado sozinho (não é um campo manual que alguém esquece de
   atualizar).
+
+### Ajustes visuais no site: fotos arredondadas, sem linhas divisórias, carrossel e rodapé
+
+Um retoque visual amplo no site público, a partir de referências que
+mostravam cartões de foto cheia e cantos bem arredondados:
+
+- **Cantos arredondados em toda foto de conteúdo** (imóvel — card,
+  galeria e relacionados —, bloco editorial, linha do tempo, equipe,
+  capa do blog e do leitor) — só as fotos de **fundo** (hero, fundo de
+  seção) continuam de canto reto, porque cobrem a tela toda e não têm
+  "canto" visível.
+- **As linhas finas que separavam seções, listas e colunas** (cabeçalho
+  ao rolar, `sec-head`, marquee de parceiros, FAQ, números, ficha
+  técnica do imóvel, linha do tempo, contato, busca do site, rodapé
+  etc.) foram removidas — o espaçamento sozinho já separa o conteúdo.
+  Bordas que são "moldura" de um cartão/caixa (formulário, ficha
+  técnica, callout) continuam, porque cumprem outro papel.
+- **Galeria do imóvel virou carrossel de verdade**, com as bolinhas/
+  travessões de navegação embaixo da foto (como o carrossel do hero da
+  Home) em vez da grade estática de foto grande + 3 miniaturas.
+- **Rodapé**: ganhou uma coluna "Localização" com um **mapa de verdade**
+  (embed do Google Maps, sem precisar de chave de API — só o endereço
+  em texto), redes sociais (Instagram/Facebook/Linkedin, cada uma
+  aparece só se o link for preenchido) e uma **cor de fundo
+  configurável**. O mesmo endereço (`contato.info.endereco`) alimenta o
+  mapa do rodapé e o mapa da página de Contato (que também deixou de
+  ser uma foto fingindo ser mapa) — editável em Design → "Menu e
+  Rodapé" → "Localização", ou na própria página de Contato. Redes
+  sociais e cor do rodapé ficam em Design → "Menu e Rodapé".
 
 ### Identidade visual, manutenção e SEO básico (Personalização)
 
@@ -505,6 +538,14 @@ o nome dos leads que têm aquela data marcada como **"Próximo contato"**
 qualquer lead) — clicar num dia abre um painel de detalhe com os
 contatos daquele dia, e clicar num contato abre o lead direto.
 
+**Compromissos avulsos** — o botão "+ Novo compromisso" cadastra um
+compromisso direto no calendário (título, hora opcional, nota opcional),
+sem precisar estar ligado a um lead — pra reunião, ligação ou lembrete
+qualquer. Aparece com um chip amarelo (pra diferenciar do chip azul dos
+leads) no mês e na lista do dia, com editar (clicar na linha) e excluir.
+Guardado em `STATE.compromissos` (`DB.getCompromissos/addCompromisso/
+updateCompromisso/deleteCompromisso`).
+
 **Sobre "conectar com o Google"**: o calendário acima é 100% real,
 construído em cima dos dados que já existem no CRM — não é uma
 maquete. Uma sincronização de verdade com o Google Agenda (importar
@@ -515,6 +556,28 @@ usuário — isso depende de credenciais que só o dono do projeto pode
 criar (não é algo que dá pra simular sem inventar uma integração que
 não funciona de verdade). Não foi implementado por esse motivo; é um
 passo natural a seguir se quiser essa integração de verdade.
+
+### Equipe: níveis de acesso (checklist de permissões)
+
+Em `crm/admin/equipe.html`, o editor de cada usuário ganhou um
+checklist **"Acesso às telas administrativas"** com as 8 telas de
+`Administração` (Disparos, Modelos, Equipe, Design, Blog, Documentos,
+Financeiro, Personalização) — marque só as que aquela pessoa deve
+acessar. **Administrador** sempre tem acesso a tudo (o checklist fica
+travado e marcado pra esse papel, pra ninguém se trancar fora sem
+querer); Consultor/Consultora seguem exatamente o que foi marcado.
+
+Isso é aplicado de verdade em dois lugares:
+- o **menu lateral** só lista, dentro de "Administração", as telas que
+  aquele usuário tem permissão de ver;
+- cada página administrativa checa a permissão no carregamento
+  (`window.SoluaUI.requirePermission("admin-xxx")`, em vez do antigo
+  "só Administrador entra") — quem tenta abrir a URL direto sem
+  permissão volta pro Dashboard com um aviso.
+
+`DB.temPermissao(usuario, chave)` é a função central dessa checagem
+(`assets/js/crm-data.js`); `DB.PERMISSOES_DISPONIVEIS` lista as 8
+chaves/rótulos usados tanto no checklist quanto no filtro do menu.
 
 ## Para produção (multiusuário completo)
 

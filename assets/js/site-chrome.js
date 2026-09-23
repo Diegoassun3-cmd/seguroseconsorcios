@@ -111,16 +111,41 @@ function renderMobile(){
   }
 }
 
+const SOCIAL_ICONS = {
+  instagram: '<rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor"/>',
+  facebook: '<path d="M14 9h2.5V6H14c-2 0-3.5 1.5-3.5 3.5V12H8v3h2.5v6H14v-6h2.3l.5-3H14V9.6c0-.4.3-.6.6-.6z" fill="currentColor"/>',
+  linkedin: '<rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="8" r="1.2" fill="currentColor"/><path d="M7.5 11v6M11.5 11v6M11.5 13.5c0-1.5 1-2.5 2.5-2.5s2.5 1 2.5 2.5V17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'
+};
+function socialLinkHtml(rede, key){
+  return `<a href="#" class="social-ico" id="footSocial${key}" data-cms="footer.social.${rede}" data-cms-tipo="social" style="display:none" target="_blank" rel="noopener" aria-label="${rede}">
+    <svg viewBox="0 0 24 24">${SOCIAL_ICONS[rede]}</svg>
+  </a>`;
+}
+
+// Embed de mapa sem precisar de chave de API — o parâmetro output=embed do
+// próprio Google Maps aceita um endereço em texto puro.
+function mapaUrl(endereco){
+  return `https://maps.google.com/maps?q=${encodeURIComponent(endereco||"Campinas, SP")}&t=&z=14&output=embed`;
+}
+
 function renderFooter(){
   const ft = document.getElementById("ft");
   if(!ft) return;
+  ft.dataset.cms = "footer.corFundo";
+  ft.dataset.cmsTipo = "corfundo";
   const yr = new Date().getFullYear();
+  const enderecoPadrao = "Campinas — SP";
   ft.innerHTML = `
   <div class="wrap">
     <div class="foot-top">
       <div>
         <span class="mark" data-brand-logo>solua</span>
         <p data-cms="footer.descricao">Corretora de seguros e consórcios e imobiliária em Campinas, desde 2001. Um consultor dedicado do primeiro contato ao pós-venda.</p>
+        <div class="foot-social">
+          ${socialLinkHtml("instagram","Instagram")}
+          ${socialLinkHtml("facebook","Facebook")}
+          ${socialLinkHtml("linkedin","Linkedin")}
+        </div>
       </div>
       <div class="fcol">
         <h5 data-cms="footer.col.produtos">Produtos</h5>
@@ -138,8 +163,12 @@ function renderFooter(){
       <div class="fcol">
         <h5 data-cms="footer.col.contato">Contato</h5>
         <span id="footEmail">contato@solua.com.br</span>
-        <span>Campinas — SP</span>
+        <span data-cms="contato.info.endereco" data-cms-tipo="endereco" data-mapa-alvo="footMapa" id="footEnderecoTxt">${enderecoPadrao}</span>
         <a href="#" id="wppFoot">Falar no WhatsApp</a>
+      </div>
+      <div class="fcol foot-mapa-col">
+        <h5>Localização</h5>
+        <iframe class="foot-mapa" id="footMapa" src="${mapaUrl(enderecoPadrao)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa — localização Solua"></iframe>
       </div>
     </div>
     <div class="foot-bot">
@@ -225,5 +254,5 @@ function renderGapCard(opts){
   return `<div class="wrap"><div class="gap-band ${align}">${renderFloatCard(opts)}</div></div>`;
 }
 
-window.SoluaChrome = { observeReveals, animateCounters, page, renderFloatCard, renderGapCard, refreshHeaderLogo };
+window.SoluaChrome = { observeReveals, animateCounters, page, renderFloatCard, renderGapCard, refreshHeaderLogo, mapaUrl };
 })();

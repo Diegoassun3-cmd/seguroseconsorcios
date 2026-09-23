@@ -43,9 +43,24 @@ function render(){
   });
 }
 
+function permissoesHtml(u){
+  const souAdmin = u.papel === "Administrador";
+  return `
+    <div class="field full" id="campoPermissoes" style="${souAdmin?"opacity:.5":""}">
+      <label>Acesso às telas administrativas${souAdmin?" — Administrador já tem tudo":""}</label>
+      <div class="perm-grid">
+        ${DB.PERMISSOES_DISPONIVEIS.map(p=>`
+          <label class="perm-item">
+            <input type="checkbox" data-perm="${p.key}" ${souAdmin || (u.permissoes||[]).includes(p.key) ? "checked" : ""} ${souAdmin?"disabled":""}>
+            ${DB.esc(p.label)}
+          </label>`).join("")}
+      </div>
+    </div>`;
+}
+
 function openEditor(id){
   editId = id || null;
-  const u = id ? DB.getUsuario(id) : {nome:"",email:"",papel:"Consultor",produto:"seguro",ativo:true,avatarBg:CORES[Math.floor(Math.random()*CORES.length)]};
+  const u = id ? DB.getUsuario(id) : {nome:"",email:"",papel:"Consultor",produto:"seguro",ativo:true,avatarBg:CORES[Math.floor(Math.random()*CORES.length)],permissoes:[]};
   document.getElementById("modalTitle").textContent = id ? "Editar usuário" : "Novo usuário";
   document.getElementById("editorBody").innerHTML = `
     <div class="grid2">
@@ -62,6 +77,7 @@ function openEditor(id){
         <option value="consorcio" ${u.produto==="consorcio"?"selected":""}>Consórcios</option>
         <option value="ambos" ${u.produto==="ambos"?"selected":""}>Todos os produtos</option>
       </select></div>
+      ${permissoesHtml(u)}
     </div>
     <div class="field"><label>Cor do avatar</label><div style="display:flex;gap:8px">
       ${CORES.map(c=>`<button type="button" class="avatar" data-cor="${c}" style="background:${c};border:2px solid ${c===u.avatarBg?"var(--tinta)":"transparent"};width:28px;height:28px"></button>`).join("")}
@@ -75,6 +91,12 @@ function openEditor(id){
     document.querySelectorAll("[data-cor]").forEach(x=> x.style.border = "2px solid transparent");
     b.style.border = "2px solid var(--tinta)";
   });
+  document.getElementById("fPapel").onchange = e=>{
+    document.getElementById("campoPermissoes").outerHTML = permissoesHtml({permissoes: permissoesMarcadas(), papel: e.target.value});
+  };
+  function permissoesMarcadas(){
+    return Array.from(document.querySelectorAll("[data-perm]:checked")).map(c=>c.dataset.perm);
+  }
   document.getElementById("btnSalvarUsuario").onclick = ()=>{
     const data = {
       nome: document.getElementById("fNome").value.trim(),
@@ -82,6 +104,7 @@ function openEditor(id){
       papel: document.getElementById("fPapel").value,
       produto: document.getElementById("fProduto").value,
       ativo: document.getElementById("fAtivo").checked,
+      permissoes: permissoesMarcadas(),
       avatarBg: corEscolhida
     };
     if(!data.nome || !data.email){ UI.toast("Preencha nome e e-mail.","err"); return; }
