@@ -50,7 +50,6 @@ function renderHeader(){
   <div class="wrap nav">
     <a href="index.html" class="brand">
       <span class="mark" data-brand-logo>solua</span>
-      <span class="desc">imóveis, seguros e consórcios.</span>
     </a>
     <nav class="menu">
       ${NAV_LINKS.map(l=>`<a href="${l.href}" class="${l.page===active?"on":""}" data-cms="${l.cms}">${l.label}</a>`).join("")}
@@ -168,7 +167,9 @@ function renderFooter(){
       </div>
       <div class="fcol foot-mapa-col">
         <h5>Localização</h5>
-        <iframe class="foot-mapa" id="footMapa" src="${mapaUrl(enderecoPadrao)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa — localização Solua"></iframe>
+        <div class="foot-mapa-frame">
+          <iframe class="foot-mapa" id="footMapa" src="${mapaUrl(enderecoPadrao)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa — localização Solua"></iframe>
+        </div>
       </div>
     </div>
     <div class="foot-bot">

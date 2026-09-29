@@ -42,11 +42,9 @@ button,input,select,textarea{font:inherit;color:inherit}
 header{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .4s,box-shadow .4s}
 header.solid{background:rgba(242,237,230,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 1px 0 rgba(21,24,28,.08)}
 header.on-photo:not(.solid) .brand .mark{color:#fff}
-header.on-photo:not(.solid) .brand .desc{color:rgba(255,255,255,.8)}
 .nav{display:flex;align-items:center;justify-content:space-between;gap:24px;height:78px}
 .brand{display:flex;align-items:baseline;gap:12px}
 .brand .mark{font-family:var(--font-display);font-weight:400;font-size:27px;color:var(--azul);letter-spacing:-.045em;line-height:1}
-.brand .desc{font-size:9.5px;line-height:1.25;letter-spacing:.05em;text-transform:lowercase;color:var(--azul);opacity:.75;max-width:78px}
 .menu{display:flex;align-items:center;gap:34px}
 .menu a{font-size:13.5px;letter-spacing:.01em;color:var(--tinta-60);transition:color .25s;position:relative}
 .menu a:hover{color:var(--tinta)}
@@ -276,7 +274,8 @@ footer{background:var(--tinta);color:var(--creme);padding:clamp(60px,7vw,96px) 0
 .social-ico{width:36px;height:36px;border-radius:50%;border:1px solid rgba(242,237,230,.25);display:flex;align-items:center;justify-content:center;color:var(--creme);opacity:.75;transition:opacity .3s,border-color .3s}
 .social-ico:hover{opacity:1;border-color:rgba(242,237,230,.6)}
 .social-ico svg{width:17px;height:17px}
-.foot-mapa{width:100%;aspect-ratio:4/3;border:0;border-radius:16px;display:block;filter:grayscale(1) invert(.9) contrast(.85)}
+.foot-mapa-frame{background:#fff;padding:6px;border-radius:16px}
+.foot-mapa{width:100%;aspect-ratio:4/3;border:0;border-radius:11px;display:block}
 .fcol h5{font-size:11px;letter-spacing:.16em;text-transform:uppercase;opacity:.45;margin-bottom:18px;font-family:var(--font-body);font-weight:600}
 .fcol a,.fcol span{display:block;font-size:14px;opacity:.75;margin-bottom:10px;transition:opacity .3s}
 .fcol a:hover{opacity:1}

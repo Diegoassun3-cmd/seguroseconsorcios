@@ -143,10 +143,17 @@ function aplicarConteudo(conteudo){
       } else if(el.dataset.cmsTipo === "alinhamento"){
         if(val){
           el.style.textAlign = val;
-          // .hero-cta é flex — text-align sozinho não move a linha de
-          // botões dentro dela, então o justify-content precisa ir junto
+          // qualquer container flex dentro do bloco (ex.: a linha de botões
+          // do hero) precisa do justify-content também — text-align sozinho
+          // só move o que é inline/inline-flex, nunca filho de display:flex.
+          // Não fica preso a uma classe (".hero-cta"): sempre que o botão
+          // escolhido for alinhado, o bloco inteiro (texto + botão) segue junto.
           const justify = val==="right" ? "flex-end" : val==="center" ? "center" : "flex-start";
-          el.querySelectorAll(".hero-cta").forEach(cta=> cta.style.justifyContent = justify);
+          el.querySelectorAll("*").forEach(node=>{
+            if(node.children.length && getComputedStyle(node).display.indexOf("flex")!==-1){
+              node.style.justifyContent = justify;
+            }
+          });
         }
       } else if(el.dataset.cmsTipo === "icone"){
         const icone = window.SoluaIcons && window.SoluaIcons[val];
