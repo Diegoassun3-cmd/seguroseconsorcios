@@ -149,9 +149,18 @@ function aplicarConteudo(conteudo){
           // Não fica preso a uma classe (".hero-cta"): sempre que o botão
           // escolhido for alinhado, o bloco inteiro (texto + botão) segue junto.
           const justify = val==="right" ? "flex-end" : val==="center" ? "center" : "flex-start";
+          const margemEsq = val==="left" ? "" : "auto";
+          const margemDir = val==="center" ? "auto" : (val==="right" ? "0" : "");
           el.querySelectorAll("*").forEach(node=>{
-            if(node.children.length && getComputedStyle(node).display.indexOf("flex")!==-1){
+            const disp = getComputedStyle(node).display;
+            if(node.children.length && disp.indexOf("flex")!==-1){
               node.style.justifyContent = justify;
+            } else if(disp === "block" && node.tagName !== "IMG"){
+              // um bloco com max-width (ex.: parágrafo do hero) só tem o TEXTO
+              // centralizado por text-align — a caixa em si fica presa na
+              // esquerda até a margem virar "auto" dos dois lados.
+              node.style.marginLeft = margemEsq;
+              node.style.marginRight = margemDir;
             }
           });
         }
