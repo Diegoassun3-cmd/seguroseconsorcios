@@ -340,7 +340,7 @@
       if(disponiveis.length) lead.consultorId = disponiveis[STATE.leads.length % disponiveis.length].id;
     }
     STATE.leads.unshift(lead);
-    logActivity("lead_criado", `Novo lead de ${lead.produto==="seguro"?"seguro":"consórcio"}: ${lead.nome}`, {leadId:lead.id});
+    logActivity("lead_criado", `Novo lead de ${({seguro:"seguro", consorcio:"consórcio", imovel:"imóvel"})[lead.produto]||lead.produto}: ${lead.nome}`, {leadId:lead.id});
     save(STATE);
     dispararAutomacaoBoasVindas(lead);
     return lead;

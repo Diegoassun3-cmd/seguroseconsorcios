@@ -12,19 +12,59 @@ const CORES = ["#004BA5","#118ECC","#B8862B","#1E8E5A","#B0453D","#6E56CF"];
 const PRODUTO_LABEL = {ambos:"Todos os produtos", seguro:"Seguros", consorcio:"Consórcios", imovel:"Imóveis"};
 function produtoLabel(p){ return PRODUTO_LABEL[p] || p; }
 
+const ICO = {
+  pessoas:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c.6-3.4 3-5.5 6-5.5s5.4 2.1 6 5.5"/><circle cx="17" cy="9" r="2.4"/><path d="M16.5 13.6c2.3.2 4 1.9 4.5 4.6"/></svg>`,
+  check:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5"/></svg>`,
+  escudo:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3l8 3.5v5.5c0 5-3.4 8.4-8 9.8-4.6-1.4-8-4.8-8-9.8V6.5L12 3z"/></svg>`,
+  funil:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-6 8v5l-4 2v-7z"/></svg>`
+};
+
+function acessoLabel(u){
+  if(u.papel==="Administrador") return "Todas as telas";
+  const n = (u.permissoes||[]).length;
+  return n ? `${n} tela${n===1?"":"s"} admin.` : "Só o dia a dia";
+}
+
+function renderKpis(eq){
+  const ativos = eq.filter(u=>u.ativo).length;
+  const admins = eq.filter(u=>u.papel==="Administrador").length;
+  const leads = DB.getLeads();
+  const atribuidos = leads.filter(l=>l.consultorId).length;
+  const pctAtrib = leads.length ? Math.round(atribuidos/leads.length*100) : 0;
+  document.getElementById("eqKpis").innerHTML = `
+    <div class="kpi accent"><span class="kpi-ico">${ICO.pessoas}</span><span class="lbl">Membros</span><b>${eq.length}</b><span class="delta"><span class="chip">${ativos} ativo${ativos===1?"":"s"}</span> na equipe</span></div>
+    <div class="kpi"><span class="kpi-ico">${ICO.check}</span><span class="lbl">Ativos</span><b>${ativos}</b><span class="delta"><span class="chip">${eq.length?Math.round(ativos/eq.length*100):0}%</span> recebem leads</span></div>
+    <div class="kpi"><span class="kpi-ico">${ICO.escudo}</span><span class="lbl">Administradores</span><b>${admins}</b><span class="delta"><span class="chip neutro">acesso total</span></span></div>
+    <div class="kpi"><span class="kpi-ico">${ICO.funil}</span><span class="lbl">Leads atribuídos</span><b>${atribuidos}</b><span class="delta"><span class="chip ${pctAtrib<100?"neutro":""}">${pctAtrib}%</span> da base</span></div>`;
+}
+
 function render(){
-  const eq = DB.getEquipe();
+  const todos = DB.getEquipe();
+  renderKpis(todos);
+  const termo = (document.getElementById("eqBusca").value||"").trim().toLowerCase();
+  const filtro = document.getElementById("eqFiltro").value;
+  const eq = todos.filter(u=>{
+    if(filtro==="Administrador" && u.papel!=="Administrador") return false;
+    if(filtro==="consultor" && u.papel==="Administrador") return false;
+    if(filtro==="inativo" && u.ativo) return false;
+    return !termo || u.nome.toLowerCase().includes(termo) || (u.email||"").toLowerCase().includes(termo);
+  });
+  if(!eq.length){
+    document.getElementById("rows").innerHTML = `<tr><td colspan="7" style="cursor:default"><div class="empty" style="padding:30px 10px">${UI.emptyState("Ninguém encontrado com esse filtro.")}</div></td></tr>`;
+    return;
+  }
   document.getElementById("rows").innerHTML = eq.map(u=>`
     <tr data-id="${u.id}">
       <td><div class="namecell"><span class="avatar" style="background:${u.avatarBg}">${DB.iniciais(u.nome)}</span>
         <div><b>${DB.esc(u.nome)}</b><span>${DB.esc(u.email)}</span></div></div></td>
       <td>${DB.esc(u.papel)}</td>
       <td>${produtoLabel(u.produto)}</td>
-      <td>${u.ativo ? `<span class="badge ganho">Ativo</span>` : `<span class="badge perdido">Inativo</span>`}</td>
+      <td><span class="badge ${u.papel==="Administrador"?"seguro":"neutro"}">${acessoLabel(u)}</span></td>
+      <td>${u.ativo ? `<span class="dotst ok"><span>Ativo</span></span>` : `<span class="dotst off"><span>Inativo</span></span>`}</td>
       <td>${DB.getLeads().filter(l=>l.consultorId===u.id).length}</td>
       <td class="rowactions">
-        <button class="btn icon ghost sm" data-edit="${u.id}" title="Editar">✎</button>
-        ${u.id!==UI.currentUser.id ? `<button class="btn icon ghost sm" data-del="${u.id}" title="Remover">✕</button>` : ""}
+        <button class="btn icon soft sm" data-edit="${u.id}" title="Editar" aria-label="Editar ${DB.esc(u.nome)}">✎</button>
+        ${u.id!==UI.currentUser.id ? `<button class="btn icon soft sm" data-del="${u.id}" title="Remover" aria-label="Remover ${DB.esc(u.nome)}">✕</button>` : ""}
       </td>
     </tr>`).join("");
   document.querySelectorAll("[data-edit]").forEach(b=> b.onclick = ()=> openEditor(b.dataset.edit));
@@ -126,5 +166,7 @@ function openEditor(id){
 }
 
 document.getElementById("btnNovoUsuario").onclick = ()=> openEditor(null);
+document.getElementById("eqBusca").addEventListener("input", render);
+document.getElementById("eqFiltro").addEventListener("change", render);
 render();
 })();

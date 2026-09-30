@@ -69,59 +69,87 @@ if(NAV_ADMIN.items.length) NAV.push(NAV_ADMIN);
 function base(){ return document.body.dataset.base || "./"; }
 function activeKey(){ return document.body.dataset.active || ""; }
 
+// Telas do dia a dia (Visão geral, Pipelines, Base) ficam na pílula de
+// navegação do topo; as administrativas, no trilho de ícones à esquerda.
+// No celular o trilho vira uma gaveta com todas elas, com rótulo.
+const NAV_TOPO = NAV.filter(g=> g!==NAV_ADMIN).flatMap(g=> g.items);
+
+function railLink(it, extraClass){
+  const b = base();
+  const count = it.count ? it.count() : null;
+  return `<a class="sb-link ${extraClass||""} ${activeKey()===it.key?"on":""}" href="${b}${it.href}">
+    ${svg(it.ico)}<span class="lbl">${it.label}</span>${count!=null?`<span class="badge">${count}</span>`:""}
+  </a>`;
+}
+
 function renderSidebar(){
   const b = base();
-  const linksHtml = NAV.map(g=>`
-    <div class="sb-group">
-      <h6>${g.group}</h6>
-      ${g.items.map(it=>`
-        <a class="sb-link ${activeKey()===it.key?"on":""}" href="${b}${it.href}">
-          ${svg(it.ico)}<span>${it.label}</span>${it.count?`<span class="badge-count badge">${it.count()}</span>`:""}
-        </a>`).join("")}
-    </div>`).join("");
-  const initials = DB.iniciais(ME.nome);
+  const adminHtml = NAV_ADMIN.items.map(it=> railLink(it)).join("");
   return `
-  <div class="sb-brand">
-    <span class="mark">solua</span>
-    <span class="badge neutro">CRM</span>
+  <div class="rail-pill rail-main ${NAV_ADMIN.items.length?"":"sem-itens"}">
+    <button type="button" class="sb-link sb-close" id="btnFecharMenu" aria-label="Fechar menu"><span class="x" style="background:none"></span></button>
+    <div class="rail-h6">Menu</div>
+    ${NAV_TOPO.map(it=> railLink(it, "sb-main")).join("")}
+    ${NAV_ADMIN.items.length ? `<div class="rail-h6">Administração</div>${adminHtml}` : ""}
   </div>
-  <nav class="sb-nav">${linksHtml}
-    <div class="sb-group">
-      <h6>Atalhos</h6>
-      <a class="sb-link" href="${b}../index.html" target="_blank">${svg("site")}<span>Ver site público</span></a>
-    </div>
-  </nav>
-  <div class="sb-foot">
-    <div class="sb-user">
-      <span class="avatar" style="background:${ME.avatarBg||"#004BA5"}">${initials}</span>
-      <span class="who"><b>${DB.esc(ME.nome)}</b><span>${DB.esc(ME.papel)}</span></span>
-    </div>
-    <button class="sb-logout" id="btnLogout">${svg("logout")}Sair</button>
+  <div class="rail-pill rail-foot">
+    <div class="rail-h6">Atalhos</div>
+    <a class="sb-link" href="${b}../index.html" target="_blank" rel="noopener">${svg("site")}<span class="lbl">Ver site público</span></a>
+    <button type="button" class="sb-link" id="btnLogout">${svg("logout")}<span class="lbl">Sair</span></button>
   </div>`;
 }
 
 function renderTopbar(){
-  const title = document.body.dataset.title || "";
-  const crumbs = document.body.dataset.crumbs || "";
+  const b = base();
   return `
-  <div style="display:flex;align-items:center;gap:14px">
-    <button class="mburger" id="btnMenu">${svg("menu")}</button>
-    <div>
-      ${crumbs?`<div class="crumbs">${crumbs}</div>`:""}
-      <h1>${title}</h1>
-    </div>
-  </div>
+  <button class="mburger" id="btnMenu" aria-label="Abrir menu">${svg("menu")}</button>
+  <a class="tb-brand" id="tbBrand" href="${b}dashboard.html"><span class="tb-logo">s</span><span class="mark" id="crmMark">solua</span></a>
+  <nav class="tb-nav"><div class="tb-nav-in">
+    ${NAV_TOPO.map(it=>`<a class="tb-link ${activeKey()===it.key?"on":""}" href="${b}${it.href}">${it.label}${it.count?`<span class="tb-count">${it.count()}</span>`:""}</a>`).join("")}
+  </div></nav>
   <div class="tb-actions">
-    <label class="tb-search"><span>${svg("search")}</span><input id="tbSearch" placeholder="Buscar contatos, leads…"></label>
-    <button class="btn sm" id="btnNovoLead">+ Novo lead</button>
+    <label class="tb-search">${svg("search")}<input id="tbSearch" placeholder="Buscar contatos, leads…"></label>
+    <button class="btn dark" id="btnNovoLead" aria-label="Novo lead">+<span class="txt"> Novo lead</span></button>
+    <div class="tb-user" title="${DB.esc(ME.nome)} · ${DB.esc(ME.papel)}">
+      <span class="avatar" style="background:${ME.avatarBg||"#004BA5"}">${DB.iniciais(ME.nome)}</span>
+      <span class="who"><b>${DB.esc(ME.nome)}</b><span>${DB.esc(ME.papel)}</span></span>
+    </div>
   </div>`;
 }
+
+// título grande da tela no topo do conteúdo (o Dashboard tem saudação própria)
+function renderPageTitle(){
+  const main = document.querySelector("main.content");
+  if(!main || document.getElementById("pageHd")) return;
+  const title = document.body.dataset.title || "";
+  if(!title) return;
+  const crumbs = document.body.dataset.crumbs || "";
+  const el = document.createElement("div");
+  el.className = "pg-title";
+  el.innerHTML = `<h1>${DB.esc(title)}</h1>${crumbs?`<p>${DB.esc(crumbs)}</p>`:""}`;
+  main.insertBefore(el, main.firstChild);
+}
+
+// logo cadastrada em Personalização (versão para fundo claro) na pílula da marca
+function aplicarLogo(){
+  const mark = document.getElementById("crmMark");
+  const brand = document.getElementById("tbBrand");
+  const s = window.SoluaBranding;
+  if(!mark || !brand || !s || !(s.logoUrl || s.logoUrlEscuro) || !window.SoluaAplicarLogoContexto) return;
+  window.SoluaAplicarLogoContexto(mark, false);
+  brand.classList.add("com-logo");
+}
+document.addEventListener("solua:branding", aplicarLogo);
 
 function mount(){
   const sb = document.getElementById("sidebar");
   const tb = document.getElementById("topbar");
   if(sb) sb.innerHTML = renderSidebar();
   if(tb) tb.innerHTML = renderTopbar();
+  renderPageTitle();
+  aplicarLogo();
+  const fecharBtn = document.getElementById("btnFecharMenu");
+  if(fecharBtn) fecharBtn.onclick = ()=> sb.classList.remove("on");
   const logoutBtn = document.getElementById("btnLogout");
   if(logoutBtn) logoutBtn.onclick = ()=>{ DB.logout(); location.href = base()+"login.html"; };
   const menuBtn = document.getElementById("btnMenu");

@@ -34,7 +34,7 @@ assets/css/fonts.css            → @font-face das fontes reais da marca
 assets/fonts/                   → Nyata-Regular.woff2, Satoshi-Medium.woff2
 assets/css/site.css             → design base do site público
 assets/css/editorial.css        → componentes editoriais (hero, catálogo, timeline…)
-assets/css/crm.css              → design do CRM (sidebar, kanban, tabelas, modais…)
+assets/css/crm.css              → design do CRM (barra em pílulas, trilho de ícones, kanban, tabelas, modais…)
 
 assets/js/site-chrome.js        → header/menu mobile/rodapé/WhatsApp flutuante (todas as páginas públicas)
 assets/js/quote-flow.js         → simulador de cotação reutilizável (Seguros e Consórcios)
@@ -55,7 +55,7 @@ assets/js/site-search.js        → lógica + interface da busca (combina o índ
 assets/js/branding.js           → aplica a personalização (logo/cor) e chama content-apply, vindos de /api/settings
 
 assets/js/crm-data.js           → "banco de dados" do CRM (localStorage) + regras de negócio
-assets/js/crm-ui.js             → sidebar/topbar/toasts/modais compartilhados do CRM
+assets/js/crm-ui.js             → barra superior/trilho de ícones/toasts/modais compartilhados do CRM
 assets/js/crm-newlead.js        → modal "novo lead"
 assets/js/crm-leaddrawer.js     → painel de detalhe do lead (notas, estágio, edição)
 assets/js/crm-pipeline.js       → lógica do quadro Kanban (imóveis/seguros/consórcios)
@@ -578,6 +578,32 @@ Isso é aplicado de verdade em dois lugares:
 `DB.temPermissao(usuario, chave)` é a função central dessa checagem
 (`assets/js/crm-data.js`); `DB.PERMISSOES_DISPONIVEIS` lista as 8
 chaves/rótulos usados tanto no checklist quanto no filtro do menu.
+
+### Layout do CRM (pílulas + trilho de ícones)
+
+O CRM inteiro segue um painel de referência em "pílulas", com as cores e
+fontes da Solua:
+
+- **Barra superior**: marca (usa a logo de Personalização, se houver) ·
+  navegação do dia a dia (Dashboard, Calendário, os 3 pipelines com
+  contador, Contatos) com o item ativo em pílula escura · busca · "+ Novo
+  lead" · usuário logado.
+- **Trilho de ícones à esquerda**: as telas administrativas liberadas pra
+  quem está logado (o rótulo aparece ao passar o mouse), e embaixo "Ver
+  site público" e "Sair". No celular vira uma gaveta com tudo, com rótulo.
+- **Cartões brancos bem arredondados, sem linhas divisórias**; botões em
+  pílula; título grande de cada tela no topo do conteúdo.
+- **Dashboard**: saudação por horário; cartão de valor em negociação com
+  atalhos e as 3 frentes; 4 indicadores (o principal em azul); barras
+  empilhadas de novos leads por dia e por produto (Consórcios hachurado,
+  paleta validada pra daltonismo, com legenda e balão ao passar o mouse);
+  distribuição da base; próximos contatos; atividade recente em tabela
+  com busca e filtro por tipo (clicar abre o lead); mural de avisos.
+- **Equipe**: 4 indicadores (membros, ativos, administradores, leads
+  atribuídos) e a tabela com busca, filtro por papel e coluna de acesso.
+
+Tudo isso mora em `assets/css/crm.css` e `assets/js/crm-ui.js`; nenhuma
+função mudou de lugar no código.
 
 ## Para produção (multiusuário completo)
 

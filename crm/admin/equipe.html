@@ -19,16 +19,30 @@
     <header class="topbar" id="topbar"></header>
     <main class="content">
 
-      <div class="filterbar">
-        <span class="spacer"></span>
-        <button class="btn sm" id="btnNovoUsuario">+ Novo usuário</button>
-      </div>
+      <div class="kpis" id="eqKpis"></div>
 
-      <div class="tbl-wrap">
-        <table class="tbl">
-          <thead><tr><th>Usuário</th><th>Papel</th><th>Atua em</th><th>Status</th><th>Leads atribuídos</th><th></th></tr></thead>
-          <tbody id="rows"></tbody>
-        </table>
+      <div class="card">
+        <div class="card-hd">
+          <div><h3>Membros da equipe</h3><p class="sub">Quem acessa o CRM, onde atua e a quais telas administrativas tem acesso</p></div>
+          <div class="card-tools">
+            <label class="card-search"><svg viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M17 17l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><input id="eqBusca" placeholder="Buscar por nome ou e-mail"></label>
+            <select class="card-select" id="eqFiltro" aria-label="Filtrar por papel">
+              <option value="">Todos os papéis</option>
+              <option value="Administrador">Administradores</option>
+              <option value="consultor">Consultores</option>
+              <option value="inativo">Inativos</option>
+            </select>
+            <button class="btn dark" id="btnNovoUsuario" style="height:40px;padding:0 18px;font-size:13px">+ Novo usuário</button>
+          </div>
+        </div>
+        <div class="card-bd">
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Usuário</th><th>Papel</th><th>Atua em</th><th>Acesso</th><th>Status</th><th>Leads</th><th></th></tr></thead>
+              <tbody id="rows"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
     </main>

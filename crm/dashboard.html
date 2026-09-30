@@ -21,58 +21,64 @@
 
       <div class="page-hd" id="pageHd"></div>
 
-      <div class="card" style="margin-bottom:16px">
+      <div class="dash-row1">
+        <div class="card saldo"><div class="card-bd" style="padding-top:20px" id="saldo"></div></div>
+        <div class="card kpi-wrap"><div class="kpis no-card" id="kpis"></div></div>
+        <div class="card fill">
+          <div class="card-hd"><div><h3>Novos leads</h3><p class="sub">Entrada por produto nos últimos 14 dias</p></div></div>
+          <div class="card-bd"><div class="inner-box" id="trendChart"></div></div>
+        </div>
+      </div>
+
+      <div class="dash-row2">
+        <div class="dash-col">
+          <div class="card">
+            <div class="card-hd"><h3>Distribuição da base</h3></div>
+            <div class="card-bd"><div class="barchart" id="splitBars"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-hd">
+              <h3>Próximos contatos</h3>
+              <a class="btn soft sm" href="calendario.html">Ver calendário</a>
+            </div>
+            <div class="card-bd"><div class="agenda" id="agenda"></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd">
+            <h3>Atividade recente</h3>
+            <div class="card-tools">
+              <label class="card-search"><svg viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M17 17l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><input id="feedBusca" placeholder="Buscar"></label>
+              <select class="card-select" id="feedFiltro" aria-label="Filtrar por tipo">
+                <option value="">Todos os tipos</option>
+                <option value="lead_criado">Lead criado</option>
+                <option value="estagio_alterado">Mudança de etapa</option>
+                <option value="nota">Nota</option>
+                <option value="campanha_enviada">Campanha</option>
+                <option value="automacao">Automação</option>
+                <option value="usuario_login">Acesso</option>
+              </select>
+            </div>
+          </div>
+          <div class="card-bd">
+            <div class="tbl-wrap">
+              <table class="tbl" style="min-width:620px">
+                <thead><tr><th>Responsável</th><th>Atividade</th><th>Tipo</th><th>Quando</th></tr></thead>
+                <tbody id="feed"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
         <div class="card-hd">
-          <h3>Mural de avisos</h3>
-          <span class="badge neutro">visível pra toda a equipe</span>
+          <div><h3>Mural de avisos</h3><p class="sub">Visível pra toda a equipe</p></div>
         </div>
         <div class="card-bd">
           <div class="mural-form" id="muralForm"></div>
           <div class="mural-list" id="muralList"></div>
-        </div>
-      </div>
-
-      <div class="kpis" id="kpis"></div>
-
-      <div class="card" style="margin-bottom:16px">
-        <div class="card-hd"><h3>Novos leads — últimos 14 dias</h3></div>
-        <div class="card-bd"><div id="trendChart"></div></div>
-      </div>
-
-      <div class="two-col">
-        <div class="card">
-          <div class="card-hd">
-            <h3>Atividade recente</h3>
-            <span class="badge neutro">últimos eventos</span>
-          </div>
-          <div class="card-bd">
-            <div class="feed" id="feed"></div>
-          </div>
-        </div>
-
-        <div style="display:flex;flex-direction:column;gap:16px">
-          <div class="card">
-            <div class="card-hd">
-              <h3>Próximos contatos</h3>
-              <span class="badge neutro">agenda</span>
-            </div>
-            <div class="card-bd"><div class="agenda" id="agenda"></div></div>
-          </div>
-          <div class="card">
-            <div class="card-hd"><h3>Imóveis × Seguros × Consórcios</h3></div>
-            <div class="card-bd">
-              <div class="barchart" id="splitBars"></div>
-              <a class="btn sm ghost block" style="margin-top:18px" href="pipeline-imoveis.html">Ver pipeline de Imóveis →</a>
-              <a class="btn sm ghost block" style="margin-top:8px" href="pipeline-seguros.html">Ver pipeline de Seguros →</a>
-              <a class="btn sm ghost block" style="margin-top:8px" href="pipeline-consorcios.html">Ver pipeline de Consórcios →</a>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-hd"><h3>Central de disparos</h3></div>
-            <div class="card-bd">
-              <a class="btn sm block" href="admin/disparos.html">Ir para Disparos →</a>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -93,19 +99,40 @@ const KPI_ICOS = {
   funil: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-6 8v5l-4 2v-7z"/></svg>`,
   check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5"/></svg>`,
   cifrao: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M16 7.5c0-1.9-1.8-3-4-3s-4 1.1-4 2.8c0 3.7 8 1.9 8 5.7 0 1.7-1.8 3-4 3s-4-1.1-4-3"/></svg>`,
-  camadas: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg>`
+  camadas: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg>`,
+  xis: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg>`,
+  novo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10" cy="8" r="3.4"/><path d="M3.5 19.5c.7-3.6 3.4-5.8 6.5-5.8 1.2 0 2.3.3 3.3.9M18 14v6M15 17h6"/></svg>`
 };
 
 // resolve o consultor por trás de uma atividade (via o lead ligado a ela, ou
 // direto quando a própria atividade já é de um usuário) pra mostrar o avatar
 // de verdade — sem inventar autor pra atividades sem um responsável claro
-function avatarPara(a){
-  let user = null;
-  if(a.leadId){ const lead = DB.getLead(a.leadId); if(lead && lead.consultorId) user = DB.getUsuario(lead.consultorId); }
-  else if(a.usuarioId){ user = DB.getUsuario(a.usuarioId); }
-  if(user) return `<span class="avatar" style="background:${user.avatarBg||"#004BA5"}">${DB.iniciais(user.nome)}</span>`;
-  return `<span class="avatar" style="background:var(--creme-2);color:var(--tinta-45)">${iconFor(a.tipo)}</span>`;
+function usuarioPara(a){
+  if(a.leadId){ const lead = DB.getLead(a.leadId); if(lead && lead.consultorId) return DB.getUsuario(lead.consultorId); }
+  else if(a.usuarioId){ return DB.getUsuario(a.usuarioId); }
+  return null;
 }
+function avatarPara(a){
+  const user = usuarioPara(a);
+  if(user) return `<span class="avatar" style="background:${user.avatarBg||"#004BA5"}">${DB.iniciais(user.nome)}</span>`;
+  return `<span class="avatar" style="background:var(--app-bg);color:var(--tinta-45)">${iconFor(a.tipo)}</span>`;
+}
+
+// cores de produto na MESMA ordem validada (Imóveis, Seguros, Consórcios —
+// pares vizinhos checados com o validador de paleta, inclusive no empilhado)
+const PRODUTOS = [
+  {key:"imovel",    label:"Imóveis",    cor:"var(--roxo-vivo)", href:"pipeline-imoveis.html",    ganho:"fechado"},
+  {key:"seguro",    label:"Seguros",    cor:"var(--azul)",      href:"pipeline-seguros.html",    ganho:"apolice"},
+  {key:"consorcio", label:"Consórcios", cor:"var(--amarelo)",   href:"pipeline-consorcios.html", ganho:"contemplado", hach:true}
+];
+const TIPO_ATIV = {
+  lead_criado:{label:"Lead criado", cls:"info"},
+  estagio_alterado:{label:"Mudança de etapa", cls:"ok"},
+  nota:{label:"Nota", cls:"aviso"},
+  campanha_enviada:{label:"Campanha", cls:"roxo"},
+  automacao:{label:"Automação", cls:"cinza"},
+  usuario_login:{label:"Acesso", cls:"cinza"}
+};
 
 // ---------- Mural de avisos (compartilhado, visível pra toda a equipe) ----------
 function renderMuralForm(){
@@ -164,53 +191,110 @@ function renderMuralList(){
   });
 }
 
+function saudacao(){
+  const h = new Date().getHours();
+  return h < 12 ? "Bom dia" : h < 18 ? "Boa tarde" : "Boa noite";
+}
+
 function renderDashboard(){
   const me = DB.currentUser();
   const primeiroNome = (me && me.nome ? me.nome.split(" ")[0] : "");
   document.getElementById("pageHd").innerHTML = `
-    <h1>Bem-vindo${primeiroNome?`, <em>${DB.esc(primeiroNome)}</em>`:""}.</h1>
-    <p>Um resumo rápido do funil e da atividade dos últimos dias.</p>`;
+    <h1>${saudacao()}${primeiroNome?`, ${DB.esc(primeiroNome)}`:""}</h1>
+    <p>Acompanhe o funil, os próximos contatos e a atividade da equipe.</p>`;
 
   renderMuralForm();
   renderMuralList();
 
   const s = DB.dashboardStats();
+  const pct = (v)=> s.total ? Math.round((v/s.total)*100) : 0;
+
+  // cartão de "saldo": valor em negociação + atalhos + as 3 frentes
+  const frentes = PRODUTOS.map(p=>{
+    const leads = DB.getLeadsByProduto(p.key);
+    const abertos = leads.filter(l=> l.estagio!=="perdido" && l.estagio!==p.ganho).length;
+    return `<a class="frente" href="${p.href}">
+      <span class="nm"><i style="background:${p.cor}"></i>${p.label}</span>
+      <b>${abertos}</b>
+      <small>em aberto · ${leads.length} no total</small>
+    </a>`;
+  }).join("");
+  document.getElementById("saldo").innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <span class="lbl">Valor em negociação</span><span class="badge neutro">BRL</span>
+    </div>
+    <div class="big">${DB.formatBRL(s.valorEmAberto)}</div>
+    <div class="linha-chip"><span class="chip">↑ ${s.novos7d}</span> novos leads nos últimos 7 dias</div>
+    <div class="acoes">
+      <button class="btn dark" id="btnSaldoNovo">+ Novo lead</button>
+      <a class="btn soft" href="contatos.html">Contatos</a>
+    </div>
+    <div class="inner-box">
+      <div class="frentes-hd">Pipelines <span>| 3 frentes</span></div>
+      <div class="frentes">${frentes}</div>
+    </div>`;
+  document.getElementById("btnSaldoNovo").onclick = ()=> window.SoluaNewLead.open({onCreated: renderDashboard});
+
   document.getElementById("kpis").innerHTML = `
-    <div class="kpi accent"><span class="kpi-ico">${KPI_ICOS.funil}</span><span class="lbl">Leads no funil</span><b>${s.abertos}</b><span class="delta">${s.novos7d} novos nos últimos 7 dias</span></div>
-    <div class="kpi"><span class="kpi-ico">${KPI_ICOS.check}</span><span class="lbl">Fechados (apólice / contemplado)</span><b>${s.ganhos}</b><span class="delta up">${s.taxaConversao}% de conversão total</span></div>
-    <div class="kpi"><span class="kpi-ico">${KPI_ICOS.cifrao}</span><span class="lbl">Valor em negociação</span><b>${DB.formatBRL(s.valorEmAberto)}</b><span class="delta">soma dos leads em aberto</span></div>
-    <div class="kpi"><span class="kpi-ico">${KPI_ICOS.camadas}</span><span class="lbl">Base total</span><b>${s.total}</b><span class="delta">${s.imovel} imóveis · ${s.seguro} seguros · ${s.consorcio} consórcios</span></div>
+    <div class="kpi accent"><span class="kpi-ico">${KPI_ICOS.funil}</span><span class="lbl">Leads no funil</span><b>${s.abertos}</b><span class="delta"><span class="chip">${pct(s.abertos)}%</span> da base</span></div>
+    <div class="kpi"><span class="kpi-ico">${KPI_ICOS.check}</span><span class="lbl">Fechados</span><b>${s.ganhos}</b><span class="delta"><span class="chip">↑ ${s.taxaConversao}%</span> conversão</span></div>
+    <div class="kpi"><span class="kpi-ico">${KPI_ICOS.xis}</span><span class="lbl">Perdidos</span><b>${s.perdidos}</b><span class="delta"><span class="chip baixa">${pct(s.perdidos)}%</span> da base</span></div>
+    <div class="kpi"><span class="kpi-ico">${KPI_ICOS.novo}</span><span class="lbl">Novos leads</span><b>${s.novos7d}</b><span class="delta"><span class="chip neutro">7 dias</span> de ${s.total} na base</span></div>
   `;
 
-  // cores checadas com o validador de paleta da skill de dataviz (contraste
-  // e distinção pra daltonismo) na MESMA ordem em que as linhas aparecem —
-  // trocar a ordem das linhas exige revalidar o par adjacente
-  const max = Math.max(s.imovel, s.seguro, s.consorcio, 1);
-  const linha = (label, valor, cor)=>{
-    const pct = s.total ? Math.round((valor/s.total)*100) : 0;
+  // trilho hachurado = o que falta pra 100% da base (como o "limite" da referência)
+  document.getElementById("splitBars").innerHTML = PRODUTOS.map(p=>{
+    const valor = s[p.key];
     return `<div class="bc-row">
       <div class="bc-hd">
-        <span class="bc-name">${label}</span>
-        <span class="bc-nums"><b>${valor}</b><span class="bc-pct">${pct}% da base</span></span>
+        <span class="bc-name">${p.label}</span>
+        <span class="bc-nums"><b>${valor}</b><span class="bc-pct">${pct(valor)}% da base</span></span>
       </div>
-      <div class="bc-track"><div class="bc-fill" style="width:${(valor/max)*100}%;background:${cor}"></div></div>
+      <div class="bc-track hach"><div class="bc-fill" style="width:${pct(valor)}%;background:${p.cor}"></div></div>
     </div>`;
-  };
-  document.getElementById("splitBars").innerHTML =
-    linha("Imóveis", s.imovel, "var(--roxo-vivo)") + linha("Seguros", s.seguro, "var(--azul)") + linha("Consórcios", s.consorcio, "var(--amarelo)");
+  }).join("");
 
-  document.getElementById("feed").innerHTML = DB.getActivity(14).map(a=>`
-    <div class="feed-item">${avatarPara(a)}
-      <div><p>${DB.esc(a.descricao)}</p><time>${DB.timeAgo(a.data)}</time></div>
-    </div>`).join("") || `<div class="empty">${window.SoluaUI.emptyState("Sem atividade ainda.")}</div>`;
-
+  renderFeed();
   renderAgenda();
   renderTrend();
 }
 
+// ---------- Atividade recente (tabela com busca e filtro por tipo) ----------
+function renderFeed(){
+  const termo = (document.getElementById("feedBusca").value||"").trim().toLowerCase();
+  const tipo = document.getElementById("feedFiltro").value;
+  const itens = DB.getActivity(80).filter(a=>{
+    if(tipo && a.tipo!==tipo) return false;
+    if(!termo) return true;
+    const u = usuarioPara(a);
+    return (a.descricao||"").toLowerCase().includes(termo) || (u && u.nome.toLowerCase().includes(termo));
+  }).slice(0, 8);
+  const el = document.getElementById("feed");
+  if(!itens.length){
+    el.innerHTML = `<tr><td colspan="4" style="cursor:default"><div class="empty" style="padding:26px 10px">${window.SoluaUI.emptyState(termo||tipo ? "Nenhuma atividade com esse filtro." : "Sem atividade ainda.")}</div></td></tr>`;
+    return;
+  }
+  el.innerHTML = itens.map(a=>{
+    const u = usuarioPara(a);
+    const t = TIPO_ATIV[a.tipo] || {label:a.tipo, cls:"cinza"};
+    return `<tr ${a.leadId && DB.getLead(a.leadId) ? `data-leadid="${a.leadId}"` : `style="cursor:default"`}>
+      <td><div class="namecell">${avatarPara(a)}<b>${u ? DB.esc(u.nome.split(" ")[0]) : "Sistema"}</b></div></td>
+      <td>${DB.esc(a.descricao)}</td>
+      <td><span class="dotst ${t.cls}"><span>${t.label}</span></span></td>
+      <td style="white-space:nowrap"><b style="font-weight:600;font-size:13px">${DB.timeAgo(a.data)}</b><div style="font-size:11.5px;color:var(--tinta-45)">${DB.formatDateTime(a.data)}</div></td>
+    </tr>`;
+  }).join("");
+  el.querySelectorAll("[data-leadid]").forEach(row=>{
+    row.onclick = ()=> window.SoluaLead && window.SoluaLead.open(row.dataset.leadid, {onChange: renderDashboard});
+  });
+}
+document.getElementById("feedBusca").addEventListener("input", renderFeed);
+document.getElementById("feedFiltro").addEventListener("change", renderFeed);
+
 // ---------- Próximos contatos (agenda real, a partir do campo
 // "proximoContato" de cada lead — nada decorativo/inventado) ----------
 const PRODUTO_BADGE = {seguro:"seguro", consorcio:"consorcio", imovel:"imovel"};
+const PRODUTO_NOME = {seguro:"Seguro", consorcio:"Consórcio", imovel:"Imóvel"};
 function parseDataLocal(dateStr){ return new Date(dateStr+"T12:00:00"); }
 function agendaRotulo(dateStr){
   const hoje = new Date(); hoje.setHours(12,0,0,0);
@@ -230,7 +314,7 @@ function renderAgenda(){
     return `<div class="agenda-row" data-leadid="${l.id}">
       <span class="ag-tag ag-${r.tom}">${r.texto}</span>
       <span class="ag-nome">${DB.esc(l.nome)}</span>
-      <span class="badge ${PRODUTO_BADGE[l.produto]||""}">${PRODUTO_BADGE[l.produto]||l.produto}</span>
+      <span class="badge ${PRODUTO_BADGE[l.produto]||""}">${PRODUTO_NOME[l.produto]||l.produto}</span>
     </div>`;
   }).join("");
   el.querySelectorAll("[data-leadid]").forEach(row=>{
@@ -238,51 +322,112 @@ function renderAgenda(){
   });
 }
 
-// ---------- Tendência de novos leads (14 dias, gráfico de linha em SVG) ----------
+// ---------- Novos leads por dia e por produto (14 dias, barras empilhadas) ----------
 function renderTrend(){
   const dias = 14;
   const hoje = new Date(); hoje.setHours(0,0,0,0);
   const buckets = [];
-  for(let i=dias-1;i>=0;i--){ const d = new Date(hoje); d.setDate(d.getDate()-i); buckets.push({data:d, total:0}); }
+  for(let i=dias-1;i>=0;i--){
+    const d = new Date(hoje); d.setDate(d.getDate()-i);
+    buckets.push({data:d, imovel:0, seguro:0, consorcio:0, total:0});
+  }
   DB.getLeads().forEach(l=>{
     const c = new Date(l.criadoEm); c.setHours(0,0,0,0);
     const b = buckets.find(bk=> bk.data.getTime()===c.getTime());
-    if(b) b.total++;
+    if(b && b[l.produto]!=null){ b[l.produto]++; b.total++; }
   });
-  const max = Math.max(...buckets.map(b=>b.total), 1);
-  const W = 600, H = 120, PAD = 8;
-  const x = i => PAD + (i/(dias-1))*(W-PAD*2);
-  const y = v => H-PAD - (v/max)*(H-PAD*2-14);
-  const pts = buckets.map((b,i)=>[x(i), y(b.total)]);
-  const linePath = pts.map((p,i)=> (i===0?"M":"L")+p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ");
-  const areaPath = linePath + ` L${x(dias-1).toFixed(1)},${(H-PAD).toFixed(1)} L${x(0).toFixed(1)},${(H-PAD).toFixed(1)} Z`;
   const totalPeriodo = buckets.reduce((a,b)=>a+b.total,0);
-  const dots = buckets.map((b,i)=>{
-    const [px,py] = pts[i];
-    const rotulo = `${b.data.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}: ${b.total} lead${b.total===1?"":"s"}`;
-    return `<circle cx="${px}" cy="${py}" r="10" fill="transparent"><title>${rotulo}</title></circle>`
-      + (i===dias-1 ? `<circle cx="${px}" cy="${py}" r="4" fill="var(--azul)" stroke="#fff" stroke-width="2"/>` : "");
-  }).join("");
-  const labelIdx = [0, Math.floor((dias-1)/2), dias-1];
-  const xLabels = labelIdx.map(i=> `<text x="${x(i)}" y="${H-1}" font-size="9.5" fill="var(--tinta-35)" text-anchor="${i===0?"start":i===dias-1?"end":"middle"}">${buckets[i].data.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}</text>`).join("");
-  document.getElementById("trendChart").innerHTML = `
-    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px">
-      <b style="font-family:var(--font-display);font-weight:400;font-size:26px">${totalPeriodo}</b>
-      <span style="font-size:12.5px;color:var(--tinta-45)">lead${totalPeriodo===1?"":"s"} novo${totalPeriodo===1?"":"s"} no período</span>
-    </div>
-    <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:${H}px;overflow:visible" role="img" aria-label="Novos leads por dia nos últimos 14 dias">
-      <path d="${areaPath}" fill="var(--azul)" opacity=".08" stroke="none"/>
-      <path d="${linePath}" fill="none" stroke="var(--azul)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-      ${dots}
-      ${xLabels}
-    </svg>`;
+  const legenda = PRODUTOS.map(p=>
+    `<span><i class="${p.hach?"hach":""}" style="${p.hach?`color:${p.cor}`:`background:${p.cor}`}"></i>${p.label}</span>`).join("");
+  const el = document.getElementById("trendChart");
+  el.innerHTML = `
+    <div class="stack-hd"><b>${totalPeriodo} novo${totalPeriodo===1?"":"s"} no período</b><div class="legenda">${legenda}</div></div>
+    <div class="stack-wrap" id="stackWrap"><div class="stack-tip" id="stackTip"></div></div>`;
+  trendBuckets = buckets;
+  desenharTrend();
 }
+
+// desenha no tamanho real (px) do espaço disponível — texto nítido e o
+// gráfico ocupa o cartão inteiro, sem esticar; redesenha ao redimensionar
+let trendBuckets = [];
+function desenharTrend(){
+  const wrap = document.getElementById("stackWrap");
+  if(!wrap) return;
+  const buckets = trendBuckets, dias = buckets.length;
+  const totalPeriodo = buckets.reduce((a,b)=>a+b.total,0);
+  const maxDia = Math.max(...buckets.map(b=>b.total), 1);
+  const passo = Math.max(1, Math.ceil(maxDia/4));
+  const yMax = passo*4;
+
+  const W = Math.max(240, wrap.clientWidth), H = Math.max(160, wrap.clientHeight), L = 24, R = 4, T = 8, B = 22;
+  const plotH = H-T-B, slot = (W-L-R)/dias, bw = Math.min(18, slot*.58), GAP = 2, RAIO = 4;
+  const y = v => T + plotH - (v/yMax)*plotH;
+
+  const grades = [0,1,2,3,4].map(k=>{
+    const v = k*passo, yy = y(v);
+    return `<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="var(--linha)" stroke-dasharray="3 4"/>
+      <text x="0" y="${yy+3.5}" font-size="10" fill="var(--tinta-45)">${v}</text>`;
+  }).join("");
+
+  // segmento de cima ganha a ponta arredondada; os de baixo ficam retos e
+  // presos na base, com 2px de respiro entre um e outro
+  const barras = buckets.map((b,i)=>{
+    const x0 = L + i*slot + (slot-bw)/2;
+    const ativos = PRODUTOS.filter(p=> b[p.key]>0);
+    let base = T + plotH, out = "";
+    ativos.forEach((p,j)=>{
+      const h = (b[p.key]/yMax)*plotH - (j>0?GAP:0);
+      const yTop = base - (j>0?GAP:0) - h;
+      const fill = p.hach ? "url(#hachCons)" : p.cor;
+      if(j===ativos.length-1){
+        const r = Math.min(RAIO, h, bw/2);
+        out += `<path d="M${x0},${yTop+h} V${yTop+r} Q${x0},${yTop} ${x0+r},${yTop} H${x0+bw-r} Q${x0+bw},${yTop} ${x0+bw},${yTop+r} V${yTop+h} Z" fill="${fill}"/>`;
+      } else {
+        out += `<rect x="${x0}" y="${yTop}" width="${bw}" height="${h}" fill="${fill}"/>`;
+      }
+      base = yTop;
+    });
+    const rotulo = b.data.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+    return out
+      + `<text x="${x0+bw/2}" y="${H-6}" font-size="10" fill="var(--tinta-45)" text-anchor="middle">${b.data.getDate()}</text>`
+      + `<rect class="hit" data-i="${i}" x="${L+i*slot}" y="${T}" width="${slot}" height="${plotH}" fill="transparent"><title>${rotulo}: ${b.total} lead${b.total===1?"":"s"}</title></rect>`;
+  }).join("");
+
+  const tip = document.getElementById("stackTip");
+  const velho = wrap.querySelector("svg"); if(velho) velho.remove();
+  wrap.insertAdjacentHTML("afterbegin", `
+    <svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Novos leads por dia e por produto nos últimos 14 dias — ${totalPeriodo} no total">
+      <defs><pattern id="hachCons" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <rect width="6" height="6" fill="var(--amarelo)" opacity=".3"/><rect width="3" height="6" fill="var(--amarelo)"/>
+      </pattern></defs>
+      ${grades}${barras}
+    </svg>`);
+
+  wrap.querySelectorAll(".hit").forEach(hit=>{
+    hit.addEventListener("mouseenter", ()=>{
+      const i = +hit.dataset.i, b = buckets[i];
+      tip.innerHTML = `<b>${b.data.toLocaleDateString("pt-BR",{weekday:"short", day:"2-digit", month:"2-digit"})}</b>`
+        + PRODUTOS.map(p=>`<div class="r"><i style="background:${p.cor}"></i>${p.label}<em>${b[p.key]}</em></div>`).join("")
+        + `<div class="r" style="margin-top:3px;opacity:.75">Total<em>${b.total}</em></div>`;
+      // mantém o balão dentro do cartão, mesmo nas barras das pontas
+      const meia = tip.offsetWidth/2;
+      const cx = Math.min(Math.max(L + i*slot + slot/2, meia), W - meia);
+      tip.style.left = cx+"px";
+      tip.style.top = Math.max(y(b.total), tip.offsetHeight - 30)+"px";
+      tip.classList.add("on");
+    });
+    hit.addEventListener("mouseleave", ()=> tip.classList.remove("on"));
+  });
+}
+let trendResize;
+addEventListener("resize", ()=>{ clearTimeout(trendResize); trendResize = setTimeout(desenharTrend, 120); });
 renderDashboard();
 
 // a topbar cria o botão "+ Novo lead" de forma genérica (crm-ui.js); aqui religamos
 // para que, depois de criar, os números e a atividade recente desta página se atualizem.
 const btnNovo = document.getElementById("btnNovoLead");
 if(btnNovo) btnNovo.onclick = ()=> window.SoluaNewLead.open({onCreated: renderDashboard});
+
 </script>
 <script src="../assets/js/crm-newlead.js"></script>
 </body>
