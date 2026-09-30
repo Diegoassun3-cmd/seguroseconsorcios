@@ -244,6 +244,20 @@
   if(!Array.isArray(STATE.posts)){ STATE.posts = POSTS_SEED.map(p=>Object.assign({}, p, {blocos: p.blocos.map(b=>Object.assign({}, b))})); save(STATE); }
   // migração leve: compromissos do calendário são uma seção nova — começa vazia.
   if(!Array.isArray(STATE.compromissos)){ STATE.compromissos = []; save(STATE); }
+  // migração leve: proprietários viram um cadastro próprio. Imóveis que só
+  // tinham o nome do proprietário digitado ganham um registro ligado a eles.
+  if(!Array.isArray(STATE.proprietarios)){
+    STATE.proprietarios = [];
+    (STATE.imoveis||[]).forEach(i=>{
+      const p = i.proprietario;
+      if(!i.proprietarioId && p && (p.nome||"").trim()){
+        let reg = STATE.proprietarios.find(x=> x.nome.trim().toLowerCase()===p.nome.trim().toLowerCase());
+        if(!reg){ reg = {id:uid("prop"), nome:p.nome.trim(), telefone:p.telefone||"", email:p.email||"", tipoPessoa:"PF", criadoEm:nowISO()}; STATE.proprietarios.push(reg); }
+        i.proprietarioId = reg.id;
+      }
+    });
+    save(STATE);
+  }
   // migração leve: checklist de permissões é novo — quem já existia ganha a
   // lista vazia (Administrador não depende dela; os demais nada muda até
   // alguém marcar algo no editor de Equipe).
@@ -311,7 +325,7 @@
         rodape:"Resposta em até 1 dia útil", botoes:[{tipo:"resposta_rapida", texto:"Pode mandar"}]}
     ];
 
-    return { leads:[], templates, campaigns:[], equipe: EQUIPE_SEED, imoveis: IMOVEIS_SEED.map(i=>Object.assign({},i)),
+    return { leads:[], templates, campaigns:[], equipe: EQUIPE_SEED, imoveis: IMOVEIS_SEED.map(i=>Object.assign({},i)), proprietarios:[],
       posts: POSTS_SEED.map(p=>Object.assign({}, p, {blocos: p.blocos.map(b=>Object.assign({}, b))})),
       contasFinanceiras:[], avisos:[], compromissos:[], activity:[], session:null };
   }
@@ -440,6 +454,25 @@
   }
 
   // -------------------- CATÁLOGO DE IMÓVEIS (produto, não contato) --------------------
+  // -------------------- PROPRIETÁRIOS (donos dos imóveis) --------------------
+  function getProprietarios(){ return STATE.proprietarios.slice().sort((a,b)=> a.nome.localeCompare(b.nome,"pt-BR")); }
+  function getProprietario(id){ return STATE.proprietarios.find(p=>p.id===id) || null; }
+  function addProprietario(data){
+    const p = Object.assign({id:uid("prop"), nome:"", tipoPessoa:"PF", documento:"", telefone:"", telefone2:"", email:"",
+      endereco:"", pix:"", observacoes:"", criadoEm:nowISO(), atualizadoEm:nowISO()}, data);
+    STATE.proprietarios.push(p); save(STATE); return p;
+  }
+  function updateProprietario(id, patch){
+    const p = getProprietario(id); if(!p) return null;
+    Object.assign(p, patch, {atualizadoEm:nowISO()}); save(STATE); return p;
+  }
+  function deleteProprietario(id){
+    STATE.proprietarios = STATE.proprietarios.filter(p=>p.id!==id);
+    STATE.imoveis.forEach(i=>{ if(i.proprietarioId===id) i.proprietarioId = null; });
+    save(STATE);
+  }
+  function imoveisDoProprietario(id){ return STATE.imoveis.filter(i=> i.proprietarioId===id); }
+
   function getImoveis(){ return STATE.imoveis.slice(); }
   function getImovel(id){ return STATE.imoveis.find(i=>i.id===id) || null; }
   // código de referência sequencial (SOL-0001…), o que o cliente cita no telefone
@@ -919,6 +952,7 @@
     getEquipe, getUsuario, addUsuario, updateUsuario, deleteUsuario, PERMISSOES_DISPONIVEIS, temPermissao,
     getImoveis, getImovel, addImovel, updateImovel, deleteImovel, filterImoveis,
     getImoveisPublicados, estaPublicado, precoImovelTexto, leadsDoImovel, proximoCodigoImovel, COMODIDADES,
+    getProprietarios, getProprietario, addProprietario, updateProprietario, deleteProprietario, imoveisDoProprietario,
     getContas, getConta, addConta, updateConta, deleteConta,
     getAvisos, addAviso, updateAviso, deleteAviso,
     getCompromissos, getCompromisso, addCompromisso, updateCompromisso, deleteCompromisso,

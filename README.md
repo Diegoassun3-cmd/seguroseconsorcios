@@ -59,9 +59,10 @@ assets/js/crm-ui.js             → barra superior/trilho de ícones/toasts/moda
 assets/js/crm-newlead.js        → modal "novo lead"
 assets/js/crm-leaddrawer.js     → painel de detalhe do lead (notas, estágio, edição)
 assets/js/crm-pipeline.js       → lógica do quadro Kanban (imóveis/seguros/consórcios)
-assets/js/crm-imoveis.js        → Cadastro de imóveis: lista do catálogo (crm/imoveis-cadastro.html)
+assets/js/crm-imoveis.js        → Gestão de imóveis: filtros, status e cards (crm/imoveis-cadastro.html)
+assets/js/crm-proprietarios.js  → cadastro de proprietários (crm/proprietarios.html)
 assets/js/crm-imovel-editor.js  → editor completo de um imóvel, em abas (crm/imovel-editor.html)
-assets/js/crm-imovel-comum.js   → rótulos e nota de qualidade do anúncio (lista + editor)
+assets/js/crm-imovel-comum.js   → rótulos, nota do anúncio, situação, regras de publicação e modal de proprietário
 assets/js/midia-store.js        → fotos, plantas e arquivos dos imóveis no IndexedDB do navegador
 assets/js/crm-disparos.js       → Central de Disparos + painel de Automações (real, via API)
 assets/js/crm-modelos.js        → configurador de modelos (blocos de e-mail + estrutura de WhatsApp)
@@ -612,14 +613,32 @@ função mudou de lugar no código.
 ### Imóveis: leads + cadastro completo
 
 O item **Imóveis** da barra superior virou um menu com setinha:
-**Leads de imóveis** (o funil de sempre) e **Cadastro de imóveis**.
+**Gestão de imóveis**, **Leads de imóveis** (o funil de sempre) e
+**Proprietários**.
 
-- **Cadastro de imóveis** (`crm/imoveis-cadastro.html`): indicadores
-  (no catálogo, não publicados, em destaque, leads vinculados), busca por
-  código/título/bairro, filtros, visão em grade ou lista, nota de
-  qualidade de cada anúncio, e ações de editar, duplicar (a cópia nasce
-  não publicada), ver no site e excluir. Cada imóvel ganha um código de
-  referência sequencial (`SOL-0001`…).
+- **Gestão de imóveis** (`crm/imoveis-cadastro.html`): filtros na lateral
+  (busca por código/endereço/proprietário, negócio, tipo, angariador,
+  proprietário — inclusive "sem proprietário" —, bairro, faixa de preço,
+  dormitórios, vagas, área, local das chaves, com leads, destaque,
+  exclusividade, sem fotos) e **filtros favoritos** salvos por usuário.
+  No topo, o filtro de **Status** com contagem, chips removíveis de cada
+  filtro ativo e ordenação. Cada imóvel é um card com a **faixa colorida
+  da situação** (Em anúncio, Anúncio pausado, Reservado, Em negociação,
+  Vendido, Alugado, Rascunho) — dá pra trocar a situação direto no card;
+  colocar "Em anúncio" confere se não falta nada pra publicar. Card mostra
+  datas de cadastro/atualização, código, endereço, cômodos, angariador,
+  proprietário, chave, preços de venda/locação, leads e nota do anúncio.
+  Também tem visão em tabela e **Compartilhar imóveis**: monta a mensagem
+  com os links dos imóveis escolhidos pra copiar ou mandar no WhatsApp.
+  Os filtros ficam guardados ao ir e voltar do editor.
+- **Proprietários** (`crm/proprietarios.html`): cadastro próprio (pessoa
+  física/jurídica, CPF/CNPJ com máscara, telefones, e-mail, endereço,
+  PIX para repasse, observações), busca, filtros, e um painel com os
+  imóveis de cada um e atalho pra cadastrar imóvel já vinculado. No
+  editor do imóvel o proprietário é escolhido da lista (ou cadastrado ali
+  mesmo). Imóveis antigos que só tinham o nome do proprietário digitado
+  ganham o cadastro automaticamente.
+- Cada imóvel tem um código de referência sequencial (`SOL-0001`…).
 - **Editor** (`crm/imovel-editor.html`), em abas: Sobre o imóvel (dados,
   localização com busca de CEP pelo ViaCEP e mapa, proprietário/ocupação/
   chaves/etiquetas, preço e negociação com máscara de R$), Detalhes

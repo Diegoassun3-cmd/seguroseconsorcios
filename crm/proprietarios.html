@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proprietários — CRM Solua</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23004BA5'/></svg>">
+<link rel="preload" href="../assets/fonts/Nyata-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/crm.css">
+<script defer src="../assets/js/branding.js"></script>
+</head>
+<body data-base="./" data-active="imoveis-proprietarios" data-title="Proprietários">
+
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar" id="topbar"></header>
+    <main class="content">
+
+      <div class="ed-hd" id="pageHd">
+        <div>
+          <h1>Proprietários</h1>
+          <p class="ed-sub">Donos dos imóveis da carteira — contato, documentos e repasses num lugar só.</p>
+        </div>
+        <div class="ed-acoes">
+          <a class="btn ghost" href="imoveis-cadastro.html">Gestão de imóveis</a>
+          <button type="button" class="btn dark" id="btnNovoProp">+ Novo proprietário</button>
+        </div>
+      </div>
+
+      <div class="kpis" id="prKpis"></div>
+
+      <div class="card">
+        <div class="card-hd">
+          <div><h3>Cadastro de proprietários</h3><p class="sub" id="prSub"></p></div>
+          <div class="card-tools">
+            <label class="card-search"><svg viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M17 17l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><input id="prBusca" placeholder="Nome, documento, telefone ou e-mail" aria-label="Buscar proprietários"></label>
+            <select class="card-select" id="prFiltro" aria-label="Filtrar proprietários">
+              <option value="">Todos</option>
+              <option value="com">Com imóveis</option>
+              <option value="anuncio">Com imóvel em anúncio</option>
+              <option value="sem">Sem imóveis</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-bd">
+          <div class="tbl-wrap">
+            <table class="tbl" style="min-width:720px">
+              <thead><tr><th>Proprietário</th><th>Contato</th><th>Imóveis</th><th>Cadastrado</th><th></th></tr></thead>
+              <tbody id="prRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<div class="overlay" id="prDrawer"><div class="drawer" id="prDrawerBody" role="dialog" aria-modal="true" aria-label="Detalhes do proprietário"></div></div>
+
+<script src="../assets/js/crm-data.js"></script>
+<script src="../assets/js/crm-ui.js"></script>
+<script src="../assets/js/midia-store.js"></script>
+<script src="../assets/js/crm-imovel-comum.js"></script>
+<script src="../assets/js/crm-proprietarios.js"></script>
+<script src="../assets/js/crm-newlead.js"></script>
+</body>
+</html>

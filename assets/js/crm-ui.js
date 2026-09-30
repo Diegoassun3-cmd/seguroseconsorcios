@@ -46,8 +46,9 @@ const NAV = [
   {group:"Pipelines", items:[
     {href:"pipeline-imoveis.html", key:"pipeline-imoveis", label:"Imóveis", ico:"imovel", count:()=>DB.getLeadsByProduto("imovel").filter(l=>l.estagio!=="perdido"&&l.estagio!=="fechado").length,
       children:[
+        {href:"imoveis-cadastro.html", key:"imoveis-cadastro", label:"Gestão de imóveis", desc:"Catálogo, filtros, fotos e anúncios", ico:"cadastro"},
         {href:"pipeline-imoveis.html", key:"pipeline-imoveis", label:"Leads de imóveis", desc:"Funil de venda e locação", ico:"imovel"},
-        {href:"imoveis-cadastro.html", key:"imoveis-cadastro", label:"Cadastro de imóveis", desc:"Catálogo, fotos e anúncios", ico:"cadastro"}
+        {href:"proprietarios.html", key:"imoveis-proprietarios", label:"Proprietários", desc:"Donos dos imóveis e repasses", ico:"contatos"}
       ]},
     {href:"pipeline-seguros.html", key:"pipeline-seguros", label:"Seguros", ico:"seguro", count:()=>DB.getLeadsByProduto("seguro").filter(l=>l.estagio!=="perdido"&&l.estagio!=="apolice").length},
     {href:"pipeline-consorcios.html", key:"pipeline-consorcios", label:"Consórcios", ico:"consorcio", count:()=>DB.getLeadsByProduto("consorcio").filter(l=>l.estagio!=="perdido"&&l.estagio!=="contemplado").length}

@@ -61,6 +61,7 @@ function novoRascunho(){
   return normalizar({finalidade:"venda", tipo:"Apartamento", status:"pronto", cidade:"Campinas", bairro:"",
     publicado:false, destaque:false, mostrarMapa:true,
     angariadores: ME ? [{usuarioId:ME.id, percentual:100}] : [],
+    proprietarioId: DB.getProprietario(params.get("proprietario")||"") ? params.get("proprietario") : null,
     captacao:{data:new Date().toISOString().slice(0,10)}});
 }
 
@@ -134,28 +135,7 @@ function secao(icone, titulo, sub, corpo){
 }
 
 // ------------------------------------------------ obrigatórios p/ publicar
-function pendencias(){
-  const p = [];
-  const falta = (cond, path, aba, label)=>{ if(cond) p.push({path, aba, label}); };
-  const e = d.endereco;
-  falta(!d.tipo, "tipo", "sobre", "Tipo do imóvel");
-  falta(!d.status, "status", "sobre", "Fase");
-  falta(!e.cep, "endereco.cep", "sobre", "CEP");
-  falta(!e.logradouro, "endereco.logradouro", "sobre", "Logradouro");
-  falta(!e.numero, "endereco.numero", "sobre", "Número");
-  falta(!d.bairro, "bairro", "sobre", "Bairro");
-  falta(!d.cidade, "cidade", "sobre", "Cidade");
-  falta(d.finalidade!=="locacao" && !n(d.precoVenda), "precoVenda", "sobre", "Preço de venda");
-  falta(d.finalidade!=="venda" && !n(d.precoLocacao), "precoLocacao", "sobre", "Preço de locação");
-  if(!IM.SEM_COMODOS.has(d.tipo)){
-    falta(!n(d.quartos), "quartos", "detalhes", "Dormitórios");
-    falta(!n(d.banheiros), "banheiros", "detalhes", "Banheiros");
-  }
-  falta(!n(d.areaM2), "areaM2", "detalhes", "Área útil");
-  falta(!(d.titulo||"").trim(), "titulo", "anuncio", "Título do anúncio");
-  falta(!d.fotos.length, "fotos", "fotos", "Pelo menos 1 foto");
-  return p;
-}
+const pendencias = ()=> IM.pendenciasPublicacao(d);
 function pendentesVisiveis(){
   return (d.publicado || tentouPublicar) ? new Set(pendencias().map(x=>x.path)) : new Set();
 }
@@ -226,9 +206,7 @@ function abaSobre(){
     </div>`)
   + secao("info","Informações detalhadas","Proprietário, ocupação e chaves — uso interno.",`
     <div class="fgrid">
-      ${campo("Proprietário","proprietario.nome",{ph:"Nome completo", span:"s2"})}
-      ${campo("Telefone do proprietário","proprietario.telefone",{tipo:"tel", opc:true, ph:"(19) 90000-0000"})}
-      ${campo("E-mail do proprietário","proprietario.email",{tipo:"email", opc:true})}
+      ${proprietarioHtml()}
       ${campo("Ocupação","ocupacao",{tipo:"select", opcoes:["Desocupado","Ocupado pelo proprietário","Ocupado por inquilino"]})}
       ${campo("Local das chaves","localChaves",{list:"dlChaves", ph:"Ex.: na imobiliária"})}
       <datalist id="dlChaves"><option value="Na imobiliária"><option value="Com o proprietário"><option value="Com o porteiro/zelador"><option value="Cofre de chaves no imóvel"></datalist>
@@ -256,6 +234,22 @@ function abaSobre(){
       <div></div>
       ${campo("Detalhes da negociação","detalhesNegociacao",{tipo:"textarea", opc:true, span:"s4", ph:"Condições, permuta aceita, documentação…"})}
     </div>`);
+}
+
+function proprietarioHtml(){
+  const lista = DB.getProprietarios();
+  const atual = d.proprietarioId ? DB.getProprietario(d.proprietarioId) : null;
+  const wa = atual ? IM.linkWhats(atual.telefone) : "";
+  return `<div class="field s2"><label for="selProp">Proprietário</label>
+      <div class="inline-btn">
+        <select id="selProp" data-k="proprietarioId" data-t="text"><option value="">${lista.length?"Selecione um proprietário":"Nenhum proprietário cadastrado"}</option>
+          ${lista.map(p=>`<option value="${p.id}" ${p.id===d.proprietarioId?"selected":""}>${esc(p.nome)}${p.documento?` · ${esc(p.documento)}`:""}</option>`).join("")}</select>
+        <button type="button" class="btn soft" id="btnNovoProp">+ Novo</button>
+      </div></div>
+    <div class="field s2"><label>Contato do proprietário</label>
+      <div class="prop-contato">${atual ? `<b>${esc(atual.telefone||"—")}</b>${atual.email?` · ${esc(atual.email)}`:""}
+        ${wa?`<a href="${wa}" target="_blank" rel="noopener">WhatsApp ↗</a>`:""}<button type="button" class="link" id="btnEditProp">Editar</button>`
+        : `<span style="color:var(--tinta-45)">Selecione ou cadastre o proprietário.</span>`}</div></div>`;
 }
 
 // -------------------------------------------------------- aba: Detalhes
@@ -555,7 +549,7 @@ function renderHd(){
       <a class="voltar" href="imoveis-cadastro.html">← Cadastro de imóveis</a>
       <h1>${esc(titulo)}</h1>
       <div class="meta">
-        ${original ? `<span class="dotst ${DB.estaPublicado(original)?"ok":"cinza"}"><span>${DB.estaPublicado(original)?"Publicado":"Não publicado"}</span></span>` : `<span class="badge neutro">Rascunho — ainda não salvo</span>`}
+        ${original ? (()=>{ const st = IM.situacao(original); return `<span class="sit-tag" style="color:${st.cor};background:${st.fundo}">${st.label}</span>`; })() : `<span class="badge neutro">Rascunho — ainda não salvo</span>`}
         ${original && original.destaque ? `<span class="badge consorcio">★ Destaque</span>` : ""}
         ${original && original.atualizadoEm ? `<span style="font-size:12.5px;color:var(--tinta-45)">Atualizado ${DB.timeAgo(original.atualizadoEm)}</span>` : ""}
       </div>
@@ -612,11 +606,7 @@ function mascaraCep(el){
   const v = el.value.replace(/\D/g,"").slice(0,8);
   el.value = v.length>5 ? v.slice(0,5)+"-"+v.slice(5) : v;
 }
-function mascaraFone(el){
-  let v = el.value.replace(/\D/g,"").slice(0,11);
-  el.value = v.length>10 ? v.replace(/(\d{2})(\d{5})(\d{4})/,"($1) $2-$3") : v.length>6 ? v.replace(/(\d{2})(\d{4})(\d{0,4})/,"($1) $2-$3") : v.length>2 ? v.replace(/(\d{2})(\d*)/,"($1) $2") : v;
-}
-const RERENDER = new Set(["finalidade","tipo","publicado","destaque","mostrarMapa","ocultarEndereco","ocultarPreco","exclusividade.ativa","publicacao.autorizacao","aceitaFinanciamento","aceitaPermuta","possuiPlaca"]);
+const RERENDER = new Set(["proprietarioId","finalidade","tipo","publicado","destaque","mostrarMapa","ocultarEndereco","ocultarPreco","exclusividade.ativa","publicacao.autorizacao","aceitaFinanciamento","aceitaPermuta","possuiPlaca"]);
 const ENDERECO = new Set(["endereco.logradouro","endereco.numero","bairro","cidade","endereco.estado"]);
 let tMapa;
 function atualizarMapa(){ clearTimeout(tMapa); tMapa = setTimeout(()=>{ const box = document.getElementById("mapaBox"); if(box) box.innerHTML = mapaHtml(); }, 700); }
@@ -624,7 +614,6 @@ function atualizarMapa(){ clearTimeout(tMapa); tMapa = setTimeout(()=>{ const bo
 function aoMudar(el){
   const k = el.dataset.k; if(!k) return;
   if(k==="endereco.cep") mascaraCep(el);
-  if(k==="proprietario.telefone") mascaraFone(el);
   setP(d, k, lerValor(el));
   marcarSujo();
   if(el.closest(".faltando") && el.value) el.closest(".faltando").classList.remove("faltando");
@@ -750,6 +739,8 @@ main.addEventListener("click", e=>{
     setP(d, segBtn.dataset.seg, segBtn.dataset.v); marcarSujo(); renderAba(); atualizarLateralDepois(); return;
   }
   if(t.id==="btnCep"){ buscarCep(); return; }
+  if(t.id==="btnNovoProp"){ IM.editarProprietario(null, p=>{ d.proprietarioId = p.id; marcarSujo(); renderAba(); atualizarLateralDepois(); }); return; }
+  if(t.id==="btnEditProp"){ IM.editarProprietario(d.proprietarioId, ()=>{ renderAba(); }); return; }
   if(t.id==="btnGerarTitulo"){
     d.titulo = tituloSugerido().slice(0,120); marcarSujo();
     const inp = document.querySelector('[data-k="titulo"]'); if(inp){ inp.value = d.titulo; inp.closest(".field").classList.remove("faltando"); }
@@ -880,6 +871,8 @@ function gravar(){
   ["quartos","suites","vagas","areaM2","banheiros"].forEach(k=> d[k] = n(d[k]));
   d.comodidadesDestaque = d.comodidadesDestaque.filter(c=> d.comodidades.includes(c));
   d.angariadores = d.angariadores.filter(a=> a.usuarioId);
+  if(d.publicado) d.despublicadoEm = null;
+  else if(original && DB.estaPublicado(original)) d.despublicadoEm = new Date().toISOString();
   if(original){ DB.updateImovel(original.id, d); }
   else {
     const novo = DB.addImovel(d);
