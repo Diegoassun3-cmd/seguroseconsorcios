@@ -178,15 +178,15 @@ function mapaHtml(){
 function abaSobre(){
   const fin = d.finalidade;
   const venda = fin!=="locacao", loc = fin!=="venda";
-  return secao("casa","Dados do imóvel","As informações principais do cadastro.",`
+  return negocioHtml()
+  + secao("casa","Dados do imóvel","As informações principais do cadastro.",`
     <div class="fgrid">
-      ${seg("Tipo de negócio","finalidade",[["venda","Venda"],["locacao","Locação"],["venda_locacao","Venda e locação"]],{span:"s2", req:true})}
-      ${campo("Tipo do imóvel","tipo",{tipo:"select", opcoes:DB.TIPOS.imovel, req:true})}
+      ${campo("Tipo do imóvel","tipo",{tipo:"select", opcoes:DB.TIPOS.imovel, req:true, span:"s2"})}
       ${campo("Fase","status",{tipo:"select", opcoes:Object.entries(IM.FASE), req:true})}
       ${campo("Ano de construção","anoConstrucao",{tipo:"num", opc:true, ph:"Ex.: 2015"})}
       ${campo("Padrão do imóvel","padraoImovel",{tipo:"select", opc:true, opcoes:["Econômico","Médio","Alto","Luxo"]})}
       ${campo("Padrão da localização","padraoLocalizacao",{tipo:"select", opc:true, opcoes:["Popular","Médio","Nobre"]})}
-      ${campo("Status comercial","statusComercial",{tipo:"select", opc:true, opcoes:["Disponível","Reservado","Em negociação","Vendido","Alugado"]})}
+      ${campo("Status comercial","statusComercial",{tipo:"select", opc:true, opcoes:["Disponível","Reservado","Em negociação"], ajuda:"Vendido ou locado? Use “Inativar imóvel” no topo."})}
     </div>`)
   + secao("pin","Localização","O mapa atualiza conforme você preenche o endereço.",`
     <div class="loc-grid">
@@ -214,25 +214,39 @@ function abaSobre(){
         <div class="chips-in" id="etiquetasBox">${d.etiquetas.map((t,ix)=>`<span class="chip-x">${esc(t)}<button type="button" data-rmtag="${ix}" aria-label="Remover ${esc(t)}">×</button></span>`).join("")}
           <input id="etiquetaIn" placeholder="Digite e tecle Enter (ex.: oportunidade, pet friendly)"></div></div>
     </div>`)
-  + secao("cifrao","Preço e negociação","",`
+  + secao("cifrao","Condições de negociação","Faixas de negociação (só a equipe vê), IPTU e condições.",`
     <div class="fgrid">
-      ${venda ? campo("Preço de venda","precoVenda",{tipo:"money", req:true}) : ""}
-      ${venda ? campo("Preço mínimo de venda","precoVendaMin",{tipo:"money", opc:true, ajuda:"Só a equipe vê."}) : ""}
-      ${venda ? campo("Preço máximo de venda","precoVendaMax",{tipo:"money", opc:true}) : ""}
-      ${venda ? `<div></div>` : ""}
-      ${loc ? campo("Preço de locação (mês)","precoLocacao",{tipo:"money", req:true}) : ""}
-      ${loc ? campo("Mínimo de locação","precoLocacaoMin",{tipo:"money", opc:true}) : ""}
-      ${loc ? campo("Máximo de locação","precoLocacaoMax",{tipo:"money", opc:true}) : ""}
+      ${venda ? campo("Venda — mínimo aceito","precoVendaMin",{tipo:"money", opc:true}) : ""}
+      ${venda ? campo("Venda — máximo","precoVendaMax",{tipo:"money", opc:true}) : ""}
+      ${loc ? campo("Locação — mínimo aceito","precoLocacaoMin",{tipo:"money", opc:true}) : ""}
+      ${loc ? campo("Locação — máximo","precoLocacaoMax",{tipo:"money", opc:true}) : ""}
+      ${campo("Parcelamento do IPTU","parcelamentoIptu",{tipo:"select", opc:true, opcoes:["À vista","10x","12x"]})}
+      ${campo("ITR","valorItr",{tipo:"money", opc:true})}
+      ${venda ? toggle("Aceita financiamento","aceitaFinanciamento",{opc:true}) : ""}
+      ${venda ? toggle("Aceita permuta","aceitaPermuta",{opc:true}) : ""}
+      ${campo("Detalhes da negociação","detalhesNegociacao",{tipo:"textarea", opc:true, span:"s4", ph:"Condições, permuta aceita, documentação…"})}
+    </div>`);
+}
+
+// primeira decisão do cadastro: o tipo de negócio define quais valores pedir
+function negocioHtml(){
+  const fin = d.finalidade, venda = fin!=="locacao", loc = fin!=="venda";
+  const card = (v, icone, titulo, desc)=> `<button type="button" class="neg-card ${fin===v?"on":""}" data-seg="finalidade" data-v="${v}" role="radio" aria-checked="${fin===v}">
+    <span class="neg-ico">${IM.ico(icone)}</span><span><b>${titulo}</b><small>${desc}</small></span></button>`;
+  const m2 = (v)=> n(v) && n(d.areaM2) ? `≈ ${DB.formatBRL(n(v)/n(d.areaM2))}/m²` : "";
+  return secao("cifrao","Negócio e valores","Escolha se o imóvel é para venda, locação ou os dois — os valores pedidos mudam conforme a escolha.",`
+    <div class="neg-cards" role="radiogroup" aria-label="Tipo de negócio">
+      ${card("venda","venda","Venda","Preço de venda")}
+      ${card("locacao","locacao","Locação","Aluguel mensal")}
+      ${card("venda_locacao","ambos","Venda e locação","Os dois valores")}
+    </div>
+    <div class="fgrid" style="margin-top:18px">
+      ${venda ? campo("Preço de venda","precoVenda",{tipo:"money", req:true, span:"s2", ajuda:m2(d.precoVenda)}) : ""}
+      ${loc ? campo("Aluguel (mês)","precoLocacao",{tipo:"money", req:true, span: venda ? "" : "s2", ajuda:m2(d.precoLocacao)}) : ""}
       ${loc ? campo("Tipo de locação","tipoLocacao",{tipo:"select", opcoes:["Residencial","Comercial","Temporada"]}) : ""}
       ${campo("Condomínio (mês)","valorCondominio",{tipo:"money", opc:true})}
       ${campo("IPTU (ano)","valorIptu",{tipo:"money", opc:true})}
-      ${campo("Parcelamento do IPTU","parcelamentoIptu",{tipo:"select", opc:true, opcoes:["À vista","10x","12x"]})}
-      ${campo("ITR","valorItr",{tipo:"money", opc:true})}
-      ${toggle("Aceita financiamento","aceitaFinanciamento",{opc:true})}
-      ${toggle("Aceita permuta","aceitaPermuta",{opc:true})}
-      ${toggle("Ocultar preço no site","ocultarPreco",{opc:true, texto: d.ocultarPreco ? "Sim — mostra “sob consulta”" : "Não"})}
-      <div></div>
-      ${campo("Detalhes da negociação","detalhesNegociacao",{tipo:"textarea", opc:true, span:"s4", ph:"Condições, permuta aceita, documentação…"})}
+      ${toggle("Ocultar preço no site","ocultarPreco",{opc:true, span:"s2", texto: d.ocultarPreco ? "Sim — mostra “preço sob consulta”" : "Não — mostra o valor"})}
     </div>`);
 }
 
@@ -344,7 +358,8 @@ function abaAnuncio(){
     </div>`)
   + secao("globo","Publicação no site","",`
     <div class="fgrid">
-      ${toggle("Publicado","publicado",{texto: pub ? "Sim — aparece no catálogo do site" : "Não — fica só no CRM"})}
+      ${IM.inativo(d) ? `<div class="demo-hint s4" style="margin:0">Este imóvel está <b>inativo</b> (${esc(IM.rotuloInativacao(d)||"inativado")}). Reative no topo da página para voltar a publicar.</div>` : ""}
+      ${IM.inativo(d) ? "" : toggle("Publicado","publicado",{texto: pub ? "Sim — aparece no catálogo do site" : "Não — fica só no CRM"})}
       ${toggle("Destaque na home","destaque",{texto: d.destaque ? "Sim — entra na vitrine da página inicial" : "Não"})}
       ${toggle("Mostrar mapa no site","mostrarMapa",{texto: d.mostrarMapa ? "Sim" : "Não"})}
       ${toggle("Ocultar rua e número","ocultarEndereco",{texto: d.ocultarEndereco ? "Sim — mapa mostra só o bairro" : "Não"})}
@@ -375,10 +390,10 @@ function abaFotos(){
         ${i===0?`<span class="capa">Capa</span>`:""}<span class="num">${i+1}</span>
         <input type="checkbox" class="ck" data-selfoto="${esc(ref)}" ${fotosSel.has(ref)?"checked":""} aria-label="Selecionar foto ${i+1}">
         <div class="ops">
-          ${i>0?`<button type="button" data-mv="-1" data-ix="${i}" title="Mover para trás" aria-label="Mover foto ${i+1} para trás">←</button>`:""}
-          ${i<total-1?`<button type="button" data-mv="1" data-ix="${i}" title="Mover para frente" aria-label="Mover foto ${i+1} para frente">→</button>`:""}
-          ${i>0?`<button type="button" data-capa="${i}" title="Tornar capa" aria-label="Tornar foto ${i+1} a capa">★</button>`:""}
-          <button type="button" class="del" data-delfoto="${i}" title="Excluir" aria-label="Excluir foto ${i+1}">✕</button>
+          ${i>0?`<button type="button" data-mv="-1" data-ix="${i}" title="Mover para trás" aria-label="Mover foto ${i+1} para trás">${IM.ico("esquerda")}</button>`:""}
+          ${i<total-1?`<button type="button" data-mv="1" data-ix="${i}" title="Mover para frente" aria-label="Mover foto ${i+1} para frente">${IM.ico("direita")}</button>`:""}
+          ${i>0?`<button type="button" data-capa="${i}" title="Tornar capa" aria-label="Tornar foto ${i+1} a capa">${IM.ico("estrela")}</button>`:""}
+          <button type="button" class="del" data-delfoto="${i}" title="Excluir" aria-label="Excluir foto ${i+1}">${IM.ico("lixeira")}</button>
         </div>
       </div>`).join("")}</div>` : `<div class="empty" style="padding:26px">${UI.emptyState("Nenhuma foto ainda.")}</div>`}`);
 }
@@ -389,7 +404,7 @@ function abaPlantas(){
     ${d.plantas.length ? `<div class="foto-grid">${d.plantas.map((p,i)=>`
       <div><div class="foto" style="cursor:default;background-size:contain;background-color:#fff;background-image:url('${esc(MID.srcInicial(p.ref))}')" data-midia="${esc(p.ref)}">
         <span class="num">${i+1}</span>
-        <div class="ops" style="opacity:1"><button type="button" class="del" data-delplanta="${i}" title="Excluir" aria-label="Excluir planta ${i+1}">✕</button></div>
+        <div class="ops" style="opacity:1"><button type="button" class="del" data-delplanta="${i}" title="Excluir" aria-label="Excluir planta ${i+1}">${IM.ico("lixeira")}</button></div>
       </div>
       <div class="foto-leg"><input data-k="plantas.${i}.legenda" data-t="text" value="${esc(p.legenda||"")}" placeholder="Legenda (ex.: Tipo 1 — 112 m²)" aria-label="Legenda da planta ${i+1}"></div></div>`).join("")}</div>`
       : `<div class="empty" style="padding:26px">${UI.emptyState("Nenhuma planta ainda.")}</div>`}`);
@@ -475,7 +490,7 @@ function abaArquivos(){
         <div class="nm"><b>${esc(a.nome)}</b><small>${tamanho(a.tamanho||0)} · enviado ${a.enviadoEm?DB.formatDate(a.enviadoEm):""}</small></div>
         <select data-k="arquivos.${i}.categoria" data-t="text" aria-label="Categoria de ${esc(a.nome)}">${CAT_ARQ.map(c=>`<option ${a.categoria===c?"selected":""}>${c}</option>`).join("")}</select>
         <button type="button" class="btn soft sm" data-baixar="${i}">Baixar</button>
-        <button type="button" class="btn icon soft sm" data-delarq="${i}" title="Remover" aria-label="Remover ${esc(a.nome)}">✕</button>
+        <button type="button" class="btn icon soft sm" data-delarq="${i}" title="Remover" aria-label="Remover ${esc(a.nome)}">${IM.ico("lixeira")}</button>
       </div>`).join("") || `<div class="empty" style="padding:22px">${UI.emptyState("Nenhum arquivo anexado.")}</div>`}</div>`);
 }
 
@@ -555,10 +570,19 @@ function renderHd(){
       </div>
     </div>
     <div class="ed-acoes">
-      ${original && DB.estaPublicado(original) ? `<a class="btn ghost" href="../imovel.html?id=${encodeURIComponent(original.id)}" target="_blank" rel="noopener">Ver no site ↗</a>` : ""}
-      ${original ? `<button type="button" class="btn ghost" id="btnExcluir">Excluir</button>` : ""}
+      ${original && DB.estaPublicado(original) ? `<a class="btn ghost" href="../imovel.html?id=${encodeURIComponent(original.id)}" target="_blank" rel="noopener">${IM.ico("abrir")}Ver no site</a>` : ""}
+      ${original ? (IM.inativo(original)
+        ? `<button type="button" class="btn ghost" id="btnReativar">${IM.ico("power")}Reativar imóvel</button>`
+        : `<button type="button" class="btn ghost" id="btnInativar">${IM.ico("power")}Inativar imóvel</button>`) : ""}
+      ${original ? `<button type="button" class="btn ghost btn-ico" id="btnMaisEd" aria-label="Mais ações" aria-haspopup="true">${IM.ico("mais")}</button>` : ""}
       <button type="button" class="btn dark" id="btnSalvar">Salvar imóvel</button>
-    </div>`;
+    </div>
+    ${original && IM.inativo(original) ? `<div class="inat-banner" role="status">
+      <span class="inat-ico">${IM.ico("power")}</span>
+      <div><b>Imóvel inativo${original.inativacao ? " — " + esc(IM.rotuloInativacao(original)) : ""}</b>
+        <span>${original.inativacao && original.inativacao.valorFechado ? `Valor fechado: ${DB.formatBRL(original.inativacao.valorFechado)}${original.inativacao.motivo==="locado"?"/mês":""}. ` : ""}${original.inativacao && original.inativacao.obs ? esc(original.inativacao.obs) + ". " : ""}Fora do site; o cadastro e o histórico continuam aqui.</span></div>
+      <button type="button" class="btn sm" id="btnReativar2">Reativar</button>
+    </div>` : ""}`;
 }
 
 // ------------------------------------------------------------- render
@@ -897,18 +921,44 @@ function descartar(){
 document.addEventListener("click", e=>{
   if(e.target.id==="btnSalvar" || e.target.id==="btnSalvarBar") salvar();
   if(e.target.id==="btnDescartar") UI.confirmAction("Descartar as alterações feitas desde o último salvamento?", descartar);
-  if(e.target.id==="btnExcluir"){
-    const nLeads = DB.leadsDoImovel(id).length;
-    UI.confirmAction(`Excluir ${original.codigo}? Ele sai do site e as fotos, plantas e arquivos são apagados.${nLeads?` Os ${nLeads} lead(s) vinculados continuam no CRM.`:""}`, ()=>{
-      [...(original.fotos||[]), ...(original.plantas||[]).map(p=>p.ref), ...(original.arquivos||[]).map(a=>a.ref), ...adicionados].forEach(MID.remover);
-      DB.getLeads().filter(l=>l.imovelId===id).forEach(l=> DB.updateLead(l.id, {imovelId:null}));
-      DB.deleteImovel(id);
-      sujo = false;
-      location.href = "imoveis-cadastro.html";
+  const alvo = e.target.closest("button");
+  if(!alvo) return;
+  if(alvo.id==="btnInativar"){
+    IM.abrirInativar(Object.assign({}, d, {codigo: original.codigo}), patch=>{ Object.assign(d, patch); gravar(); UI.toast("Imóvel inativado e retirado do site.","ok"); });
+  }
+  if(alvo.id==="btnReativar" || alvo.id==="btnReativar2"){
+    Object.assign(d, IM.patchReativar()); gravar();
+    UI.toast("Imóvel reativado. Ele está pausado — publique na aba Anúncio quando quiser.","ok");
+  }
+  if(alvo.id==="btnMaisEd"){
+    e.stopPropagation();
+    const velho = document.getElementById("menuMaisEd"); if(velho){ velho.remove(); return; }
+    const menu = document.createElement("div");
+    menu.className = "tb-menu"; menu.id = "menuMaisEd"; menu.setAttribute("role","menu");
+    menu.innerHTML = `<a href="#" role="menuitem" data-acao="dup"><span class="mi-ico">${IM.ico("duplicar")}</span><span><b>Duplicar</b><small>Cria uma cópia como rascunho</small></span></a>
+      <a href="#" role="menuitem" data-acao="del"><span class="mi-ico" style="color:var(--vermelho)">${IM.ico("lixeira")}</span><span><b>Excluir</b><small>Apaga o cadastro definitivamente</small></span></a>`;
+    document.body.appendChild(menu);
+    const r = alvo.getBoundingClientRect();
+    menu.style.top = (r.bottom + 8) + "px";
+    menu.style.left = Math.max(10, Math.min(r.right - menu.offsetWidth, innerWidth - menu.offsetWidth - 10)) + "px";
+    menu.addEventListener("click", async ev=>{
+      const a = ev.target.closest("[data-acao]"); if(!a) return;
+      ev.preventDefault(); menu.remove();
+      if(a.dataset.acao==="dup"){
+        if(sujo){ UI.toast("Salve ou descarte as alterações antes de duplicar.","err"); return; }
+        const novo = await IM.duplicar(id); UI.toast(`Cópia criada como ${novo.codigo}.`,"ok");
+        location.href = "imovel-editor.html?id=" + encodeURIComponent(novo.id);
+      } else {
+        IM.excluir(id, ()=>{ [...adicionados].forEach(MID.remover); sujo = false; location.href = "imoveis-cadastro.html"; });
+      }
     });
   }
 });
-document.addEventListener("keydown", e=>{ if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==="s"){ e.preventDefault(); salvar(); } });
+document.addEventListener("click", e=>{ const m = document.getElementById("menuMaisEd"); if(m && !m.contains(e.target) && !e.target.closest("#btnMaisEd")) m.remove(); });
+document.addEventListener("keydown", e=>{
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==="s"){ e.preventDefault(); salvar(); }
+  if(e.key==="Escape"){ const m = document.getElementById("menuMaisEd"); if(m) m.remove(); }
+});
 addEventListener("beforeunload", e=>{ if(sujo){ e.preventDefault(); e.returnValue = ""; } });
 
 renderTudo();

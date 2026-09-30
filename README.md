@@ -639,6 +639,17 @@ O item **Imóveis** da barra superior virou um menu com setinha:
   mesmo). Imóveis antigos que só tinham o nome do proprietário digitado
   ganham o cadastro automaticamente.
 - Cada imóvel tem um código de referência sequencial (`SOL-0001`…).
+- **Ativar / inativar**: no topo do cadastro (ou no menu "⋯" / na pílula
+  de situação do card) o imóvel pode ser inativado informando o motivo —
+  Vendido, Locado, Proprietário desistiu, Negociado por terceiros ou
+  Outro —, a data, o valor fechado (venda ou aluguel) e uma observação.
+  Inativo sai do site e da vitrine, fica esmaecido na Gestão com o motivo,
+  e mantém todo o histórico; "Reativar" o traz de volta como pausado.
+- **Negócio e valores** é o primeiro bloco do cadastro: cartões Venda /
+  Locação / Venda e locação, e os campos de preço aparecem conforme a
+  escolha (preço de venda, aluguel mensal ou os dois), com o valor por m²
+  calculado. Faixas mínimas/máximas e condições ficam em "Condições de
+  negociação".
 - **Editor** (`crm/imovel-editor.html`), em abas: Sobre o imóvel (dados,
   localização com busca de CEP pelo ViaCEP e mapa, proprietário/ocupação/
   chaves/etiquetas, preço e negociação com máscara de R$), Detalhes

@@ -100,12 +100,13 @@ function renderKpis(){
   const todos = DB.getImoveis();
   const conta = id => todos.filter(i=> IM.situacao(i).id===id).length;
   const leads = todos.reduce((s,i)=> s + DB.leadsDoImovel(i.id).length, 0);
-  const semProp = todos.filter(i=> !i.proprietarioId).length;
+  const inat = todos.filter(IM.inativo);
+  const vend = inat.filter(i=> IM.situacao(i).id==="vendido").length, loc = inat.filter(i=> IM.situacao(i).id==="alugado").length;
   document.getElementById("imKpis").innerHTML = `
-    <div class="kpi accent"><span class="kpi-ico">${ICO.casa}</span><span class="lbl">Imóveis cadastrados</span><b>${todos.length}</b><span class="delta"><span class="chip">${conta("em_anuncio")}</span> em anúncio no site</span></div>
-    <div class="kpi"><span class="kpi-ico">${ICO.pausa}</span><span class="lbl">Pausados e rascunhos</span><b>${conta("pausado")+conta("rascunho")}</b><span class="delta"><span class="chip neutro">${conta("rascunho")} rascunho${conta("rascunho")===1?"":"s"}</span> incompletos</span></div>
-    <div class="kpi"><span class="kpi-ico">${ICO.pessoas}</span><span class="lbl">Leads vinculados</span><b>${leads}</b><span class="delta"><span class="chip neutro">${todos.filter(i=>DB.leadsDoImovel(i.id).length).length}</span> imóveis com interessados</span></div>
-    <div class="kpi"><span class="kpi-ico">${ICO.olho}</span><span class="lbl">Sem proprietário</span><b>${semProp}</b><span class="delta"><span class="chip ${semProp?"baixa":""}">${DB.getProprietarios().length}</span> proprietários cadastrados</span></div>`;
+    <div class="kpi accent"><span class="kpi-ico">${ICO.casa}</span><span class="lbl">Imóveis ativos</span><b>${todos.length - inat.length}</b><span class="delta"><span class="chip">${conta("em_anuncio")}</span> em anúncio no site</span></div>
+    <div class="kpi"><span class="kpi-ico">${ICO.pausa}</span><span class="lbl">Fora do site</span><b>${conta("pausado")+conta("rascunho")}</b><span class="delta"><span class="chip neutro">${conta("rascunho")} rascunho${conta("rascunho")===1?"":"s"}</span> · ${conta("pausado")} pausado${conta("pausado")===1?"":"s"}</span></div>
+    <div class="kpi"><span class="kpi-ico">${IM.ico("power")}</span><span class="lbl">Inativos</span><b>${inat.length}</b><span class="delta"><span class="chip neutro">${vend} vendido${vend===1?"":"s"}</span> · ${loc} locado${loc===1?"":"s"}</span></div>
+    <div class="kpi"><span class="kpi-ico">${ICO.pessoas}</span><span class="lbl">Leads vinculados</span><b>${leads}</b><span class="delta"><span class="chip neutro">${todos.filter(i=>DB.leadsDoImovel(i.id).length).length}</span> imóveis com interessados</span></div>`;
 }
 
 // ------------------------------------------------------- filtros (lateral)
@@ -232,10 +233,8 @@ function specs(i){
   return it.map(([ic,v,t])=>`<span title="${t}">${ic}${v}</span>`).join("");
 }
 function acoes(i){
-  return `<button class="btn icon soft sm" data-edit="${i.id}" title="Editar" aria-label="Editar ${esc(i.codigo)}">✎</button>
-    <button class="btn icon soft sm" data-dup="${i.id}" title="Duplicar" aria-label="Duplicar ${esc(i.codigo)}">⧉</button>
-    ${DB.estaPublicado(i) ? `<a class="btn icon soft sm" href="../imovel.html?id=${encodeURIComponent(i.id)}" target="_blank" rel="noopener" title="Ver no site" aria-label="Ver ${esc(i.codigo)} no site">↗</a>` : ""}
-    <button class="btn icon soft sm" data-del="${i.id}" title="Excluir" aria-label="Excluir ${esc(i.codigo)}">✕</button>`;
+  return `<a class="btn soft sm" href="imovel-editor.html?id=${encodeURIComponent(i.id)}">${IM.ico("editar")}Editar</a>
+    <button type="button" class="btn soft sm btn-ico" data-mais="${i.id}" aria-label="Mais ações para ${esc(i.codigo)}" aria-haspopup="true">${IM.ico("mais")}</button>`;
 }
 function cardHtml(i){
   const s = IM.situacao(i);
@@ -245,7 +244,7 @@ function cardHtml(i){
   const nLeads = DB.leadsDoImovel(i.id).length;
   const q = IM.qualidade(i);
   const pv = precoVenda(i), pl = precoLocacao(i);
-  return `<article class="gi-card" style="--sit:${s.cor}" data-card="${i.id}">
+  return `<article class="gi-card ${IM.inativo(i)?"inativo":""}" style="--sit:${s.cor}" data-card="${i.id}">
     <div class="gi-foto" ${capa?`data-midia="${esc(capa)}" style="background-image:url('${esc(MID.srcInicial(capa))}')"`:""}>
       ${capa?"":`<span class="gi-semfoto">${ICO.foto}</span>`}
       ${sitPill(i)}
@@ -259,14 +258,20 @@ function cardHtml(i){
       <div class="gi-specs">${specs(i)}</div>
     </div>
     <div class="gi-lado">
-      <div><small>Angariador</small><b>${angs.length ? esc(angs[0].nome) + (angs.length>1?` +${angs.length-1}`:"") : "—"}</b></div>
-      <div><small>Venda:</small><b>${i.finalidade==="locacao" ? "—" : (pv ? DB.formatBRL(pv) : "Sem informação")}</b></div>
-      <div><small>Proprietário</small><b>${prop ? esc(prop.nome) : `<span class="gi-falta">Não vinculado</span>`}</b></div>
-      <div><small>Locação:</small><b>${i.finalidade==="venda" ? "—" : (pl ? DB.formatBRL(pl)+"/mês" : "Sem informação")}</b></div>
-      <div><small>Chave:</small><b>${esc(i.localChaves || "—")}</b></div>
-      <div><small>Leads:</small><b>${nLeads}</b></div>
+      <div class="gi-precos">
+        ${i.finalidade!=="locacao" ? `<div><small>Venda</small><b>${pv ? DB.formatBRL(pv) : `<span class="gi-sem">Sem valor</span>`}</b></div>` : ""}
+        ${i.finalidade!=="venda" ? `<div><small>Locação</small><b>${pl ? DB.formatBRL(pl)+`<em>/mês</em>` : `<span class="gi-sem">Sem valor</span>`}</b></div>` : ""}
+        ${i.ocultarPreco ? `<span class="gi-oculto">oculto no site</span>` : ""}
+      </div>
+      <dl class="gi-meta">
+        <div><dt>Angariador</dt><dd>${angs.length ? esc(angs[0].nome.split(" ").slice(0,2).join(" ")) + (angs.length>1?` +${angs.length-1}`:"") : "—"}</dd></div>
+        <div><dt>Proprietário</dt><dd>${prop ? esc(prop.nome) : `<span class="gi-falta">Não vinculado</span>`}</dd></div>
+        <div><dt>Chave</dt><dd>${esc(i.localChaves || "—")}</dd></div>
+        <div><dt>Leads</dt><dd>${nLeads ? `<span class="gi-leads">${nLeads}</span>` : "0"}</dd></div>
+      </dl>
+      ${IM.inativo(i) && i.inativacao ? `<div class="gi-inat">${esc(IM.rotuloInativacao(i))}${i.inativacao.valorFechado?` · ${DB.formatBRL(i.inativacao.valorFechado)}`:""}</div>` : ""}
       <div class="gi-rodape">
-        <span class="gi-q" title="Qualidade do anúncio"><span class="qbar"><i style="width:${q.pct}%;background:${q.cor}"></i></span>${q.pct}%</span>
+        <span class="gi-q" title="Qualidade do anúncio: ${q.pct}%"><span class="qbar"><i style="width:${q.pct}%;background:${q.cor}"></i></span>${q.pct}%</span>
         <span class="gi-acoes">${acoes(i)}</span>
       </div>
     </div>
@@ -329,8 +334,12 @@ function abrirMenuSituacao(btn, id){
   const atual = IM.situacao(i).id;
   const menu = document.createElement("div");
   menu.className = "tb-menu sit-menu"; menu.setAttribute("role","menu");
-  menu.innerHTML = IM.SITUACOES.filter(s=> s.id!=="rascunho").map(s=>
-    `<a href="#" role="menuitem" data-set-sit="${s.id}" class="${s.id===atual?"on":""}"><span class="sit-dot" style="background:${s.cor}"></span><span><b>${s.label}</b><small>${({em_anuncio:"Aparece no site", pausado:"Sai do site, continua no CRM", reservado:"Negócio encaminhado", em_negociacao:"Proposta em andamento", vendido:"Sai do site", alugado:"Sai do site"})[s.id]}</small></span></a>`).join("");
+  const DESC = {em_anuncio:"Aparece no site", pausado:"Sai do site, continua no CRM", reservado:"Negócio encaminhado", em_negociacao:"Proposta em andamento"};
+  menu.innerHTML = IM.inativo(i)
+    ? `<a href="#" role="menuitem" data-set-sit="reativar"><span class="mi-ico">${IM.ico("power")}</span><span><b>Reativar imóvel</b><small>Volta como pausado, pronto pra publicar</small></span></a>`
+    : IM.SITUACOES.filter(s=> DESC[s.id]).map(s=>
+      `<a href="#" role="menuitem" data-set-sit="${s.id}" class="${s.id===atual?"on":""}"><span class="sit-dot" style="background:${s.cor}"></span><span><b>${s.label}</b><small>${DESC[s.id]}</small></span></a>`).join("")
+      + `<div class="menu-sep"></div><a href="#" role="menuitem" data-set-sit="inativar"><span class="mi-ico">${IM.ico("power")}</span><span><b>Inativar…</b><small>Vendido, locado ou retirado</small></span></a>`;
   document.body.appendChild(menu);
   const r = btn.getBoundingClientRect();
   menu.style.top = Math.min(r.bottom + 8, innerHeight - menu.offsetHeight - 10) + "px";
@@ -338,8 +347,10 @@ function abrirMenuSituacao(btn, id){
   menu.addEventListener("click", e=>{
     const a = e.target.closest("[data-set-sit]"); if(!a) return;
     e.preventDefault();
-    const patch = IM.patchSituacao(i, a.dataset.setSit);
     fecharMenuSituacao();
+    if(a.dataset.setSit==="inativar"){ IM.abrirInativar(i, p=>{ DB.updateImovel(id, p); UI.toast(`${i.codigo} inativado.`,"ok"); render(); }); return; }
+    if(a.dataset.setSit==="reativar"){ DB.updateImovel(id, IM.patchReativar()); UI.toast(`${i.codigo} reativado (pausado).`,"ok"); render(); return; }
+    const patch = IM.patchSituacao(i, a.dataset.setSit);
     if(patch.erro){
       UI.confirmAction(`Para colocar em anúncio ainda falta: ${patch.erro.slice(0,6).join(", ")}${patch.erro.length>6?"…":""}. Abrir o cadastro para completar?`,
         ()=>{ location.href = "imovel-editor.html?id="+encodeURIComponent(id); });
@@ -349,37 +360,49 @@ function abrirMenuSituacao(btn, id){
     UI.toast(`${i.codigo}: ${IM.situacao(DB.getImovel(id)).label}.`,"ok");
     render();
   });
-  menuSit = menu;
-  const primeiro = menu.querySelector("a"); if(primeiro) primeiro.focus();
+  menuSit = menu; menu._y = scrollY;
+  const primeiro = menu.querySelector("a"); if(primeiro) primeiro.focus({preventScroll:true});
 }
 let menuSit = null;
 function fecharMenuSituacao(){ if(menuSit){ menuSit.remove(); menuSit = null; } }
 
 // -------------------------------------------------------- duplicar/excluir
 function abrir(id){ location.href = "imovel-editor.html?id="+encodeURIComponent(id); }
-async function duplicar(id){
-  const o = DB.getImovel(id); if(!o) return;
-  const copia = JSON.parse(JSON.stringify(o));
-  ["id","codigo","criadoEm","atualizadoEm","despublicadoEm"].forEach(k=> delete copia[k]);
-  copia.titulo = (o.titulo||"Imóvel") + " (cópia)";
-  copia.publicado = false; copia.destaque = false; copia.statusComercial = "Disponível";
-  copia.fotos = await Promise.all((o.fotos||[]).map(MID.copiar));
-  copia.plantas = await Promise.all((o.plantas||[]).map(async p=> Object.assign({}, p, {ref: await MID.copiar(p.ref)})));
-  copia.arquivos = [];
-  const novo = DB.addImovel(copia);
-  UI.toast(`Cópia criada como ${novo.codigo} (rascunho).`,"ok");
-  abrir(novo.id);
-}
-function excluir(id){
+async function duplicar(id){ const novo = await IM.duplicar(id); if(novo){ UI.toast(`Cópia criada como ${novo.codigo} (rascunho).`,"ok"); abrir(novo.id); } }
+function excluir(id){ IM.excluir(id, render); }
+
+// menu "⋯" de cada imóvel
+function abrirMenuMais(btn, id){
+  fecharMenuSituacao();
   const i = DB.getImovel(id); if(!i) return;
-  const nLeads = DB.leadsDoImovel(id).length;
-  UI.confirmAction(`Excluir ${i.codigo} — "${i.titulo||"sem título"}"? Ele sai do site e as fotos, plantas e arquivos são apagados.${nLeads?` Os ${nLeads} lead(s) vinculados continuam no CRM.`:""}`, ()=>{
-    [...(i.fotos||[]), ...(i.plantas||[]).map(p=>p.ref), ...(i.arquivos||[]).map(a=>a.ref)].forEach(MID.remover);
-    DB.getLeads().filter(l=>l.imovelId===id).forEach(l=> DB.updateLead(l.id, {imovelId:null}));
-    DB.deleteImovel(id);
-    UI.toast("Imóvel excluído.","err");
-    render();
+  const pub = DB.estaPublicado(i);
+  const menu = document.createElement("div");
+  menu.className = "tb-menu sit-menu"; menu.setAttribute("role","menu"); menu.dataset.para = "mais-"+id;
+  const url = new URL("../imovel.html?id="+encodeURIComponent(id), location.href).href;
+  menu.innerHTML = `
+    ${pub ? `<a href="${url}" target="_blank" rel="noopener" role="menuitem"><span class="mi-ico">${IM.ico("abrir")}</span><span><b>Ver no site</b><small>Abre a página pública</small></span></a>
+    <a href="https://wa.me/?text=${encodeURIComponent(`${i.titulo}\n${DB.precoImovelTexto(i)}\n${url}`)}" target="_blank" rel="noopener" role="menuitem"><span class="mi-ico">${IM.ico("whats")}</span><span><b>Enviar no WhatsApp</b><small>Link do imóvel pro cliente</small></span></a>` : ""}
+    <a href="#" role="menuitem" data-m="dup"><span class="mi-ico">${IM.ico("duplicar")}</span><span><b>Duplicar</b><small>Cópia como rascunho</small></span></a>
+    ${IM.inativo(i)
+      ? `<a href="#" role="menuitem" data-m="reativar"><span class="mi-ico">${IM.ico("power")}</span><span><b>Reativar</b><small>Volta como pausado</small></span></a>`
+      : `<a href="#" role="menuitem" data-m="inativar"><span class="mi-ico">${IM.ico("power")}</span><span><b>Inativar</b><small>Vendido, locado ou retirado</small></span></a>`}
+    <div class="menu-sep"></div>
+    <a href="#" role="menuitem" data-m="del"><span class="mi-ico" style="color:var(--vermelho)">${IM.ico("lixeira")}</span><span><b>Excluir</b><small>Apaga o cadastro</small></span></a>`;
+  document.body.appendChild(menu);
+  const r = btn.getBoundingClientRect();
+  menu.style.top = Math.min(r.bottom + 8, innerHeight - menu.offsetHeight - 10) + "px";
+  menu.style.left = Math.max(10, Math.min(r.right - menu.offsetWidth, innerWidth - menu.offsetWidth - 10)) + "px";
+  menu.addEventListener("click", e=>{
+    const a = e.target.closest("[data-m]"); if(!a){ fecharMenuSituacao(); return; }
+    e.preventDefault(); fecharMenuSituacao();
+    const m = a.dataset.m;
+    if(m==="dup") duplicar(id);
+    if(m==="del") excluir(id);
+    if(m==="inativar") IM.abrirInativar(i, p=>{ DB.updateImovel(id, p); UI.toast(`${i.codigo} inativado.`,"ok"); render(); });
+    if(m==="reativar"){ DB.updateImovel(id, IM.patchReativar()); UI.toast(`${i.codigo} reativado (pausado).`,"ok"); render(); }
   });
+  menuSit = menu; menu._y = scrollY;
+  const primeiro = menu.querySelector("a"); if(primeiro) primeiro.focus({preventScroll:true});
 }
 
 // ------------------------------------------------------ compartilhar
@@ -484,16 +507,16 @@ document.addEventListener("click", e=>{
     statusAberto = false; render(); return;
   }
   if(statusAberto && !e.target.closest(".gi-status-wrap")){ statusAberto = false; renderResultados(); }
-  if(menuSit && !e.target.closest(".sit-menu") && !e.target.closest("[data-sit]")) fecharMenuSituacao();
+  if(menuSit && !e.target.closest(".sit-menu") && !e.target.closest("[data-sit]") && !e.target.closest("[data-mais]")) fecharMenuSituacao();
 });
 document.addEventListener("keydown", e=>{ if(e.key==="Escape"){ fecharMenuSituacao(); if(statusAberto){ statusAberto = false; renderResultados(); } } });
-addEventListener("scroll", fecharMenuSituacao, {passive:true});
+addEventListener("scroll", ()=>{ if(menuSit && Math.abs(scrollY - (menuSit._y||0)) > 80) fecharMenuSituacao(); }, {passive:true});
 
 document.getElementById("imLista").addEventListener("click", e=>{
   const t = e.target;
   const sit = t.closest("[data-sit]"); if(sit){ e.stopPropagation(); menuSit && menuSit.dataset.para===sit.dataset.sit ? fecharMenuSituacao() : (abrirMenuSituacao(sit, sit.dataset.sit), menuSit && (menuSit.dataset.para = sit.dataset.sit)); return; }
-  const dup = t.closest("[data-dup]"); if(dup){ duplicar(dup.dataset.dup); return; }
-  const del = t.closest("[data-del]"); if(del){ excluir(del.dataset.del); return; }
+  const mais = t.closest("[data-mais]");
+  if(mais){ e.stopPropagation(); if(menuSit && menuSit.dataset.para==="mais-"+mais.dataset.mais){ fecharMenuSituacao(); } else abrirMenuMais(mais, mais.dataset.mais); return; }
   if(t.closest("a")) return;
   const ed = t.closest("[data-edit]"); if(ed){ abrir(ed.dataset.edit); return; }
   const card = t.closest("[data-card]"); if(card && !t.closest("button")) abrir(card.dataset.card);

@@ -495,7 +495,7 @@
     STATE.imoveis = STATE.imoveis.filter(i=>i.id!==id); save(STATE);
   }
   // imóvel sem o campo "publicado" (catálogo antigo/de exemplo) conta como publicado
-  function estaPublicado(i){ return !!i && i.publicado !== false; }
+  function estaPublicado(i){ return !!i && i.publicado !== false && i.ativo !== false; }
   function getImoveisPublicados(){ return STATE.imoveis.filter(estaPublicado); }
   function atendeFinalidade(i, fin){ return i.finalidade===fin || i.finalidade==="venda_locacao"; }
   function precoImovelTexto(i){

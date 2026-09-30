@@ -63,7 +63,7 @@ function render(){
         <div style="font-size:12px;color:var(--tinta-45)">${esc(p.email||"")}</div></div></td>
       <td>${ims.length ? `<div class="pr-ims">${ims.slice(0,3).map(i=>{ const s = IM.situacao(i); return `<span class="pr-im" style="--sit:${s.cor}" title="${esc(s.label)}">${esc(i.codigo)}</span>`; }).join("")}${ims.length>3?`<span class="pr-im">+${ims.length-3}</span>`:""}</div>` : `<span style="color:var(--tinta-35)">Nenhum</span>`}</td>
       <td>${p.criadoEm ? DB.formatDate(p.criadoEm) : "—"}</td>
-      <td class="rowactions"><button class="btn icon soft sm" data-editar="${p.id}" title="Editar" aria-label="Editar ${esc(p.nome)}">✎</button><button class="btn icon soft sm" data-excluir="${p.id}" title="Excluir" aria-label="Excluir ${esc(p.nome)}">✕</button></td>
+      <td class="rowactions"><button class="btn icon soft sm" data-editar="${p.id}" title="Editar" aria-label="Editar ${esc(p.nome)}">${IM.ico("editar")}</button><button class="btn icon soft sm" data-excluir="${p.id}" title="Excluir" aria-label="Excluir ${esc(p.nome)}">${IM.ico("lixeira")}</button></td>
     </tr>`;
   }).join("");
 }
