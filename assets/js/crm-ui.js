@@ -31,6 +31,8 @@ const ICO = {
   menu:'<path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
   empty:'<path d="M3 8l2.5-4h9L17 8M3 8v8a1 1 0 001 1h12a1 1 0 001-1V8M3 8h4.2c.3 1.2 1.4 2 2.8 2s2.5-.8 2.8-2H17" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>',
   calendario:'<rect x="3" y="4" width="14" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 8h14M6.5 2.5v3M13.5 2.5v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="7" cy="11.5" r="1" fill="currentColor" stroke="none"/><circle cx="10" cy="11.5" r="1" fill="currentColor" stroke="none"/><circle cx="13" cy="11.5" r="1" fill="currentColor" stroke="none"/>',
+  cadastro:'<path d="M3 17V8.5L10 3l7 5.5V17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 9v6M7 12h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
+  chevron:'<path d="M5 7.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
   blog:'<path d="M4 3.5h9L17 7.5V16a1 1 0 01-1 1H4a1 1 0 01-1-1V4.5a1 1 0 011-1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M13 3.5V7h4" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5.5 10.5h6M5.5 13h9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>'
 };
 function svg(name){ return `<svg viewBox="0 0 20 20">${ICO[name]||""}</svg>`; }
@@ -42,7 +44,11 @@ const NAV = [
     {href:"calendario.html", key:"calendario", label:"Calendário", ico:"calendario"}
   ]},
   {group:"Pipelines", items:[
-    {href:"pipeline-imoveis.html", key:"pipeline-imoveis", label:"Imóveis", ico:"imovel", count:()=>DB.getLeadsByProduto("imovel").filter(l=>l.estagio!=="perdido"&&l.estagio!=="fechado").length},
+    {href:"pipeline-imoveis.html", key:"pipeline-imoveis", label:"Imóveis", ico:"imovel", count:()=>DB.getLeadsByProduto("imovel").filter(l=>l.estagio!=="perdido"&&l.estagio!=="fechado").length,
+      children:[
+        {href:"pipeline-imoveis.html", key:"pipeline-imoveis", label:"Leads de imóveis", desc:"Funil de venda e locação", ico:"imovel"},
+        {href:"imoveis-cadastro.html", key:"imoveis-cadastro", label:"Cadastro de imóveis", desc:"Catálogo, fotos e anúncios", ico:"cadastro"}
+      ]},
     {href:"pipeline-seguros.html", key:"pipeline-seguros", label:"Seguros", ico:"seguro", count:()=>DB.getLeadsByProduto("seguro").filter(l=>l.estagio!=="perdido"&&l.estagio!=="apolice").length},
     {href:"pipeline-consorcios.html", key:"pipeline-consorcios", label:"Consórcios", ico:"consorcio", count:()=>DB.getLeadsByProduto("consorcio").filter(l=>l.estagio!=="perdido"&&l.estagio!=="contemplado").length}
   ]},
@@ -89,7 +95,7 @@ function renderSidebar(){
   <div class="rail-pill rail-main ${NAV_ADMIN.items.length?"":"sem-itens"}">
     <button type="button" class="sb-link sb-close" id="btnFecharMenu" aria-label="Fechar menu"><span class="x" style="background:none"></span></button>
     <div class="rail-h6">Menu</div>
-    ${NAV_TOPO.map(it=> railLink(it, "sb-main")).join("")}
+    ${NAV_TOPO.flatMap(it=> it.children ? it.children.map(c=> railLink(c, "sb-main sb-sub")) : [railLink(it, "sb-main")]).join("")}
     ${NAV_ADMIN.items.length ? `<div class="rail-h6">Administração</div>${adminHtml}` : ""}
   </div>
   <div class="rail-pill rail-foot">
@@ -105,7 +111,9 @@ function renderTopbar(){
   <button class="mburger" id="btnMenu" aria-label="Abrir menu">${svg("menu")}</button>
   <a class="tb-brand" id="tbBrand" href="${b}dashboard.html"><span class="tb-logo">s</span><span class="mark" id="crmMark">solua</span></a>
   <nav class="tb-nav"><div class="tb-nav-in">
-    ${NAV_TOPO.map(it=>`<a class="tb-link ${activeKey()===it.key?"on":""}" href="${b}${it.href}">${it.label}${it.count?`<span class="tb-count">${it.count()}</span>`:""}</a>`).join("")}
+    ${NAV_TOPO.map(it=> it.children
+      ? `<button type="button" class="tb-link tb-drop ${it.children.some(c=>c.key===activeKey())?"on":""}" data-menu="${it.key}" aria-haspopup="true" aria-expanded="false">${it.label}${it.count?`<span class="tb-count">${it.count()}</span>`:""}<span class="tb-chev">${svg("chevron")}</span></button>`
+      : `<a class="tb-link ${activeKey()===it.key?"on":""}" href="${b}${it.href}">${it.label}${it.count?`<span class="tb-count">${it.count()}</span>`:""}</a>`).join("")}
   </div></nav>
   <div class="tb-actions">
     <label class="tb-search">${svg("search")}<input id="tbSearch" placeholder="Buscar contatos, leads…"></label>
@@ -141,6 +149,42 @@ function aplicarLogo(){
 }
 document.addEventListener("solua:branding", aplicarLogo);
 
+// submenu (ex.: Imóveis → Leads / Cadastro). Fica solto no <body> com
+// posição fixa, porque a pílula de navegação corta o que passa da borda.
+function ligarSubmenus(){
+  const b = base();
+  let aberto = null;
+  function fechar(){
+    if(!aberto) return;
+    aberto.menu.remove(); aberto.btn.setAttribute("aria-expanded","false"); aberto.btn.classList.remove("aberto");
+    aberto = null;
+  }
+  document.querySelectorAll(".tb-drop").forEach(btn=>{
+    const item = NAV_TOPO.find(it=> it.key===btn.dataset.menu);
+    btn.addEventListener("click", e=>{
+      e.stopPropagation();
+      const eraEste = aberto && aberto.btn===btn;
+      fechar();
+      if(eraEste) return;
+      const menu = document.createElement("div");
+      menu.className = "tb-menu"; menu.setAttribute("role","menu");
+      menu.innerHTML = item.children.map(c=>`<a role="menuitem" class="${activeKey()===c.key?"on":""}" href="${b}${c.href}">
+        <span class="mi-ico">${svg(c.ico)}</span><span><b>${c.label}</b><small>${c.desc||""}</small></span></a>`).join("");
+      document.body.appendChild(menu);
+      const r = btn.getBoundingClientRect();
+      menu.style.top = (r.bottom + 10) + "px";
+      menu.style.left = Math.max(12, Math.min(r.left, innerWidth - menu.offsetWidth - 12)) + "px";
+      btn.setAttribute("aria-expanded","true"); btn.classList.add("aberto");
+      aberto = {btn, menu};
+      const primeiro = menu.querySelector("a"); if(primeiro && e.detail===0) primeiro.focus();
+    });
+  });
+  document.addEventListener("click", e=>{ if(aberto && !aberto.menu.contains(e.target)) fechar(); });
+  document.addEventListener("keydown", e=>{ if(e.key==="Escape" && aberto){ const bt = aberto.btn; fechar(); bt.focus(); } });
+  addEventListener("resize", fechar);
+  addEventListener("scroll", fechar, {passive:true});
+}
+
 function mount(){
   const sb = document.getElementById("sidebar");
   const tb = document.getElementById("topbar");
@@ -148,6 +192,7 @@ function mount(){
   if(tb) tb.innerHTML = renderTopbar();
   renderPageTitle();
   aplicarLogo();
+  ligarSubmenus();
   const fecharBtn = document.getElementById("btnFecharMenu");
   if(fecharBtn) fecharBtn.onclick = ()=> sb.classList.remove("on");
   const logoutBtn = document.getElementById("btnLogout");

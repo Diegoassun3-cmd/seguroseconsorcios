@@ -37,6 +37,7 @@ function fieldsHtml(l){
     <div class="field"><label>Consultor</label><select data-f="consultorId"><option value="">— sem atribuição —</option>${equipe.map(u=>`<option value="${u.id}" ${u.id===l.consultorId?"selected":""}>${esc(u.nome)}${u.ativo?"":" (inativo)"}</option>`).join("")}</select></div>
     <div class="field"><label>${l.produto==="seguro"?"Prêmio estimado (R$/ano)":l.produto==="imovel"?"Valor do negócio (R$)":"Valor da carta (R$)"}</label><input data-f="valor" type="number" value="${Number(l.valor)||0}"></div>
     <div class="field"><label>Próximo contato</label><input data-f="proximoContato" type="date" value="${l.proximoContato||""}"></div>
+    ${l.produto==="imovel" ? `<div class="field full"><label>Imóvel de interesse</label><select data-f="imovelId"><option value="">— nenhum imóvel específico —</option>${DB.getImoveis().map(i=>`<option value="${i.id}" ${i.id===l.imovelId?"selected":""}>${esc(i.codigo||"")} · ${esc(i.titulo||"Sem título")}</option>`).join("")}</select></div>` : ""}
   </div>
   <div class="field">
     <label>Etiquetas</label>

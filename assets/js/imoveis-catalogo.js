@@ -2,18 +2,21 @@
 (function(){
 "use strict";
 const DB = window.SoluaDB;
-const STATUS_LABEL = {pronto:"Pronto",lancamento:"Lançamento",em_construcao:"Em construção"};
+const MID = window.SoluaMidia;
+const STATUS_LABEL = {pronto:"Pronto",lancamento:"Lançamento",em_construcao:"Em construção",na_planta:"Na planta",reforma:"Precisa de reforma"};
+const FIN_LABEL = {venda:"Venda", locacao:"Locação", venda_locacao:"Venda e locação"};
+const FOTO_PADRAO = "https://picsum.photos/seed/solua-imovel-fallback/1200/800";
 let filtro = {finalidade:"todos", tipo:"Todos", status:"todos", quartos:""};
 
 function cardHtml(i){
   return `
   <a class="prop-card" href="imovel.html?id=${i.id}">
     <div class="ph">
-      <img src="${i.fotos[0]}" alt="${DB.esc(i.titulo)}" loading="lazy">
-      <span class="tag${i.destaque?" destaque":""}">${i.destaque?"Destaque":(i.finalidade==="locacao"?"Locação":"Venda")}</span>
+      <img ${(i.fotos||[])[0]?`data-midia="${DB.esc(i.fotos[0])}"`:""} src="${DB.esc((i.fotos||[])[0] ? MID.srcInicial(i.fotos[0]) : FOTO_PADRAO)}" alt="${DB.esc(i.titulo)}" loading="lazy">
+      <span class="tag${i.destaque?" destaque":""}">${i.destaque?"Destaque":(FIN_LABEL[i.finalidade]||"Venda")}</span>
     </div>
     <div class="bd">
-      <div class="valor">${i.finalidade==="locacao" ? DB.formatBRL(i.valor)+"/mês" : DB.formatBRL(i.valor)}</div>
+      <div class="valor">${DB.esc(DB.precoImovelTexto(i))}</div>
       <h3>${DB.esc(i.titulo)}</h3>
       <div class="loc">${DB.esc(i.bairro)}, ${DB.esc(i.cidade)}</div>
       <div class="specs"><span>${i.quartos} dorm.</span><span>${i.vagas} vaga(s)</span><span>${i.areaM2} m²</span><span>${STATUS_LABEL[i.status]||i.status}</span></div>
@@ -24,6 +27,7 @@ function cardHtml(i){
 function renderGrid(){
   const itens = DB.filterImoveis(filtro);
   document.getElementById("propGrid").innerHTML = itens.map(cardHtml).join("");
+  MID.hidratar(document.getElementById("propGrid"));
   document.getElementById("propEmpty").style.display = itens.length ? "none" : "block";
   document.getElementById("propCountLbl").textContent = `${itens.length} imóve${itens.length===1?"l":"is"}`;
   window.SoluaChrome.observeReveals();

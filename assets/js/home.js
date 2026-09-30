@@ -72,20 +72,22 @@ if(heroEl){
 /* IMÓVEIS EM DESTAQUE */
 const propEl = document.getElementById("propDestaque");
 if(propEl){
-  const destaques = DB.getImoveis().filter(i=>i.destaque).slice(0,3);
+  const MID = window.SoluaMidia;
+  const destaques = DB.getImoveisPublicados().filter(i=>i.destaque).slice(0,3);
   propEl.innerHTML = destaques.map(i=>`
     <a class="prop-card" href="imovel.html?id=${i.id}">
       <div class="ph">
-        <img src="${i.fotos[0]}" alt="${DB.esc(i.titulo)}" loading="lazy">
+        <img ${(i.fotos||[])[0]?`data-midia="${DB.esc(i.fotos[0])}"`:""} src="${DB.esc((i.fotos||[])[0] ? MID.srcInicial(i.fotos[0]) : "https://picsum.photos/seed/solua-imovel-fallback/1200/800")}" alt="${DB.esc(i.titulo)}" loading="lazy">
         <span class="tag destaque">Destaque</span>
       </div>
       <div class="bd">
-        <div class="valor">${i.finalidade==="locacao" ? DB.formatBRL(i.valor)+"/mês" : DB.formatBRL(i.valor)}</div>
+        <div class="valor">${DB.esc(DB.precoImovelTexto(i))}</div>
         <h3>${DB.esc(i.titulo)}</h3>
         <div class="loc">${DB.esc(i.bairro)}, ${DB.esc(i.cidade)}</div>
         <div class="specs"><span>${i.quartos} dorm.</span><span>${i.vagas} vaga(s)</span><span>${i.areaM2} m²</span></div>
       </div>
     </a>`).join("");
+  MID.hidratar(propEl);
 }
 
 /* CARTÕES FLUTUANTES — nos vãos entre seções, nunca sobre foto/texto */

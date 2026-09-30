@@ -59,6 +59,10 @@ assets/js/crm-ui.js             → barra superior/trilho de ícones/toasts/moda
 assets/js/crm-newlead.js        → modal "novo lead"
 assets/js/crm-leaddrawer.js     → painel de detalhe do lead (notas, estágio, edição)
 assets/js/crm-pipeline.js       → lógica do quadro Kanban (imóveis/seguros/consórcios)
+assets/js/crm-imoveis.js        → Cadastro de imóveis: lista do catálogo (crm/imoveis-cadastro.html)
+assets/js/crm-imovel-editor.js  → editor completo de um imóvel, em abas (crm/imovel-editor.html)
+assets/js/crm-imovel-comum.js   → rótulos e nota de qualidade do anúncio (lista + editor)
+assets/js/midia-store.js        → fotos, plantas e arquivos dos imóveis no IndexedDB do navegador
 assets/js/crm-disparos.js       → Central de Disparos + painel de Automações (real, via API)
 assets/js/crm-modelos.js        → configurador de modelos (blocos de e-mail + estrutura de WhatsApp)
 assets/js/crm-equipe.js         → lógica de gestão de equipe/usuários
@@ -604,6 +608,53 @@ fontes da Solua:
 
 Tudo isso mora em `assets/css/crm.css` e `assets/js/crm-ui.js`; nenhuma
 função mudou de lugar no código.
+
+### Imóveis: leads + cadastro completo
+
+O item **Imóveis** da barra superior virou um menu com setinha:
+**Leads de imóveis** (o funil de sempre) e **Cadastro de imóveis**.
+
+- **Cadastro de imóveis** (`crm/imoveis-cadastro.html`): indicadores
+  (no catálogo, não publicados, em destaque, leads vinculados), busca por
+  código/título/bairro, filtros, visão em grade ou lista, nota de
+  qualidade de cada anúncio, e ações de editar, duplicar (a cópia nasce
+  não publicada), ver no site e excluir. Cada imóvel ganha um código de
+  referência sequencial (`SOL-0001`…).
+- **Editor** (`crm/imovel-editor.html`), em abas: Sobre o imóvel (dados,
+  localização com busca de CEP pelo ViaCEP e mapa, proprietário/ocupação/
+  chaves/etiquetas, preço e negociação com máscara de R$), Detalhes
+  (cômodos, áreas, informações confidenciais que nunca vão pro site),
+  Anúncio (título com "Gerar título", descrição com dicas por tema,
+  vídeo/tour, publicar/destacar/mapa), Fotos (arrastar e soltar,
+  reordenar, escolher capa, excluir em lote, marca d’água opcional),
+  Plantas (com legenda), Comodidades (até 6 em destaque viram selos no
+  anúncio), Angariadores (divisão em %, captação e exclusividade), Termos
+  de publicação (autorização do proprietário e onde está anunciado —
+  controle interno, o CRM **não** envia pros portais), Arquivos e Leads.
+  O painel lateral mostra a prévia do card do site e a nota do anúncio
+  com o que falta. Salvar com Ctrl/⌘+S; uma barra avisa quando há
+  alterações não salvas.
+- **Publicar exige o básico** (tipo, fase, endereço, preço, cômodos,
+  área útil, título e pelo menos 1 foto). Faltando algo, o CRM oferece
+  salvar como não publicado e marca em vermelho o que falta.
+- **Leads por imóvel**: o formulário "Tenho interesse" da página do imóvel
+  agora grava o `imovelId` no lead, então ele aparece sozinho na aba Leads
+  daquele imóvel. Dá pra criar lead já vinculado, vincular um existente, e
+  o painel do lead tem o campo "Imóvel de interesse".
+- **Site público**: só mostra imóveis publicados; respeita "venda e
+  locação" e "preço sob consulta"; a página do imóvel ganhou código,
+  ficha mais completa (banheiros, condomínio, IPTU, financiamento…),
+  selos de destaque, comodidades, plantas, links de vídeo/tour e mapa
+  (exato ou só do bairro, conforme a opção).
+
+**Onde ficam os dados:** como o resto do CRM hoje, o catálogo fica no
+navegador (localStorage). Fotos, plantas e arquivos vão pro **IndexedDB**
+do navegador — o localStorage tem ~5MB e estourá-lo impediria de salvar
+qualquer outro dado do CRM. As fotos são reduzidas pra no máximo 1600px
+(~250KB cada) antes de guardar. Consequência: um imóvel cadastrado aparece
+no site **neste navegador**; pra aparecer pra todos os visitantes é
+preciso o passo 1 de "Para produção" abaixo (catálogo no D1 + fotos num
+armazenamento de arquivos como o R2).
 
 ## Para produção (multiusuário completo)
 

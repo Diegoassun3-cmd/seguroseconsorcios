@@ -4,15 +4,60 @@
 (function(){
 "use strict";
 const DB = window.SoluaDB;
-const STATUS_LABEL = {pronto:"Pronto",lancamento:"Lançamento",em_construcao:"Em construção"};
+const MID = window.SoluaMidia;
+const STATUS_LABEL = {pronto:"Pronto",lancamento:"Lançamento",em_construcao:"Em construção",na_planta:"Na planta",reforma:"Precisa de reforma"};
+const FIN_LABEL = {venda:"Venda", locacao:"Locação", venda_locacao:"Venda e locação"};
+const FOTO_PADRAO = "https://picsum.photos/seed/solua-imovel-fallback/1200/800";
 const id = new URLSearchParams(location.search).get("id");
-const imovel = id ? DB.getImovel(id) : null;
+const achado = id ? DB.getImovel(id) : null;
+const imovel = achado && DB.estaPublicado(achado) ? achado : null;
+const fotoAttr = ref => ref ? `data-midia="${DB.esc(ref)}"` : "";
+const fotoSrc = ref => ref ? MID.srcInicial(ref) : FOTO_PADRAO;
 const wrap = document.getElementById("propDetailWrap");
 const body = document.getElementById("propDetailBody");
 
 if(!imovel){
   document.getElementById("propRelatedWrap").style.display = "none";
-  body.innerHTML = `<div style="text-align:center;padding:60px 0">
+  // comodidades em destaque viram "selos" logo abaixo do preço
+function destaquesHtml(){
+  const dest = (imovel.comodidadesDestaque||[]).filter(c=> (imovel.comodidades||[]).includes(c));
+  if(!dest.length) return "";
+  return `<div class="im-selos">${dest.map(c=>`<span>★ ${DB.esc(c)}</span>`).join("")}</div>`;
+}
+function comodidadesHtml(){
+  const lista = imovel.comodidades||[];
+  if(!lista.length) return "";
+  return `<h3 class="im-sub">Comodidades</h3><ul class="im-comod">${lista.map(c=>`<li>${DB.esc(c)}</li>`).join("")}</ul>`;
+}
+function plantasHtml(){
+  const pl = imovel.plantas||[];
+  if(!pl.length) return "";
+  return `<h3 class="im-sub">Plantas</h3><div class="im-plantas">${pl.map((p,i)=>`<figure>
+    <img ${fotoAttr(p.ref)} src="${DB.esc(MID.srcInicial(p.ref))}" alt="${DB.esc(p.legenda || "Planta "+(i+1))}" loading="lazy">
+    ${p.legenda?`<figcaption>${DB.esc(p.legenda)}</figcaption>`:""}</figure>`).join("")}</div>`;
+}
+function linkSeguro(u){ return /^https?:\/\//i.test(u||"") ? u : ""; }
+function midiasExtrasHtml(){
+  const v = linkSeguro(imovel.videoUrl), t = linkSeguro(imovel.tourUrl);
+  if(!v && !t) return "";
+  return `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:22px">
+    ${v?`<a class="btn ghost" href="${DB.esc(v)}" target="_blank" rel="noopener">▶ Ver vídeo do imóvel</a>`:""}
+    ${t?`<a class="btn ghost" href="${DB.esc(t)}" target="_blank" rel="noopener">Tour virtual 360°</a>`:""}
+  </div>`;
+}
+function mapaHtml(){
+  if(imovel.mostrarMapa===false) return "";
+  const e = imovel.endereco||{};
+  const rua = imovel.ocultarEndereco ? "" : [e.logradouro, e.numero].filter(Boolean).join(", ");
+  const partes = [rua, imovel.bairro, imovel.cidade, e.estado].filter(Boolean);
+  if(!partes.length) return "";
+  const url = `https://maps.google.com/maps?q=${encodeURIComponent(partes.join(" - "))}&t=&z=${rua?16:14}&output=embed`;
+  return `<h3 class="im-sub">Localização</h3>
+    <div class="im-mapa"><iframe src="${url}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa — ${DB.esc(imovel.bairro||"localização")}"></iframe></div>
+    ${rua?"":`<p style="font-size:13px;color:var(--tinta-45);margin-top:8px">Localização aproximada — o endereço exato é passado pelo consultor.</p>`}`;
+}
+
+body.innerHTML = `<div style="text-align:center;padding:60px 0">
     <h2 style="font-size:clamp(28px,4vw,44px);margin-bottom:14px">Imóvel não encontrado.</h2>
     <p style="color:var(--tinta-60);margin-bottom:26px">Ele pode ter sido vendido, alugado ou removido do catálogo.</p>
     <a class="btn lg" href="imoveis.html">Ver catálogo de imóveis</a>
@@ -24,11 +69,11 @@ if(!imovel){
 document.title = `${imovel.titulo} — Solua`;
 
 function galleryHtml(){
-  const fotos = imovel.fotos.length ? imovel.fotos : ["https://picsum.photos/seed/solua-imovel-fallback/1200/800"];
+  const fotos = (imovel.fotos||[]).length ? imovel.fotos : [""];
   return `
   <div class="prop-gallery">
     <div class="pg-main" id="pgMain">
-      ${fotos.map((f,i)=>`<div class="pg-slide${i===0?" on":""}" style="background-image:url('${f}')" role="img" aria-label="${DB.esc(imovel.titulo)} — foto ${i+1}"></div>`).join("")}
+      ${fotos.map((f,i)=>`<div class="pg-slide${i===0?" on":""}" ${fotoAttr(f)} style="background-image:url('${DB.esc(fotoSrc(f))}')" role="img" aria-label="${DB.esc(imovel.titulo)} — foto ${i+1}"></div>`).join("")}
     </div>
     ${fotos.length>1 ? `<div class="pg-dots" id="pgDots">${fotos.map((_,i)=>`<button type="button" class="${i===0?"on":""}" data-i="${i}" aria-label="Foto ${i+1}"></button>`).join("")}</div>` : ""}
   </div>`;
@@ -50,16 +95,27 @@ function ligarGaleria(){
 }
 
 function fichaHtml(){
+  const semComodos = ["Terreno","Sala comercial","Loja","Galpão","Rural"].includes(imovel.tipo);
+  const sim = v => v ? "Sim" : "Não";
   const rows = [
-    ["Finalidade", imovel.finalidade==="locacao"?"Locação":"Venda"],
+    ["Código", imovel.codigo],
+    ["Finalidade", FIN_LABEL[imovel.finalidade]||imovel.finalidade],
     ["Tipo", imovel.tipo],
-    ["Área", imovel.areaM2+" m²"],
-    ["Quartos", imovel.quartos],
-    ["Suítes", imovel.suites],
+    ["Área útil", imovel.areaM2 ? imovel.areaM2+" m²" : null],
+    ["Área total", imovel.areaTotal ? imovel.areaTotal+" m²" : null],
+    ["Terreno", imovel.areaTerreno ? imovel.areaTerreno+" m²" : null],
+    ["Quartos", semComodos ? null : imovel.quartos],
+    ["Suítes", semComodos ? null : imovel.suites],
+    ["Banheiros", semComodos ? null : imovel.banheiros],
     ["Vagas", imovel.vagas],
+    ["Condomínio", imovel.valorCondominio ? DB.formatBRL(imovel.valorCondominio)+"/mês" : null],
+    ["IPTU", imovel.valorIptu ? DB.formatBRL(imovel.valorIptu)+"/ano" : null],
+    ["Mobiliado", imovel.mobiliado && imovel.mobiliado!=="Não" ? imovel.mobiliado : null],
+    ["Aceita financiamento", imovel.aceitaFinanciamento!=null && imovel.finalidade!=="locacao" ? sim(imovel.aceitaFinanciamento) : null],
+    ["Aceita permuta", imovel.aceitaPermuta ? "Sim" : null],
     ["Status", STATUS_LABEL[imovel.status]||imovel.status],
     ["Bairro", imovel.bairro+", "+imovel.cidade]
-  ];
+  ].filter(([,v])=> v!=null && v!=="");
   return `<div class="prop-ficha">${rows.map(([k,v])=>`<div class="row"><span>${DB.esc(k)}</span><b>${DB.esc(String(v))}</b></div>`).join("")}</div>`;
 }
 
@@ -78,16 +134,60 @@ function formHtml(){
   </div>`;
 }
 
+// comodidades em destaque viram "selos" logo abaixo do preço
+function destaquesHtml(){
+  const dest = (imovel.comodidadesDestaque||[]).filter(c=> (imovel.comodidades||[]).includes(c));
+  if(!dest.length) return "";
+  return `<div class="im-selos">${dest.map(c=>`<span>★ ${DB.esc(c)}</span>`).join("")}</div>`;
+}
+function comodidadesHtml(){
+  const lista = imovel.comodidades||[];
+  if(!lista.length) return "";
+  return `<h3 class="im-sub">Comodidades</h3><ul class="im-comod">${lista.map(c=>`<li>${DB.esc(c)}</li>`).join("")}</ul>`;
+}
+function plantasHtml(){
+  const pl = imovel.plantas||[];
+  if(!pl.length) return "";
+  return `<h3 class="im-sub">Plantas</h3><div class="im-plantas">${pl.map((p,i)=>`<figure>
+    <img ${fotoAttr(p.ref)} src="${DB.esc(MID.srcInicial(p.ref))}" alt="${DB.esc(p.legenda || "Planta "+(i+1))}" loading="lazy">
+    ${p.legenda?`<figcaption>${DB.esc(p.legenda)}</figcaption>`:""}</figure>`).join("")}</div>`;
+}
+function linkSeguro(u){ return /^https?:\/\//i.test(u||"") ? u : ""; }
+function midiasExtrasHtml(){
+  const v = linkSeguro(imovel.videoUrl), t = linkSeguro(imovel.tourUrl);
+  if(!v && !t) return "";
+  return `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:22px">
+    ${v?`<a class="btn ghost" href="${DB.esc(v)}" target="_blank" rel="noopener">▶ Ver vídeo do imóvel</a>`:""}
+    ${t?`<a class="btn ghost" href="${DB.esc(t)}" target="_blank" rel="noopener">Tour virtual 360°</a>`:""}
+  </div>`;
+}
+function mapaHtml(){
+  if(imovel.mostrarMapa===false) return "";
+  const e = imovel.endereco||{};
+  const rua = imovel.ocultarEndereco ? "" : [e.logradouro, e.numero].filter(Boolean).join(", ");
+  const partes = [rua, imovel.bairro, imovel.cidade, e.estado].filter(Boolean);
+  if(!partes.length) return "";
+  const url = `https://maps.google.com/maps?q=${encodeURIComponent(partes.join(" - "))}&t=&z=${rua?16:14}&output=embed`;
+  return `<h3 class="im-sub">Localização</h3>
+    <div class="im-mapa"><iframe src="${url}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa — ${DB.esc(imovel.bairro||"localização")}"></iframe></div>
+    ${rua?"":`<p style="font-size:13px;color:var(--tinta-45);margin-top:8px">Localização aproximada — o endereço exato é passado pelo consultor.</p>`}`;
+}
+
 body.innerHTML = `
   <div class="lbl" style="margin-bottom:16px"><a href="imoveis.html" style="color:var(--tinta-35)">← Voltar ao catálogo</a></div>
   ${galleryHtml()}
   <div class="prop-detail-grid">
     <div>
-      <span class="num">${imovel.tipo}</span>
+      <span class="num">${DB.esc(imovel.tipo)}${imovel.codigo?` · ${DB.esc(imovel.codigo)}`:""}</span>
       <h1 style="font-size:clamp(30px,4.4vw,50px);letter-spacing:-.03em;margin:10px 0 6px">${DB.esc(imovel.titulo)}</h1>
       <p style="color:var(--tinta-60);margin-bottom:22px">${DB.esc(imovel.bairro)}, ${DB.esc(imovel.cidade)}</p>
-      <div style="font-family:var(--font-display);font-size:32px;color:var(--azul);margin-bottom:26px">${imovel.finalidade==="locacao"?DB.formatBRL(imovel.valor)+"/mês":DB.formatBRL(imovel.valor)}</div>
-      <p style="font-size:15.5px;line-height:1.7;color:var(--tinta-60)">${DB.esc(imovel.descricao)}</p>
+      <div style="font-family:var(--font-display);font-size:32px;color:var(--azul);margin-bottom:26px">${DB.esc(DB.precoImovelTexto(imovel))}</div>
+      ${destaquesHtml()}
+      <p style="font-size:15.5px;line-height:1.7;color:var(--tinta-60);white-space:pre-line">${DB.esc(imovel.descricao||"")}</p>
+      ${midiasExtrasHtml()}
+      ${comodidadesHtml()}
+      ${plantasHtml()}
+      ${mapaHtml()}
     </div>
     <div>
       ${fichaHtml()}
@@ -96,6 +196,7 @@ body.innerHTML = `
   </div>`;
 
 ligarGaleria();
+MID.hidratar(body);
 
 document.getElementById("piFone").oninput = e=>{ let v=e.target.value.replace(/\D/g,"").slice(0,11);
   e.target.value = v.length>10 ? v.replace(/(\d{2})(\d{5})(\d{4})/,"($1) $2-$3") : v.length>6 ? v.replace(/(\d{2})(\d{4})(\d{0,4})/,"($1) $2-$3") : v.length>2 ? v.replace(/(\d{2})(\d*)/,"($1) $2") : v; };
@@ -109,7 +210,7 @@ document.getElementById("piSend").onclick = ()=>{
   if(fone.replace(/\D/g,"").length<10){ document.getElementById("piFone").focus(); return; }
   const btn = document.getElementById("piSend"); btn.textContent="Enviando…"; btn.disabled=true;
   DB.addLead({
-    nome, email, telefone: fone, produto:"imovel", tipo: imovel.tipo, origem:"Site", estagio:"novo",
+    nome, email, telefone: fone, produto:"imovel", tipo: imovel.tipo, origem:"Site", estagio:"novo", imovelId: imovel.id,
     notas:[{id:DB.uid("nota"), data:new Date().toISOString(), autor:"Sistema",
       texto:`Interesse no imóvel "${imovel.titulo}" (${imovel.id}).${msg?" Mensagem: "+msg:""}`}]
   });
@@ -120,17 +221,19 @@ document.getElementById("piSend").onclick = ()=>{
 };
 
 /* RELACIONADOS */
-const relacionados = DB.getImoveis().filter(i=>i.id!==imovel.id && i.tipo===imovel.tipo).slice(0,3);
-const relFallback = relacionados.length ? relacionados : DB.getImoveis().filter(i=>i.id!==imovel.id).slice(0,3);
+const publicados = DB.getImoveisPublicados().filter(i=>i.id!==imovel.id);
+const relacionados = publicados.filter(i=> i.tipo===imovel.tipo).slice(0,3);
+const relFallback = relacionados.length ? relacionados : publicados.slice(0,3);
 document.getElementById("propRelated").innerHTML = relFallback.map(i=>`
   <a class="prop-card" href="imovel.html?id=${i.id}">
-    <div class="ph"><img src="${i.fotos[0]}" alt="${DB.esc(i.titulo)}" loading="lazy"></div>
+    <div class="ph"><img ${fotoAttr((i.fotos||[])[0])} src="${DB.esc(fotoSrc((i.fotos||[])[0]))}" alt="${DB.esc(i.titulo)}" loading="lazy"></div>
     <div class="bd">
-      <div class="valor">${i.finalidade==="locacao"?DB.formatBRL(i.valor)+"/mês":DB.formatBRL(i.valor)}</div>
+      <div class="valor">${DB.esc(DB.precoImovelTexto(i))}</div>
       <h3>${DB.esc(i.titulo)}</h3>
       <div class="loc">${DB.esc(i.bairro)}, ${DB.esc(i.cidade)}</div>
     </div>
   </a>`).join("");
+MID.hidratar(document.getElementById("propRelated"));
 
 window.SoluaChrome.observeReveals();
 })();

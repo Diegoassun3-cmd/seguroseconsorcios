@@ -55,7 +55,7 @@
   const TIPOS = {
     seguro: ["Auto","Residencial","Vida","Empresarial","Saúde / Odonto","Viagem","Garantia locatícia","Condomínio","Outro"],
     consorcio: ["Imóvel","Automóvel","Pesados / Máquinas","Serviços"],
-    imovel: ["Apartamento","Casa","Casa em condomínio","Cobertura","Terreno","Sala comercial","Rural"]
+    imovel: ["Apartamento","Casa","Casa em condomínio","Sobrado","Cobertura","Studio / Kitnet","Terreno","Sala comercial","Loja","Galpão","Chácara / Sítio","Rural"]
   };
 
   const ORIGENS = ["Site","Indicação","WhatsApp","Instagram","Anúncio","Telefone","Balcão"];
@@ -228,6 +228,12 @@
   // migração leve: quem já tinha um estado salvo (v2) antes da linha de Imóveis
   // existir ganha o catálogo de exemplo na primeira carga, sem perder leads/equipe/modelos reais.
   if(!Array.isArray(STATE.imoveis)){ STATE.imoveis = IMOVEIS_SEED.map(i=>Object.assign({},i)); save(STATE); }
+  // imóveis anteriores ao cadastro completo ganham um código de referência
+  if(STATE.imoveis.some(i=>!i.codigo)){
+    let n = STATE.imoveis.reduce((m,i)=>{ const x = /^SOL-(\d+)$/.exec(i.codigo||""); return x ? Math.max(m, +x[1]) : m; }, 0);
+    STATE.imoveis.slice().reverse().forEach(i=>{ if(!i.codigo) i.codigo = "SOL-" + String(++n).padStart(4,"0"); });
+    save(STATE);
+  }
   // migração leve: contas a pagar/receber é uma seção nova — começa vazia de
   // propósito (é dado financeiro real, nunca fictício), só garante o array.
   if(!Array.isArray(STATE.contasFinanceiras)){ STATE.contasFinanceiras = []; save(STATE); }
@@ -436,24 +442,51 @@
   // -------------------- CATÁLOGO DE IMÓVEIS (produto, não contato) --------------------
   function getImoveis(){ return STATE.imoveis.slice(); }
   function getImovel(id){ return STATE.imoveis.find(i=>i.id===id) || null; }
+  // código de referência sequencial (SOL-0001…), o que o cliente cita no telefone
+  function proximoCodigoImovel(){
+    const n = STATE.imoveis.reduce((m,i)=>{ const x = /^SOL-(\d+)$/.exec(i.codigo||""); return x ? Math.max(m, +x[1]) : m; }, 0);
+    return "SOL-" + String(n+1).padStart(4,"0");
+  }
   function addImovel(data){
-    const i = Object.assign({id:uid("imv"), titulo:"", finalidade:"venda", tipo:"Apartamento",
+    const i = Object.assign({id:uid("imv"), codigo:proximoCodigoImovel(), titulo:"", finalidade:"venda", tipo:"Apartamento",
       bairro:"", cidade:"Campinas", valor:0, quartos:0, suites:0, vagas:0, areaM2:0,
-      status:"pronto", destaque:false, descricao:"", fotos:[]}, data);
+      status:"pronto", destaque:false, publicado:true, descricao:"", fotos:[],
+      criadoEm: nowISO(), atualizadoEm: nowISO()}, data);
     STATE.imoveis.unshift(i); save(STATE); return i;
   }
   function updateImovel(id, patch){
     const i = getImovel(id); if(!i) return null;
-    Object.assign(i, patch); save(STATE); return i;
+    Object.assign(i, patch, {atualizadoEm: nowISO()}); save(STATE); return i;
   }
   function deleteImovel(id){
     STATE.imoveis = STATE.imoveis.filter(i=>i.id!==id); save(STATE);
   }
+  // imóvel sem o campo "publicado" (catálogo antigo/de exemplo) conta como publicado
+  function estaPublicado(i){ return !!i && i.publicado !== false; }
+  function getImoveisPublicados(){ return STATE.imoveis.filter(estaPublicado); }
+  function atendeFinalidade(i, fin){ return i.finalidade===fin || i.finalidade==="venda_locacao"; }
+  function precoImovelTexto(i){
+    if(i.ocultarPreco) return "Preço sob consulta";
+    const venda = Number(i.precoVenda != null ? i.precoVenda : (i.finalidade!=="locacao" ? i.valor : 0)) || 0;
+    const loc = Number(i.precoLocacao != null ? i.precoLocacao : (i.finalidade==="locacao" ? i.valor : 0)) || 0;
+    if(i.finalidade==="locacao") return formatBRL(loc)+"/mês";
+    if(i.finalidade==="venda_locacao" && loc) return formatBRL(venda)+" · "+formatBRL(loc)+"/mês";
+    return formatBRL(venda);
+  }
+  function leadsDoImovel(id){ return STATE.leads.filter(l=> l.imovelId===id); }
+  const COMODIDADES = {
+    "Imóvel":["Ar-condicionado","Armários planejados","Varanda","Varanda gourmet","Churrasqueira privativa","Piscina privativa","Lareira","Closet","Escritório","Área de serviço","Despensa","Quintal","Jardim","Aquecimento solar","Energia solar","Piso aquecido","Cozinha americana","Vista panorâmica"],
+    "Condomínio":["Portaria 24h","Elevador","Academia","Piscina","Salão de festas","Espaço gourmet","Playground","Brinquedoteca","Quadra poliesportiva","Quadra de tênis","Sauna","Coworking","Bicicletário","Pet place","Lavanderia coletiva","Gerador"],
+    "Segurança":["Câmeras de segurança","Cerca elétrica","Alarme","Portão eletrônico","Interfone","Condomínio fechado"],
+    "Acessibilidade e outros":["Acessível para cadeirantes","Aceita pet","Mobiliado","Semimobiliado","Próximo ao metrô/terminal","Próximo a escolas","Próximo a comércio"]
+  };
   // filtros do catálogo público: tipo, finalidade, faixa de preço, quartos mínimos, status
+  // (só entra o que está publicado)
   function filterImoveis(f){
     f = f || {};
     return STATE.imoveis.filter(i=>{
-      if(f.finalidade && f.finalidade!=="todos" && i.finalidade!==f.finalidade) return false;
+      if(!estaPublicado(i)) return false;
+      if(f.finalidade && f.finalidade!=="todos" && !atendeFinalidade(i, f.finalidade)) return false;
       if(f.tipo && f.tipo!=="Todos" && i.tipo!==f.tipo) return false;
       if(f.status && f.status!=="todos" && i.status!==f.status) return false;
       if(f.quartos && i.quartos < Number(f.quartos)) return false;
@@ -885,6 +918,7 @@
     getLeads, getLead, getLeadsByProduto, addLead, updateLead, deleteLead, addNota,
     getEquipe, getUsuario, addUsuario, updateUsuario, deleteUsuario, PERMISSOES_DISPONIVEIS, temPermissao,
     getImoveis, getImovel, addImovel, updateImovel, deleteImovel, filterImoveis,
+    getImoveisPublicados, estaPublicado, precoImovelTexto, leadsDoImovel, proximoCodigoImovel, COMODIDADES,
     getContas, getConta, addConta, updateConta, deleteConta,
     getAvisos, addAviso, updateAviso, deleteAviso,
     getCompromissos, getCompromisso, addCompromisso, updateCompromisso, deleteCompromisso,
