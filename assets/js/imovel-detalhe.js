@@ -270,7 +270,7 @@ function fichaHtml(){
 
 function formHtml(){
   return `
-  <div style="border:1px solid var(--linha);padding:24px;margin-top:20px">
+  <div style="background:var(--papel);border-radius:18px;padding:24px;margin-top:20px">
     <h4 style="font-size:17px;margin-bottom:14px">Tenho interesse neste imóvel</h4>
     <div class="fields" id="propFormFields" style="grid-template-columns:1fr">
       <div class="f"><label>Nome completo *</label><input id="piNome" placeholder="Seu nome"></div>

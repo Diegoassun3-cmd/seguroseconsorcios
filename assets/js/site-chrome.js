@@ -137,46 +137,56 @@ function renderFooter(){
   ft.innerHTML = `
   <div class="wrap">
     <div class="foot-top">
-      <div>
+      <div class="foot-marca">
         <span class="mark" data-brand-logo>solua</span>
         <p data-cms="footer.descricao">Corretora de seguros e consórcios e imobiliária em Campinas, desde 2001. Um consultor dedicado do primeiro contato ao pós-venda.</p>
-        <div class="foot-social">
-          ${socialLinkHtml("instagram","Instagram")}
-          ${socialLinkHtml("facebook","Facebook")}
-          ${socialLinkHtml("linkedin","Linkedin")}
+      </div>
+      <div class="fcol foot-end">
+        <h5>Endereço</h5>
+        <span data-cms="contato.info.endereco" data-cms-tipo="endereco" data-mapa-alvo="footMapa" id="footEnderecoTxt">${enderecoPadrao}</span>
+        <div class="foot-mapa-frame">
+          <iframe class="foot-mapa" id="footMapa" src="${mapaUrl(enderecoPadrao)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa — localização Solua"></iframe>
         </div>
+      </div>
+      <div class="fcol">
+        <h5 data-cms="footer.col.contato">Contato</h5>
+        <a href="#" id="wppFoot" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="mailto:contato@solua.com.br" id="footEmail" class="sub">contato@solua.com.br</a>
       </div>
       <div class="fcol">
         <h5 data-cms="footer.col.produtos">Produtos</h5>
         <a href="imoveis.html" data-cms="nav.imoveis">Imóveis</a>
         <a href="seguros.html" data-cms="nav.seguros">Seguros</a>
         <a href="consorcios.html" data-cms="nav.consorcios">Consórcios</a>
-        <a href="blog.html" data-cms="nav.blog">Blog</a>
       </div>
       <div class="fcol">
         <h5 data-cms="footer.col.institucional">Institucional</h5>
         <a href="sobre.html" data-cms="nav.sobre">A Solua</a>
         <a href="sobre.html#equipe">Nossa equipe</a>
+        <a href="blog.html" data-cms="nav.blog">Blog</a>
         <a href="contato.html" data-cms="nav.contato">Contato</a>
-      </div>
-      <div class="fcol">
-        <h5 data-cms="footer.col.contato">Contato</h5>
-        <span id="footEmail">contato@solua.com.br</span>
-        <span data-cms="contato.info.endereco" data-cms-tipo="endereco" data-mapa-alvo="footMapa" id="footEnderecoTxt">${enderecoPadrao}</span>
-        <a href="#" id="wppFoot">Falar no WhatsApp</a>
-      </div>
-      <div class="fcol foot-mapa-col">
-        <h5>Localização</h5>
-        <div class="foot-mapa-frame">
-          <iframe class="foot-mapa" id="footMapa" src="${mapaUrl(enderecoPadrao)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa — localização Solua"></iframe>
-        </div>
       </div>
     </div>
     <div class="foot-bot">
-      <span>© ${yr} <span data-cms="footer.copyright">Solua Corretora e Imobiliária — CRECI e SUSEP conforme legislação vigente.</span></span>
-      <span class="staff"><a href="crm/login.html">Acesso da equipe</a></span>
+      <div class="foot-legal">
+        <span>© ${yr} <span data-cms="footer.copyright">Solua Corretora e Imobiliária — CRECI e SUSEP conforme legislação vigente.</span></span>
+        <a class="staff" href="crm/login.html">Acesso da equipe</a>
+      </div>
+      <div class="foot-social">
+        ${socialLinkHtml("instagram","Instagram")}
+        ${socialLinkHtml("facebook","Facebook")}
+        ${socialLinkHtml("linkedin","Linkedin")}
+      </div>
     </div>
   </div>`;
+}
+
+// número do WhatsApp (Personalização) escrito por extenso no rodapé
+function foneLegivel(d){
+  d = String(d||"").replace(/\D/g,"").replace(/^55(?=\d{10,11}$)/,"");
+  if(d.length===11) return `+55 ${d.slice(0,2)} ${d.slice(2,7)}-${d.slice(7)}`;
+  if(d.length===10) return `+55 ${d.slice(0,2)} ${d.slice(2,6)}-${d.slice(6)}`;
+  return "";
 }
 
 function renderWppFloat(){
@@ -190,9 +200,12 @@ function renderWppFloat(){
 
 function refreshWppLinks(){
   ["wppFix","wppFoot","mobWpp"].forEach(id=>{ const el=document.getElementById(id); if(el) el.href = wppMsg(); });
+  const ft = document.getElementById("wppFoot");
+  if(ft) ft.textContent = (wppDefinido && foneLegivel(WPP)) || "WhatsApp";
 }
 
-window.SoluaSite = { setWhatsapp(numero){ if(numero){ WPP = numero; refreshWppLinks(); } }, wppLink: wppMsg };
+let wppDefinido = false; // só mostra o número depois que a Personalização informar o real
+window.SoluaSite = { setWhatsapp(numero){ if(numero){ WPP = numero; wppDefinido = true; refreshWppLinks(); } }, wppLink: wppMsg };
 
 // e-mail de contato exibido no rodapé e no menu mobile — Personalização sobrescreve via /api/settings
 document.addEventListener("solua:branding", e=>{
