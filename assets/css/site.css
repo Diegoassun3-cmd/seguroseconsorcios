@@ -193,7 +193,7 @@ section{position:relative}
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:34px}
 .filt{font-size:12.5px;padding:8px 17px;border:1px solid var(--linha);border-radius:100px;background:none;cursor:pointer;color:var(--tinta-60);transition:.3s}
 .filt:hover{border-color:var(--tinta-35)}
-.filt.on{background:var(--tinta);color:var(--creme);border-color:var(--tinta)}
+.filt.on{background:var(--azul);color:#fff;border-color:var(--azul)}
 /* ---------- BLOG — cards de foto cheia, com texto sobreposto ---------- */
 .blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .blog-card{position:relative;border-radius:28px;overflow:hidden;padding:22px;display:flex;flex-direction:column;justify-content:flex-end;min-height:400px;color:#fff;cursor:pointer;background-size:cover;background-position:center;text-decoration:none;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
