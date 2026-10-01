@@ -116,11 +116,9 @@ const SCHEMA = [
     ]},
     { titulo:"Bloco \"Como funciona\"", campos:[
       {key:"seguros.processo.visivel", label:"Mostrar este bloco", tipo:"toggle"},
-      {key:"seguros.processo.alinhamento", label:"Alinhamento do texto", tipo:"alinhamento"},
       {key:"seguros.processo.fundo", label:"Fundo da seção", tipo:"midia"},
-      {key:"seguros.processo.midia", label:"Foto", tipo:"imagem"},
       {key:"seguros.processo.titulo", label:"Título", tipo:"texto"},
-      {key:"seguros.processo.texto", label:"Texto", tipo:"textarea"}
+      {key:"seguros.processo.texto", label:"Texto curto ao lado do título", tipo:"textarea"}
     ]}
   ]},
   { id:"consorcios", label:"Consórcios", grupos:[
@@ -133,7 +131,6 @@ const SCHEMA = [
     ]},
     { titulo:"Administradoras parceiras", campos:[
       {key:"consorcios.administradoras.visivel", label:"Mostrar este bloco", tipo:"toggle"},
-      {key:"consorcios.administradoras.fundo", label:"Fundo da seção", tipo:"midia"},
       {key:"consorcios.administradoras.titulo", label:"Título", tipo:"texto", placeholder:"Quem administra o seu grupo."},
       {key:"consorcios.administradoras.porto.titulo", label:"Porto Bank — título", tipo:"texto"},
       {key:"consorcios.administradoras.porto.texto", label:"Porto Bank — texto", tipo:"textarea"},

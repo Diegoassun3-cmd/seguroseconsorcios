@@ -22,8 +22,8 @@ Não precisa de build (`npm run build`) — é HTML/CSS/JS puro mais um
 index.html                      → Home (resumo das 3 frentes + destaques + blog)
 imoveis.html                    → catálogo de imóveis (filtros)
 imovel.html                     → detalhe de um imóvel (galeria, ficha, interesse)
-seguros.html                    → linhas de seguro + simulador + FAQ
-consorcios.html                 → linhas de consórcio + parceiras + simulador + FAQ
+seguros.html                    → cards de seguro + como funciona + simulador + FAQ
+consorcios.html                 → cards de consórcio + como funciona/parceiras + simulador + FAQ
 blog.html                       → catálogo completo do blog (filtro por categoria)
 sobre.html                      → história (linha do tempo) + equipe pública
 contato.html                    → formulário geral de contato
@@ -726,6 +726,23 @@ qualquer outro dado do CRM. As fotos são reduzidas pra no máximo 1600px
 no site **neste navegador**; pra aparecer pra todos os visitantes é
 preciso o passo 1 de "Para produção" abaixo (catálogo no D1 + fotos num
 armazenamento de arquivos como o R2).
+
+### Seguros e Consórcios (layout limpo)
+
+As duas páginas seguem a mesma sequência, toda em fundo creme e separada
+só por espaço: foto grande no topo → **cards de produto** (título, uma
+frase e "Cotar"/"Simular") → **como funciona** em 4 passos numerados (em
+Consórcios, com as administradoras logo abaixo) → **simulador** (único
+bloco em tom mais escuro, como o formulário do Contato) → **FAQ** em duas
+colunas.
+
+- O link "Cotar"/"Simular" de cada card já escolhe aquele tipo no simulador
+  e rola até ele (evento `solua:simular`, ouvido por `quote-flow.js`).
+- O simulador mostra as etapas numa barra no topo do card, os tipos em
+  pílulas e os campos sublinhados. Valores (carta de crédito, valor do
+  imóvel, capital, aluguel, faturamento) ganham máscara `R$ 300.000`.
+- Dados dos cards, passos e FAQ: `assets/js/seguros.js` e
+  `assets/js/consorcios.js`.
 
 ## Para produção (multiusuário completo)
 
