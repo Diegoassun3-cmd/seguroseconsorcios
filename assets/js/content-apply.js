@@ -176,6 +176,8 @@ function aplicarConteudo(conteudo){
       } else if(el.dataset.cmsTipo === "social"){
         if(val){ el.href = val; el.style.display = ""; }
         else { el.style.display = "none"; }
+      } else if(el.dataset.cmsTipo === "placeholder"){
+        if(val) el.placeholder = val;
       } else if(el.dataset.cmsTipo === "corfundo"){
         if(val) el.style.background = val;
       } else if(el.tagName === "IMG"){

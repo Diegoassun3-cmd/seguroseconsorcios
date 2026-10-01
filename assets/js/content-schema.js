@@ -144,6 +144,13 @@ const SCHEMA = [
       {key:"consorcios.banner.texto", label:"Texto do banner (vazio = não mostrar)", tipo:"texto", placeholder:"Ex.: Condições especiais de parcela até o fim do mês."}
     ]}
   ]},
+  { id:"imoveis", label:"Imóveis", grupos:[
+    { titulo:"Topo (busca)", campos:[
+      {key:"imoveis.hero.titulo", label:"Título", tipo:"texto", placeholder:"Encontre seu próximo endereço."},
+      {key:"imoveis.hero.midia", label:"Foto ou vídeo de fundo", tipo:"midia"},
+      {key:"imoveis.hero.placeholder", label:"Texto dentro da busca", tipo:"texto", placeholder:"Digite o bairro ou código do imóvel"}
+    ]}
+  ]},
   { id:"sobre", label:"Sobre", grupos:[
     { titulo:"Hero", campos:[
       {key:"sobre.hero.titulo", label:"Título", tipo:"texto"},

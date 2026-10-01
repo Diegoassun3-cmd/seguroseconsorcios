@@ -42,6 +42,13 @@ button,input,select,textarea{font:inherit;color:inherit}
 header{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .4s,box-shadow .4s}
 header.solid{background:rgba(242,237,230,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 1px 0 rgba(21,24,28,.08)}
 header.on-photo:not(.solid) .brand .mark{color:#fff}
+header.on-photo:not(.solid) .menu a{color:rgba(255,255,255,.82)}
+header.on-photo:not(.solid) .menu a:hover,header.on-photo:not(.solid) .menu a.on{color:#fff}
+header.on-photo:not(.solid) .search-trigger{color:#fff;border-color:rgba(255,255,255,.4)}
+header.on-photo:not(.solid) .burger{border-color:rgba(255,255,255,.45)}
+header.on-photo:not(.solid) .burger i{background:#fff}
+header.on-photo:not(.solid) .burger.on{border-color:var(--linha)}
+header.on-photo:not(.solid) .burger.on i{background:var(--tinta)}
 .nav{display:flex;align-items:center;justify-content:space-between;gap:24px;height:78px}
 .brand{display:flex;align-items:baseline;gap:12px}
 .brand .mark{font-family:var(--font-display);font-weight:400;font-size:27px;color:var(--azul);letter-spacing:-.045em;line-height:1}

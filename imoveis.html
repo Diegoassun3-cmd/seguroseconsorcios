@@ -20,21 +20,51 @@
 <header id="hd"></header>
 <div class="mob" id="mob"></div>
 
-<section class="hero" style="padding-bottom:20px">
-  <div class="wrap">
-    <div class="hero-top" style="justify-content:flex-end">
-      <span class="lbl" id="propCountLbl">catálogo</span>
+<section class="hero-photo im-hero" id="imHero">
+  <div class="slide on" data-cms="imoveis.hero.midia" data-cms-media="bg" style="background-image:url('https://picsum.photos/seed/solua-imoveis-hero/1800/1000')"></div>
+  <div class="scrim"></div>
+  <div class="in im-hero-in">
+    <h1 data-cms="imoveis.hero.titulo">Encontre seu próximo endereço.</h1>
+    <div class="im-modo" role="radiogroup" aria-label="O que você procura">
+      <button type="button" role="radio" aria-checked="false" data-modo="venda">Comprar</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button type="button" role="radio" aria-checked="false" data-modo="locacao">Alugar</button>
     </div>
-    <h1 style="font-size:clamp(40px,8vw,96px)">Encontre seu<br><em style="color:var(--azul);font-style:normal">próximo endereço.</em></h1>
-    <p class="hero-lead" style="margin-top:24px">Venda e locação, com ficha técnica completa e fotos de cada imóvel. Não achou o que procura? Fale com um consultor — temos imóveis fora do site também.</p>
+    <form class="im-busca" id="imBusca" role="search" autocomplete="off">
+      <input id="imQ" type="search" placeholder="Digite o bairro ou código do imóvel" aria-label="Buscar por bairro ou código do imóvel" aria-controls="imSug" aria-autocomplete="list" data-cms="imoveis.hero.placeholder" data-cms-tipo="placeholder">
+      <button type="submit" aria-label="Buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></svg></button>
+      <div class="im-sug" id="imSug" role="listbox" hidden></div>
+    </form>
   </div>
 </section>
 
-<section class="sec" style="padding-top:20px">
-  <div class="wrap rev">
-    <div class="prop-toolbar" id="propToolbar"></div>
+<section class="im-res" id="imResultados">
+  <div class="wrap">
+    <div class="imf" id="imFiltros" aria-label="Filtros de imóveis"></div>
+    <div class="imf-mais" id="imMais" hidden></div>
+    <div class="imf-topo">
+      <h2 id="imCount" aria-live="polite"></h2>
+      <div class="imf-chips" id="imChips"></div>
+      <label class="imf-ordem"><span>Ordenar</span>
+        <select id="imOrdem">
+          <option value="relevancia">Destaques primeiro</option>
+          <option value="recentes">Mais recentes</option>
+          <option value="menor">Menor preço</option>
+          <option value="maior">Maior preço</option>
+          <option value="area">Maior área</option>
+        </select>
+      </label>
+    </div>
     <div class="prop-grid" id="propGrid"></div>
-    <p class="prop-empty" id="propEmpty" style="display:none">Nenhum imóvel encontrado com esses filtros. <a href="contato.html" style="color:var(--azul)">Fale com um consultor</a> — talvez a gente tenha algo fora do catálogo.</p>
+    <div class="im-mais-wrap" id="imMaisWrap" hidden><button type="button" class="btn ghost" id="imVerMais">Ver mais imóveis</button></div>
+    <div class="prop-empty" id="propEmpty" style="display:none">
+      <h3>Nenhum imóvel com esses filtros.</h3>
+      <p>Tente ampliar a faixa de preço ou tirar algum filtro. Também temos imóveis fora do site — fale com um consultor.</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px">
+        <button type="button" class="btn ghost" id="imLimparVazio">Limpar filtros</button>
+        <a class="btn" href="contato.html">Falar com um consultor</a>
+      </div>
+    </div>
   </div>
 </section>
 

@@ -677,6 +677,18 @@ O item **Imóveis** da barra superior virou um menu com setinha:
   selos de destaque, comodidades, plantas, links de vídeo/tour e mapa
   (exato ou só do bairro, conforme a opção).
 
+**Página pública de Imóveis** (`imoveis.html`): topo com foto, "Comprar |
+Alugar" e uma busca por bairro ou código (com sugestões enquanto digita;
+código completo, ex. `SOL-0008`, abre o imóvel direto). Abaixo, a barra
+de filtros: Todos/Comprar/Alugar, Tipo (com contagem), Quartos, Preço
+(mínimo/máximo + faixas prontas que mudam entre compra e aluguel) e
+"Mais filtros" (vagas, banheiros, área útil, bairro, fase, comodidades
+que existem no catálogo, aceita financiamento, com vídeo/tour, só
+destaques). Os filtros ativos viram chips removíveis, tem ordenação
+(destaques, recentes, preço, área) e "Ver mais". Tudo vai pra URL, então
+dá pra mandar o link de uma busca pronta. Título, foto de fundo e o texto
+da busca são editáveis em Design → Imóveis.
+
 **Onde ficam os dados:** como o resto do CRM hoje, o catálogo fica no
 navegador (localStorage). Fotos, plantas e arquivos vão pro **IndexedDB**
 do navegador — o localStorage tem ~5MB e estourá-lo impediria de salvar
