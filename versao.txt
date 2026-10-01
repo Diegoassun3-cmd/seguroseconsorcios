@@ -1,0 +1,2 @@
+Solua — versão publicada: 2026-10-01b
+Inclui: rodapé novo (Endereço/Contato/Produtos/Institucional), sem linhas finas, botões azuis.
