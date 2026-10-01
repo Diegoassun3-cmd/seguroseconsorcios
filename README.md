@@ -677,6 +677,20 @@ O item **Imóveis** da barra superior virou um menu com setinha:
   selos de destaque, comodidades, plantas, links de vídeo/tour e mapa
   (exato ou só do bairro, conforme a opção).
 
+**Fotos grandes no topo**: Home, Imóveis, Seguros, Consórcios, Blog e A
+Solua abrem com foto/vídeo ocupando ~78% da tela (o menu fica branco por
+cima). A do Blog é nova e, como as outras, troca em Design → Blog.
+
+**Contato** (`contato.html`): título grande, texto + endereço (com "Como
+chegar"), horário e canais com ícones (telefone fixo só aparece se
+preenchido em Design; WhatsApp e e-mail vêm da Personalização) ao lado de
+uma foto grande arredondada. Abaixo, o formulário de campos sublinhados:
+nome, e-mail, telefone, assunto (comprar/alugar/anunciar imóvel, seguros,
+consórcios, outro), mensagem e "Como conheceu a Solua?". O botão "Enviar"
+só libera com tudo preenchido; erros aparecem embaixo de cada campo; há
+um campo invisível anti-robô (o reCAPTCHA do Google exigiria chave). O
+envio vira lead no CRM no funil certo, com o "como conheceu" registrado.
+
 **Topo da Home**: sem setas — troca arrastando com o mouse, deslizando o
 dedo ou com as setas do teclado; as "retinhas" continuam clicáveis.
 

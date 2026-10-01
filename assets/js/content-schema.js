@@ -190,15 +190,27 @@ const SCHEMA = [
     ]}
   ]},
   { id:"contato", label:"Contato", grupos:[
-    { titulo:"Hero", campos:[
-      {key:"contato.hero.titulo", label:"Título", tipo:"texto", placeholder:"Vamos conversar."}
+    { titulo:"Topo", campos:[
+      {key:"contato.hero.titulo", label:"Título", tipo:"texto", placeholder:"Dúvidas ou sugestões?"},
+      {key:"contato.info.chamada", label:"Texto ao lado da foto", tipo:"textarea", placeholder:"Converse com a gente ou faça uma visita — estamos em Campinas."},
+      {key:"contato.foto", label:"Foto (escritório, fachada…)", tipo:"imagem"}
     ]},
     { titulo:"Informações de contato", campos:[
       {key:"contato.info.endereco", label:"Endereço", tipo:"texto"},
-      {key:"contato.info.horario", label:"Horário de atendimento", tipo:"texto"}
+      {key:"contato.info.horario", label:"Horário de atendimento", tipo:"texto"},
+      {key:"contato.info.telefone", label:"Telefone fixo (vazio = não mostrar)", tipo:"texto", placeholder:"(19) 3000-0000"}
     ]},
     { titulo:"Formulário", campos:[
-      {key:"contato.form.botao", label:"Botão de envio — texto", tipo:"texto", placeholder:"Enviar mensagem"}
+      {key:"contato.form.titulo", label:"Título ao lado do formulário", tipo:"texto", placeholder:"Caso prefira, envie uma mensagem diretamente para nós."},
+      {key:"contato.form.botao", label:"Botão de envio — texto", tipo:"texto", placeholder:"Enviar"}
+    ]}
+  ]},
+  { id:"blog", label:"Blog", grupos:[
+    { titulo:"Topo", campos:[
+      {key:"blog.hero.titulo", label:"Título", tipo:"texto", placeholder:"Para decidir bem, é preciso entender."},
+      {key:"blog.hero.subtitulo", label:"Subtítulo", tipo:"textarea"},
+      {key:"blog.hero.alinhamento", label:"Alinhamento do texto", tipo:"alinhamento"},
+      {key:"blog.hero.midia", label:"Foto ou vídeo de fundo", tipo:"midia"}
     ]}
   ]},
   { id:"global", label:"Menu e Rodapé", grupos:[
