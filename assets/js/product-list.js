@@ -1,34 +1,14 @@
-/* Solua — cards de produtos (Seguros e Consórcios), passos de "como funciona"
-   e acordeão do FAQ. Cada card tem "Simular", que já escolhe o tipo no
-   simulador (evento solua:simular, ouvido por quote-flow.js). */
+/* Solua — Seguros e Consórcios: as fotos de produto levam ao simulador já
+   com o tipo escolhido (evento solua:simular, ouvido por quote-flow.js) e o
+   FAQ abre em acordeão. */
 (function(){
 "use strict";
-const SETA = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-// itens: [{nome, texto, tipo}] — tipo é o nome usado no simulador (SoluaDB.TIPOS)
-function cards(itens, elId, rotulo){
-  const el = document.getElementById(elId);
-  if(!el) return;
-  el.innerHTML = itens.map(p=>`
-  <article class="px-card">
-    <h3>${p.nome}</h3>
-    <p>${p.texto}</p>
-    <a class="px-go" href="#simulador" data-simular="${p.tipo}">${rotulo} ${SETA}</a>
-  </article>`).join("");
-  el.addEventListener("click", e=>{
-    const a = e.target.closest("[data-simular]"); if(!a) return;
-    e.preventDefault();
-    document.dispatchEvent(new CustomEvent("solua:simular", {detail:a.dataset.simular}));
-  });
-}
-
-// passos: [[titulo, texto]]
-function passos(lista, elId){
-  const el = document.getElementById(elId);
-  if(!el) return;
-  el.innerHTML = lista.map((p,i)=>`
-  <li><span class="px-n">${String(i+1).padStart(2,"0")}</span><h3>${p[0]}</h3><p>${p[1]}</p></li>`).join("");
-}
+document.addEventListener("click", e=>{
+  const a = e.target.closest("[data-simular]"); if(!a) return;
+  e.preventDefault();
+  document.dispatchEvent(new CustomEvent("solua:simular", {detail:a.dataset.simular}));
+});
 
 // faqs: [[pergunta, resposta]]
 function faq(lista, elId){
@@ -46,5 +26,5 @@ document.addEventListener("click", e=>{
   if(!open){ it.classList.add("open"); bd.style.maxHeight = bd.scrollHeight+"px"; }
 });
 
-window.SoluaProductList = { cards, passos, faq };
+window.SoluaProductList = { faq };
 })();

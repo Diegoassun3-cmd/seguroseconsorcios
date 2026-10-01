@@ -114,11 +114,19 @@ const SCHEMA = [
       {key:"seguros.hero.botao", label:"Botão — texto", tipo:"texto", placeholder:"Simular meu seguro"},
       {key:"seguros.hero.midia", label:"Foto ou vídeo de fundo", tipo:"midia"}
     ]},
-    { titulo:"Bloco \"Como funciona\"", campos:[
-      {key:"seguros.processo.visivel", label:"Mostrar este bloco", tipo:"toggle"},
-      {key:"seguros.processo.fundo", label:"Fundo da seção", tipo:"midia"},
-      {key:"seguros.processo.titulo", label:"Título", tipo:"texto"},
-      {key:"seguros.processo.texto", label:"Texto curto ao lado do título", tipo:"textarea"}
+    { titulo:"Fotos dos seguros", campos:[
+      {key:"seguros.produtos.auto.foto", label:"Auto", tipo:"imagem"},
+      {key:"seguros.produtos.residencial.foto", label:"Residencial", tipo:"imagem"},
+      {key:"seguros.produtos.vida.foto", label:"Vida", tipo:"imagem"},
+      {key:"seguros.produtos.viagem.foto", label:"Viagem", tipo:"imagem"},
+      {key:"seguros.produtos.fianca.foto", label:"Fiança locatícia", tipo:"imagem"},
+      {key:"seguros.produtos.empresarial.foto", label:"Empresarial", tipo:"imagem"},
+      {key:"seguros.produtos.saude.foto", label:"Saúde e odonto", tipo:"imagem"},
+      {key:"seguros.produtos.condominio.foto", label:"Condomínio e frota", tipo:"imagem"}
+    ]},
+    { titulo:"Faixa \"Como funciona\"", campos:[
+      {key:"seguros.processo.visivel", label:"Mostrar esta faixa", tipo:"toggle"},
+      {key:"seguros.processo.titulo", label:"Título", tipo:"texto", placeholder:"Como funciona"}
     ]}
   ]},
   { id:"consorcios", label:"Consórcios", grupos:[
@@ -129,13 +137,20 @@ const SCHEMA = [
       {key:"consorcios.hero.botao", label:"Botão — texto", tipo:"texto", placeholder:"Simular minha parcela"},
       {key:"consorcios.hero.midia", label:"Foto ou vídeo de fundo", tipo:"midia"}
     ]},
+    { titulo:"Fotos dos consórcios", campos:[
+      {key:"consorcios.produtos.imovel.foto", label:"Imóvel", tipo:"imagem"},
+      {key:"consorcios.produtos.automovel.foto", label:"Automóvel", tipo:"imagem"},
+      {key:"consorcios.produtos.pesados.foto", label:"Pesados e máquinas", tipo:"imagem"},
+      {key:"consorcios.produtos.servicos.foto", label:"Serviços", tipo:"imagem"}
+    ]},
+    { titulo:"Faixa \"Como funciona\"", campos:[
+      {key:"consorcios.processo.visivel", label:"Mostrar esta faixa", tipo:"toggle"},
+      {key:"consorcios.processo.titulo", label:"Título", tipo:"texto", placeholder:"Como funciona"}
+    ]},
     { titulo:"Administradoras parceiras", campos:[
-      {key:"consorcios.administradoras.visivel", label:"Mostrar este bloco", tipo:"toggle"},
-      {key:"consorcios.administradoras.titulo", label:"Título", tipo:"texto", placeholder:"Quem administra o seu grupo."},
-      {key:"consorcios.administradoras.porto.titulo", label:"Porto Bank — título", tipo:"texto"},
-      {key:"consorcios.administradoras.porto.texto", label:"Porto Bank — texto", tipo:"textarea"},
-      {key:"consorcios.administradoras.ademicon.titulo", label:"Ademicon — título", tipo:"texto"},
-      {key:"consorcios.administradoras.ademicon.texto", label:"Ademicon — texto", tipo:"textarea"}
+      {key:"consorcios.administradoras.visivel", label:"Mostrar as administradoras", tipo:"toggle"},
+      {key:"consorcios.administradoras.porto.titulo", label:"Administradora 1", tipo:"texto", placeholder:"Porto Bank"},
+      {key:"consorcios.administradoras.ademicon.titulo", label:"Administradora 2", tipo:"texto", placeholder:"Ademicon"}
     ]},
     { titulo:"Banner de campanha", campos:[
       {key:"consorcios.banner.texto", label:"Texto do banner (vazio = não mostrar)", tipo:"texto", placeholder:"Ex.: Condições especiais de parcela até o fim do mês."}

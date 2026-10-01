@@ -3,20 +3,6 @@
 "use strict";
 const P = window.SoluaProductList;
 
-P.cards([
- {nome:"Imóvel", tipo:"Imóvel", texto:"Comprar, construir, reformar ou quitar financiamento, sem juros."},
- {nome:"Automóvel", tipo:"Automóvel", texto:"Novo ou seminovo, com crédito à vista para negociar melhor."},
- {nome:"Pesados e máquinas", tipo:"Pesados / Máquinas", texto:"Caminhões e equipamentos sem comprometer o capital de giro."},
- {nome:"Serviços", tipo:"Serviços", texto:"Reforma, viagem, estudos ou saúde, planejados em parcelas."}
-], "conCards", "Simular");
-
-P.passos([
- ["Simule a carta","Escolha o valor de crédito e o prazo que cabem no seu mês."],
- ["Entre no grupo","Indicamos o grupo com o melhor histórico de contemplação."],
- ["Seja contemplado","Por sorteio mensal ou por lance — explicamos cada modalidade."],
- ["Compre à vista","Use a carta como dinheiro na mão e negocie melhor."]
-], "conPassos");
-
 P.faq([
  ["Qual a diferença entre consórcio e financiamento?","No financiamento você paga juros ao banco e leva o bem na hora. No consórcio não há juros — apenas taxa de administração — e o bem vem na contemplação, por sorteio ou lance. Consórcio é para quem pode planejar; financiamento, para quem tem pressa."],
  ["Posso usar o FGTS no consórcio de imóvel?","Sim, em muitos casos. O FGTS pode ser usado para dar lance, complementar a carta de crédito ou amortizar parcelas, respeitando as regras da Caixa e da administradora. Analisamos seu caso antes de qualquer contratação."],

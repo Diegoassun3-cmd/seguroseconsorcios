@@ -30,24 +30,55 @@
   </div>
 </section>
 
-<section class="sec px-sec">
+<section class="px-sec">
   <div class="wrap rev">
-    <div class="px-head">
-      <h2>Para cada risco, uma cobertura.</h2>
-      <p>Comparamos as principais seguradoras do país e você decide com informação, não com pressão.</p>
+    <h2 class="px-tit">O que você quer proteger?</h2>
+    <div class="px-tiles">
+      <a class="px-tile" href="#simulador" data-simular="Auto">
+        <img data-cms="seguros.produtos.auto.foto" src="https://picsum.photos/seed/solua-seguros-auto/800/600" alt="Auto" loading="lazy">
+        <span>Auto<em>Cotar</em></span>
+      </a>
+      <a class="px-tile" href="#simulador" data-simular="Residencial">
+        <img data-cms="seguros.produtos.residencial.foto" src="https://picsum.photos/seed/solua-seguros-residencial/800/600" alt="Residencial" loading="lazy">
+        <span>Residencial<em>Cotar</em></span>
+      </a>
+      <a class="px-tile" href="#simulador" data-simular="Vida">
+        <img data-cms="seguros.produtos.vida.foto" src="https://picsum.photos/seed/solua-seguros-vida/800/600" alt="Vida" loading="lazy">
+        <span>Vida<em>Cotar</em></span>
+      </a>
+      <a class="px-tile" href="#simulador" data-simular="Viagem">
+        <img data-cms="seguros.produtos.viagem.foto" src="https://picsum.photos/seed/solua-seguros-viagem/800/600" alt="Viagem" loading="lazy">
+        <span>Viagem<em>Cotar</em></span>
+      </a>
+      <a class="px-tile" href="#simulador" data-simular="Garantia locatícia">
+        <img data-cms="seguros.produtos.fianca.foto" src="https://picsum.photos/seed/solua-seguros-fianca/800/600" alt="Fiança locatícia" loading="lazy">
+        <span>Fiança locatícia<em>Cotar</em></span>
+      </a>
+      <a class="px-tile" href="#simulador" data-simular="Empresarial">
+        <img data-cms="seguros.produtos.empresarial.foto" src="https://picsum.photos/seed/solua-seguros-empresarial/800/600" alt="Empresarial" loading="lazy">
+        <span>Empresarial<em>Cotar</em></span>
+      </a>
+      <a class="px-tile" href="#simulador" data-simular="Saúde / Odonto">
+        <img data-cms="seguros.produtos.saude.foto" src="https://picsum.photos/seed/solua-seguros-saude/800/600" alt="Saúde e odonto" loading="lazy">
+        <span>Saúde e odonto<em>Cotar</em></span>
+      </a>
+      <a class="px-tile" href="#simulador" data-simular="Condomínio">
+        <img data-cms="seguros.produtos.condominio.foto" src="https://picsum.photos/seed/solua-seguros-condominio/800/600" alt="Condomínio e frota" loading="lazy">
+        <span>Condomínio e frota<em>Cotar</em></span>
+      </a>
     </div>
-    <div class="px-cards" id="segCards"></div>
   </div>
 </section>
 
-<section class="sec px-sec px-como" data-cms="seguros.processo.visivel" data-cms-tipo="toggle">
-  <div class="sec-bg" data-cms="seguros.processo.fundo" data-cms-media="bg"></div>
+<section class="px-sec px-como" data-cms="seguros.processo.visivel" data-cms-tipo="toggle">
   <div class="wrap rev">
-    <div class="px-head">
-      <h2 data-cms="seguros.processo.titulo">Quatro passos. Nenhuma surpresa.</h2>
-      <p data-cms="seguros.processo.texto">Do primeiro contato à renovação, com o mesmo consultor.</p>
-    </div>
-    <ol class="px-passos" id="segPassos"></ol>
+    <ol class="px-passos">
+      <li class="px-passos-tit" data-cms="seguros.processo.titulo">Como funciona</li>
+      <li><span>01</span>Você conta o que precisa</li>
+      <li><span>02</span>Cotamos nas seguradoras</li>
+      <li><span>03</span>Comparamos com você</li>
+      <li><span>04</span>Cuidamos do sinistro e da renovação</li>
+    </ol>
   </div>
 </section>
 
@@ -56,19 +87,18 @@
   <div class="wrap qf-grid rev">
     <div class="qf-lado">
       <h2>Sua cotação começa aqui.</h2>
-      <p>Leva menos de dois minutos. Um consultor Solua retorna em até 1 dia útil com o comparativo pronto.</p>
-      <small>Seus dados são usados só para a cotação. Nunca vendemos ou compartilhamos suas informações.</small>
+      <p>Menos de dois minutos. Um consultor retorna em até 1 dia útil com o comparativo pronto.</p>
     </div>
     <div id="quoteMount"></div>
   </div>
 </section>
 
 <!-- FAQ -->
-<section class="sec px-sec">
+<section class="px-sec px-ult">
   <div class="wrap px-faq rev">
     <div class="px-faq-lado">
       <h2>Perguntas frequentes</h2>
-      <p>Não encontrou o que procurava? <a href="contato.html">Fale com a gente</a>.</p>
+      <p>Não achou sua dúvida? <a href="contato.html">Fale com a gente</a>.</p>
     </div>
     <div class="list faq" id="faqList"></div>
   </div>

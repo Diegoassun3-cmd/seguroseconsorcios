@@ -22,8 +22,8 @@ Não precisa de build (`npm run build`) — é HTML/CSS/JS puro mais um
 index.html                      → Home (resumo das 3 frentes + destaques + blog)
 imoveis.html                    → catálogo de imóveis (filtros)
 imovel.html                     → detalhe de um imóvel (galeria, ficha, interesse)
-seguros.html                    → cards de seguro + como funciona + simulador + FAQ
-consorcios.html                 → cards de consórcio + como funciona/parceiras + simulador + FAQ
+seguros.html                    → fotos dos seguros + como funciona + simulador + FAQ
+consorcios.html                 → fotos dos consórcios + como funciona + simulador + FAQ
 blog.html                       → catálogo completo do blog (filtro por categoria)
 sobre.html                      → história (linha do tempo) + equipe pública
 contato.html                    → formulário geral de contato
@@ -727,22 +727,22 @@ no site **neste navegador**; pra aparecer pra todos os visitantes é
 preciso o passo 1 de "Para produção" abaixo (catálogo no D1 + fotos num
 armazenamento de arquivos como o R2).
 
-### Seguros e Consórcios (layout limpo)
+### Seguros e Consórcios
 
-As duas páginas seguem a mesma sequência, toda em fundo creme e separada
-só por espaço: foto grande no topo → **cards de produto** (título, uma
-frase e "Cotar"/"Simular") → **como funciona** em 4 passos numerados (em
-Consórcios, com as administradoras logo abaixo) → **simulador** (único
-bloco em tom mais escuro, como o formulário do Contato) → **FAQ** em duas
-colunas.
+As duas páginas têm pouco texto e a mesma sequência: foto grande no topo →
+**fotos dos produtos** (só o nome sobre a foto) → **faixa fina "Como
+funciona"** com 4 passos de uma linha → **simulador** (bloco em tom mais
+escuro) → **FAQ** em duas colunas. Em Consórcios as administradoras
+parceiras aparecem numa linha ao lado do simulador.
 
-- O link "Cotar"/"Simular" de cada card já escolhe aquele tipo no simulador
-  e rola até ele (evento `solua:simular`, ouvido por `quote-flow.js`).
-- O simulador mostra as etapas numa barra no topo do card, os tipos em
-  pílulas e os campos sublinhados. Valores (carta de crédito, valor do
-  imóvel, capital, aluguel, faturamento) ganham máscara `R$ 300.000`.
-- Dados dos cards, passos e FAQ: `assets/js/seguros.js` e
-  `assets/js/consorcios.js`.
+- Clicar numa foto leva ao simulador com aquele tipo já escolhido (evento
+  `solua:simular`, ouvido por `quote-flow.js`).
+- No celular as fotos viram uma fileira que se arrasta para o lado.
+- As fotos de cada produto são trocadas em Design → Seguros/Consórcios →
+  "Fotos dos seguros" / "Fotos dos consórcios".
+- Simulador: etapas numa barra no topo, tipos em pílulas, campos
+  sublinhados, botões no formato pílula do site e máscara `R$ 300.000` nos
+  campos de valor.
 
 ## Para produção (multiusuário completo)
 

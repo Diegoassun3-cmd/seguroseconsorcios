@@ -32,35 +32,39 @@
   </div>
 </section>
 
-<section class="sec px-sec">
+<section class="px-sec">
   <div class="wrap rev">
-    <div class="px-head">
-      <h2>Um plano para cada objetivo.</h2>
-      <p>Sem juros, com parcela que cabe no mês — e tudo explicado antes de você assinar.</p>
+    <h2 class="px-tit">O que você quer conquistar?</h2>
+    <div class="px-tiles">
+      <a class="px-tile" href="#simulador" data-simular="Imóvel">
+        <img data-cms="consorcios.produtos.imovel.foto" src="https://picsum.photos/seed/solua-consorcios-imovel/800/600" alt="Imóvel" loading="lazy">
+        <span>Imóvel<em>Simular</em></span>
+      </a>
+      <a class="px-tile" href="#simulador" data-simular="Automóvel">
+        <img data-cms="consorcios.produtos.automovel.foto" src="https://picsum.photos/seed/solua-consorcios-automovel/800/600" alt="Automóvel" loading="lazy">
+        <span>Automóvel<em>Simular</em></span>
+      </a>
+      <a class="px-tile" href="#simulador" data-simular="Pesados / Máquinas">
+        <img data-cms="consorcios.produtos.pesados.foto" src="https://picsum.photos/seed/solua-consorcios-pesados/800/600" alt="Pesados e máquinas" loading="lazy">
+        <span>Pesados e máquinas<em>Simular</em></span>
+      </a>
+      <a class="px-tile" href="#simulador" data-simular="Serviços">
+        <img data-cms="consorcios.produtos.servicos.foto" src="https://picsum.photos/seed/solua-consorcios-servicos/800/600" alt="Serviços" loading="lazy">
+        <span>Serviços<em>Simular</em></span>
+      </a>
     </div>
-    <div class="px-cards" id="conCards"></div>
   </div>
 </section>
 
-<section class="sec px-sec px-como">
+<section class="px-sec px-como" data-cms="consorcios.processo.visivel" data-cms-tipo="toggle">
   <div class="wrap rev">
-    <div class="px-head">
-      <h2>Como funciona.</h2>
-      <p>Consórcio é planejamento: você compra poder de compra, não dívida.</p>
-    </div>
-    <ol class="px-passos" id="conPassos"></ol>
-    <!-- ADMINISTRADORAS PARCEIRAS -->
-    <div class="px-adm" data-cms="consorcios.administradoras.visivel" data-cms-tipo="toggle">
-      <h3 data-cms="consorcios.administradoras.titulo">Quem administra o seu grupo.</h3>
-      <div>
-        <b data-cms="consorcios.administradoras.porto.titulo">Porto Bank</b>
-        <p data-cms="consorcios.administradoras.porto.texto">Braço financeiro do grupo Porto, com grupos de imóvel e automóvel e histórico consolidado de contemplações.</p>
-      </div>
-      <div>
-        <b data-cms="consorcios.administradoras.ademicon.titulo">Ademicon</b>
-        <p data-cms="consorcios.administradoras.ademicon.texto">Uma das maiores administradoras independentes do Brasil, com planos de parcelas flexíveis.</p>
-      </div>
-    </div>
+    <ol class="px-passos">
+      <li class="px-passos-tit" data-cms="consorcios.processo.titulo">Como funciona</li>
+      <li><span>01</span>Simule a carta</li>
+      <li><span>02</span>Entre no grupo</li>
+      <li><span>03</span>Seja contemplado</li>
+      <li><span>04</span>Compre à vista</li>
+    </ol>
   </div>
 </section>
 
@@ -69,19 +73,19 @@
   <div class="wrap qf-grid rev">
     <div class="qf-lado">
       <h2>Sua simulação começa aqui.</h2>
-      <p>Escolha o tipo, informe o valor da carta e o prazo. Um consultor Solua retorna em até 1 dia útil.</p>
-      <small>Seus dados são usados só para a simulação. Nunca vendemos ou compartilhamos suas informações.</small>
+      <p>Escolha o tipo, o valor da carta e o prazo. Um consultor retorna em até 1 dia útil.</p>
+      <p class="qf-adm" data-cms="consorcios.administradoras.visivel" data-cms-tipo="toggle">Administradoras parceiras: <b data-cms="consorcios.administradoras.porto.titulo">Porto Bank</b> · <b data-cms="consorcios.administradoras.ademicon.titulo">Ademicon</b></p>
     </div>
     <div id="quoteMount"></div>
   </div>
 </section>
 
 <!-- FAQ -->
-<section class="sec px-sec">
+<section class="px-sec px-ult">
   <div class="wrap px-faq rev">
     <div class="px-faq-lado">
       <h2>Perguntas frequentes</h2>
-      <p>Não encontrou o que procurava? <a href="contato.html">Fale com a gente</a>.</p>
+      <p>Não achou sua dúvida? <a href="contato.html">Fale com a gente</a>.</p>
     </div>
     <div class="list faq" id="faqList"></div>
   </div>

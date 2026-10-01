@@ -39,7 +39,7 @@ function shellHtml(ramo){
       <h3>${seg?"Que seguro você quer cotar?":"Qual consórcio te interessa?"}</h3>
       <div class="qf-tipos" id="qTipos" role="radiogroup"></div>
       <div class="qf-campos" id="qDet"></div>
-      <div class="qf-nav"><span></span><button type="button" class="qf-btn" id="qN1">Continuar</button></div>
+      <div class="qf-nav"><span></span><button type="button" class="btn lg" id="qN1">Continuar</button></div>
     </div>
     <div class="stepv" data-step="2">
       <h3>Como falamos com você?</h3>
@@ -50,19 +50,19 @@ function shellHtml(ramo){
         <div class="f full"><label for="qCidade">Cidade</label><input id="qCidade" placeholder="Campinas" autocomplete="address-level2"></div>
         <div class="f full"><label for="qObs">Quer adiantar algo? <em>(opcional)</em></label><textarea id="qObs" rows="1" placeholder="Conte o que for útil."></textarea></div>
       </div>
-      <div class="qf-nav"><button type="button" class="qf-voltar" data-qback>← Voltar</button><button type="button" class="qf-btn" id="qN2">Continuar</button></div>
+      <div class="qf-nav"><button type="button" class="qf-voltar" data-qback>← Voltar</button><button type="button" class="btn lg" id="qN2">Continuar</button></div>
     </div>
     <div class="stepv" data-step="3">
       <h3>Confira e envie</h3>
       <dl class="qf-resumo" id="qResumo"></dl>
       <label class="qf-lgpd"><input type="checkbox" id="qLgpd"><span>Autorizo a Solua a entrar em contato e tratar meus dados para a ${seg?"cotação":"simulação"}, conforme a LGPD.</span></label>
-      <div class="qf-nav"><button type="button" class="qf-voltar" data-qback>← Voltar</button><button type="button" class="qf-btn" id="qSend">Enviar ${seg?"cotação":"simulação"}</button></div>
+      <div class="qf-nav"><button type="button" class="qf-voltar" data-qback>← Voltar</button><button type="button" class="btn lg" id="qSend">Enviar ${seg?"cotação":"simulação"}</button></div>
     </div>
     <div class="done-v qf-ok" id="qDone">
       <div class="ok"></div>
       <h3>Recebemos sua solicitação.</h3>
       <p>Um consultor Solua retorna em até 1 dia útil. Se preferir adiantar, chame no WhatsApp.</p>
-      <a class="qf-btn" id="qWppLink" target="_blank" rel="noopener">Falar no WhatsApp agora</a>
+      <a class="btn lg" id="qWppLink" target="_blank" rel="noopener">Falar no WhatsApp agora</a>
     </div>
   </div>`;
 }
