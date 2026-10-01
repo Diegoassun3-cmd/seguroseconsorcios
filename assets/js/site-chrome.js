@@ -263,6 +263,7 @@ function arrastar(el, o){
   el.style.touchAction = "pan-y";
   el.addEventListener("pointerdown", e=>{
     if(e.button>0 || (o.ignorar && e.target.closest(o.ignorar))) return;
+    el._arrastou = false;
     x0 = e.clientX; y0 = e.clientY; el.classList.add("dragging");
   });
   const soltar = e=>{
@@ -270,8 +271,10 @@ function arrastar(el, o){
     if(x0==null) return;
     const dx = e.clientX - x0, dy = e.clientY - y0;
     x0 = null;
+    if(Math.abs(dx) > 10) el._arrastou = true;   // o "click" que vem depois do arraste não conta
     if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) (dx < 0 ? o.proxima : o.anterior)();
   };
+  el.addEventListener("click", e=>{ if(el._arrastou){ el._arrastou = false; e.preventDefault(); e.stopPropagation(); } }, true);
   el.addEventListener("pointerup", soltar);
   el.addEventListener("pointerleave", e=>{ if(x0!=null && e.pointerType==="mouse") soltar(e); });
   el.addEventListener("pointercancel", ()=>{ x0 = null; el.classList.remove("dragging"); });

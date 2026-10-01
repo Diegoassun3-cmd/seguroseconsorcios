@@ -68,39 +68,180 @@ body.innerHTML = `<div style="text-align:center;padding:60px 0">
 
 document.title = `${imovel.titulo} — Solua`;
 
-function galleryHtml(){
-  const fotos = (imovel.fotos||[]).length ? imovel.fotos : [""];
-  return `
-  <div class="prop-gallery">
-    <div class="pg-main" id="pgMain">
-      ${fotos.map((f,i)=>`<div class="pg-slide${i===0?" on":""}" ${fotoAttr(f)} style="background-image:url('${DB.esc(fotoSrc(f))}')" role="img" aria-label="${DB.esc(imovel.titulo)} — foto ${i+1}"></div>`).join("")}
+// ---------------------------------------------------------- fotos
+// Mosaico (1 grande + 2 empilhadas) → clicar abre a galeria completa
+// (1 larga, 2 lado a lado, …) → clicar numa foto abre em tela cheia.
+const FOTOS = (imovel.fotos||[]).length ? imovel.fotos.slice() : [""];
+const temFotoReal = (imovel.fotos||[]).length > 0;
+const esc = DB.esc;
+const ICO_G = {
+  galeria:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="9" cy="9.5" r="1.8"/><path d="M20 15.5l-4.5-4.5L6 20.5"/></svg>`,
+  video:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="M16 10.5l5-3v9l-5-3"/></svg>`,
+  x:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>`,
+  share:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="M8.2 10.8l7.6-4M8.2 13.2l7.6 4"/></svg>`
+};
+function urlVideo(){ return /^https?:\/\//i.test(imovel.videoUrl||"") ? imovel.videoUrl : ""; }
+function embedVideo(u){
+  const yt = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
+  if(yt) return `https://www.youtube.com/embed/${yt[1]}`;
+  const vm = u.match(/vimeo\.com\/(\d+)/);
+  if(vm) return `https://player.vimeo.com/video/${vm[1]}`;
+  return "";
+}
+function bgFoto(ref){ return `${ref?`data-midia="${esc(ref)}"`:""} style="background-image:url('${esc(fotoSrc(ref))}')"`; }
+
+function breadcrumbHtml(){
+  const itens = [["imoveis.html","Imóveis"]];
+  if(imovel.cidade) itens.push([`imoveis.html?q=${encodeURIComponent(imovel.cidade)}`, imovel.cidade]);
+  if(imovel.bairro) itens.push([`imoveis.html?bairro=${encodeURIComponent(imovel.bairro)}`, imovel.bairro]);
+  if(imovel.tipo) itens.push([`imoveis.html?tipo=${encodeURIComponent(imovel.tipo)}${imovel.bairro?`&bairro=${encodeURIComponent(imovel.bairro)}`:""}`, imovel.tipo]);
+  return `<nav class="pd-bread" aria-label="Você está em">${itens.map(([h,t])=>`<a href="${h}">${esc(t)}</a>`).join(`<span aria-hidden="true">›</span>`)}</nav>`;
+}
+function mosaicoHtml(){
+  const n = FOTOS.length;
+  const lado = n>=3 ? [1,2] : n===2 ? [1] : [];
+  const video = urlVideo();
+  return `<div class="pd-mosaico pd-n${Math.min(n,3)}">
+    <div class="pd-m pd-m1" role="button" tabindex="0" data-abrir="0" aria-label="Abrir galeria de fotos" ${bgFoto(FOTOS[0])}>
+      ${n>1 ? `<span class="pd-cont" id="pdCont">1 / ${n}</span>` : ""}
+      ${video ? `<button type="button" class="pd-chip" data-video="1">Vídeo ${ICO_G.video}</button>` : ""}
+      ${temFotoReal ? `<span class="pd-chip pd-chip-dir ${n>=3?"pd-so-cel":""}">Galeria${n>1?` (${n})`:""} ${ICO_G.galeria}</span>` : ""}
     </div>
-    ${fotos.length>1 ? `<div class="pg-dots" id="pgDots">${fotos.map((_,i)=>`<button type="button" class="${i===0?"on":""}" data-i="${i}" aria-label="Foto ${i+1}"></button>`).join("")}</div>` : ""}
+    ${lado.map((ix,k)=>`<div class="pd-m pd-m${ix+1}" role="button" tabindex="0" data-abrir="${ix}" aria-label="Abrir foto ${ix+1} na galeria" ${bgFoto(FOTOS[ix])}>
+      ${k===lado.length-1 ? `<span class="pd-chip">Galeria${n>3?` (${n})`:""} ${ICO_G.galeria}</span>` : ""}
+    </div>`).join("")}
   </div>`;
 }
 
-function ligarGaleria(){
-  const main = document.getElementById("pgMain");
-  const slides = main.querySelectorAll(".pg-slide");
-  const dots = document.querySelectorAll("#pgDots button");
-  if(slides.length<2) return;
-  let idx = 0, auto = null, pausado = false;
-  function ir(i){
-    idx = (i + slides.length) % slides.length;
-    slides.forEach((s,j)=> s.classList.toggle("on", j===idx));
-    dots.forEach((d,j)=>{ d.classList.toggle("on", j===idx); d.setAttribute("aria-current", j===idx ? "true" : "false"); });
-  }
-  function reiniciar(){ clearInterval(auto); if(!pausado) auto = setInterval(()=> ir(idx+1), 6000); }
-  dots.forEach(d=> d.onclick = ()=>{ ir(+d.dataset.i); reiniciar(); });
-  // sem setas: arrastar/deslizar (ou setas do teclado) troca a foto
-  main.classList.add("arrastavel");
-  main.setAttribute("aria-roledescription","carrossel");
-  main.setAttribute("aria-label", `Fotos do imóvel (${slides.length}) — arraste ou use as setas do teclado`);
-  window.SoluaChrome.arrastar(main, {anterior:()=>{ ir(idx-1); reiniciar(); }, proxima:()=>{ ir(idx+1); reiniciar(); }});
-  main.addEventListener("mouseenter", ()=>{ pausado = true; clearInterval(auto); });
-  main.addEventListener("mouseleave", ()=>{ pausado = false; reiniciar(); });
-  reiniciar();
+function galeriaHtml(){
+  const v = urlVideo(), emb = v ? embedVideo(v) : "";
+  return `<div class="pd-gal-topo">
+      <div><b>${esc(imovel.titulo)}</b><small>${FOTOS.length} foto${FOTOS.length===1?"":"s"}${imovel.codigo?` · ${esc(imovel.codigo)}`:""}</small></div>
+      <button type="button" class="pd-gal-btn" id="pdShare">${ICO_G.share}<span>Compartilhar</span></button>
+      <button type="button" class="pd-gal-btn pd-gal-x" id="pdFechar" aria-label="Fechar galeria">${ICO_G.x}</button>
+    </div>
+    <div class="pd-gal-grade">
+      ${emb ? `<div class="pd-gal-video"><iframe src="${esc(emb)}" title="Vídeo do imóvel" allow="autoplay; encrypted-media; fullscreen" allowfullscreen loading="lazy"></iframe></div>`
+        : v ? `<a class="pd-gal-video-link" href="${esc(v)}" target="_blank" rel="noopener">${ICO_G.video} Assistir ao vídeo do imóvel</a>` : ""}
+      ${FOTOS.map((ref,i)=>`<button type="button" class="pd-gal-it ${i%3===0?"larga":""}" data-zoom="${i}" aria-label="Ver foto ${i+1} em tela cheia">
+        <img ${ref?`data-midia="${esc(ref)}"`:""} src="${esc(fotoSrc(ref))}" alt="${esc(imovel.titulo)} — foto ${i+1}" loading="lazy"></button>`).join("")}
+    </div>`;
 }
+
+let galEl = null, zoomEl = null, zoomIx = 0, focoAntes = null;
+function abrirGaleria(ix, empilhar){
+  if(!temFotoReal && !urlVideo()) return;
+  focoAntes = document.activeElement;
+  if(!galEl){
+    galEl = document.createElement("div");
+    galEl.className = "pd-gal"; galEl.id = "pdGaleria";
+    galEl.setAttribute("role","dialog"); galEl.setAttribute("aria-modal","true"); galEl.setAttribute("aria-label","Galeria de fotos");
+    galEl.innerHTML = galeriaHtml();
+    document.body.appendChild(galEl);
+    MID.hidratar(galEl);
+    galEl.addEventListener("click", e=>{
+      if(e.target.closest("#pdFechar")){ fecharGaleria(); return; }
+      if(e.target.closest("#pdShare")){ compartilhar(); return; }
+      const z = e.target.closest("[data-zoom]"); if(z) abrirZoom(+z.dataset.zoom);
+    });
+  }
+  galEl.classList.add("on");
+  document.documentElement.classList.add("pd-travado");
+  if(empilhar!==false) history.pushState({pdGaleria:true}, "", "#galeria");
+  const alvo = galEl.querySelector(`[data-zoom="${ix||0}"]`);
+  requestAnimationFrame(()=>{
+    if(ix && alvo) alvo.scrollIntoView({block:"center"}); else galEl.scrollTop = 0;
+    galEl.querySelector("#pdFechar").focus({preventScroll:true});
+  });
+}
+function fecharGaleria(viaHistorico){
+  if(!galEl || !galEl.classList.contains("on")) return;
+  fecharZoom(true);
+  galEl.classList.remove("on");
+  document.documentElement.classList.remove("pd-travado");
+  const v = galEl.querySelector("iframe"); if(v) v.src = v.src;   // para o vídeo
+  if(!viaHistorico && location.hash==="#galeria") history.back();
+  if(focoAntes && focoAntes.focus) focoAntes.focus({preventScroll:true});
+}
+function abrirZoom(ix){
+  if(!zoomEl){
+    zoomEl = document.createElement("div");
+    zoomEl.className = "pd-zoom"; zoomEl.setAttribute("role","dialog"); zoomEl.setAttribute("aria-modal","true"); zoomEl.setAttribute("aria-label","Foto em tela cheia");
+    zoomEl.innerHTML = `<div class="pd-zoom-topo"><span id="pdZoomCont"></span><button type="button" class="pd-gal-btn pd-gal-x" id="pdZoomX" aria-label="Fechar foto">${ICO_G.x}</button></div>
+      <div class="pd-zoom-palco" id="pdZoomPalco" tabindex="0"><img id="pdZoomImg" alt=""></div>`;
+    document.body.appendChild(zoomEl);
+    zoomEl.querySelector("#pdZoomX").onclick = ()=> fecharZoom();
+    zoomEl.addEventListener("click", e=>{ if(e.target===zoomEl || e.target.id==="pdZoomPalco") fecharZoom(); });
+    window.SoluaChrome.arrastar(zoomEl.querySelector("#pdZoomPalco"), {anterior:()=> mostrarZoom(zoomIx-1), proxima:()=> mostrarZoom(zoomIx+1)});
+  }
+  zoomEl.classList.add("on");
+  mostrarZoom(ix);
+  zoomEl.querySelector("#pdZoomPalco").focus({preventScroll:true});
+}
+function mostrarZoom(ix){
+  zoomIx = (ix + FOTOS.length) % FOTOS.length;
+  const img = zoomEl.querySelector("#pdZoomImg"), ref = FOTOS[zoomIx];
+  img.alt = `${imovel.titulo} — foto ${zoomIx+1}`;
+  img.src = fotoSrc(ref);
+  if(ref && MID.ehRef(ref)) MID.url(ref).then(u=>{ if(u && FOTOS[zoomIx]===ref) img.src = u; });
+  zoomEl.querySelector("#pdZoomCont").textContent = `${zoomIx+1} / ${FOTOS.length}`;
+}
+function fecharZoom(silencioso){
+  if(!zoomEl || !zoomEl.classList.contains("on")) return;
+  zoomEl.classList.remove("on");
+  if(!silencioso && galEl){ const it = galEl.querySelector(`[data-zoom="${zoomIx}"]`); if(it){ it.scrollIntoView({block:"center"}); it.focus({preventScroll:true}); } }
+}
+function compartilhar(){
+  const dados = {title: imovel.titulo, text: `${imovel.titulo} — ${DB.precoImovelTexto(imovel)}`, url: location.href.split("#")[0]};
+  if(navigator.share) navigator.share(dados).catch(()=>{});
+  else if(navigator.clipboard) navigator.clipboard.writeText(dados.url).then(()=>{
+    const b = document.getElementById("pdShare"); const t = b.querySelector("span"); t.textContent = "Link copiado!"; setTimeout(()=> t.textContent = "Compartilhar", 1800);
+  });
+}
+
+function ligarGaleria(){
+  const mos = body.querySelector(".pd-mosaico");
+  mos.addEventListener("click", e=>{
+    if(e.target.closest("[data-video]")){
+      e.stopPropagation();
+      const v = urlVideo();
+      if(embedVideo(v)) abrirGaleria(0); else window.open(v, "_blank", "noopener");
+      return;
+    }
+    const t = e.target.closest("[data-abrir]");
+    if(t) abrirGaleria(+t.dataset.abrir === 0 && celular() ? idxCel : +t.dataset.abrir);
+  });
+  mos.addEventListener("keydown", e=>{
+    const t = e.target.closest(".pd-m[data-abrir]");
+    if(t && (e.key==="Enter" || e.key===" ") && e.target===t){ e.preventDefault(); abrirGaleria(+t.dataset.abrir); }
+  });
+  // no celular a foto grande desliza por todas as fotos; tocar abre a galeria
+  const m1 = mos.querySelector(".pd-m1");
+  if(FOTOS.length>1) window.SoluaChrome.arrastar(m1, {anterior:()=> trocarCel(idxCel-1), proxima:()=> trocarCel(idxCel+1), ignorar:".pd-chip"});
+}
+const celular = ()=> matchMedia("(max-width: 760px)").matches;
+let idxCel = 0;
+function trocarCel(i){
+  if(!celular()) return;
+  idxCel = (i + FOTOS.length) % FOTOS.length;
+  const m1 = body.querySelector(".pd-m1"), ref = FOTOS[idxCel];
+  m1.style.backgroundImage = `url('${fotoSrc(ref)}')`;
+  if(ref && MID.ehRef(ref)) MID.url(ref).then(u=>{ if(u && FOTOS[idxCel]===ref) m1.style.backgroundImage = `url('${u}')`; });
+  const c = document.getElementById("pdCont"); if(c) c.textContent = `${idxCel+1} / ${FOTOS.length}`;
+}
+document.addEventListener("keydown", e=>{
+  if(zoomEl && zoomEl.classList.contains("on")){
+    if(e.key==="Escape"){ e.preventDefault(); fecharZoom(); }
+    if(e.key==="ArrowRight" && e.target.id!=="pdZoomPalco") mostrarZoom(zoomIx+1);
+    if(e.key==="ArrowLeft" && e.target.id!=="pdZoomPalco") mostrarZoom(zoomIx-1);
+    return;
+  }
+  if(galEl && galEl.classList.contains("on") && e.key==="Escape"){ e.preventDefault(); fecharGaleria(); }
+});
+addEventListener("popstate", ()=>{
+  if(location.hash==="#galeria") abrirGaleria(0, false);
+  else fecharGaleria(true);
+});
 
 function fichaHtml(){
   const semComodos = ["Terreno","Sala comercial","Loja","Galpão","Rural"].includes(imovel.tipo);
@@ -182,8 +323,8 @@ function mapaHtml(){
 }
 
 body.innerHTML = `
-  <div class="lbl" style="margin-bottom:16px"><a href="imoveis.html" style="color:var(--tinta-35)">← Voltar ao catálogo</a></div>
-  ${galleryHtml()}
+  ${breadcrumbHtml()}
+  ${mosaicoHtml()}
   <div class="prop-detail-grid">
     <div>
       <span class="num">${DB.esc(imovel.tipo)}${imovel.codigo?` · ${DB.esc(imovel.codigo)}`:""}</span>
@@ -205,6 +346,7 @@ body.innerHTML = `
 
 ligarGaleria();
 MID.hidratar(body);
+if(location.hash==="#galeria") history.replaceState(null, "", location.pathname + location.search);
 
 document.getElementById("piFone").oninput = e=>{ let v=e.target.value.replace(/\D/g,"").slice(0,11);
   e.target.value = v.length>10 ? v.replace(/(\d{2})(\d{5})(\d{4})/,"($1) $2-$3") : v.length>6 ? v.replace(/(\d{2})(\d{4})(\d{0,4})/,"($1) $2-$3") : v.length>2 ? v.replace(/(\d{2})(\d*)/,"($1) $2") : v; };

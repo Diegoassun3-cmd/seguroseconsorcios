@@ -677,11 +677,20 @@ O item **Imóveis** da barra superior virou um menu com setinha:
   selos de destaque, comodidades, plantas, links de vídeo/tour e mapa
   (exato ou só do bairro, conforme a opção).
 
-**Carrosséis de fotos (topo da Home e galeria do imóvel)**: sem setas —
-troca arrastando com o mouse, deslizando o dedo no celular ou com as setas
-do teclado; as "retinhas" embaixo continuam clicáveis e a troca automática
-recomeça depois de cada troca manual (na galeria, pausa com o mouse em
-cima). A lógica é uma só, `SoluaChrome.arrastar` em `site-chrome.js`.
+**Topo da Home**: sem setas — troca arrastando com o mouse, deslizando o
+dedo ou com as setas do teclado; as "retinhas" continuam clicáveis.
+
+**Fotos na página do imóvel**: caminho clicável (Imóveis › cidade › bairro
+› tipo) e mosaico com a foto principal grande e duas menores ao lado, com
+os botões "Vídeo" (se o imóvel tiver) e "Galeria". Clicar em qualquer foto
+abre a galeria completa por cima da página (vídeo no topo quando é do
+YouTube/Vimeo, depois as fotos alternando uma larga e duas lado a lado),
+com "Compartilhar". Clicar numa foto da galeria abre em tela cheia, onde
+se passa arrastando, deslizando ou com as setas do teclado; Esc e o
+"voltar" do navegador fecham. No celular aparece só a foto grande, que
+desliza por todas (com contador "2 / 6"), e tocar abre a galeria. O
+arrastar é um só para o site todo: `SoluaChrome.arrastar` em
+`site-chrome.js`.
 
 **Página pública de Imóveis** (`imoveis.html`): topo com foto, "Comprar |
 Alugar" e uma busca por bairro ou código (com sugestões enquanto digita;

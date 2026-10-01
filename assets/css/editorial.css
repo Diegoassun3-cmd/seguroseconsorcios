@@ -17,9 +17,9 @@
 .hero-dots{position:absolute;right:var(--pad);bottom:26px;z-index:1;display:flex;gap:8px}
 .hero-dots button{width:26px;height:3px;border:none;background:rgba(242,237,230,.35);cursor:pointer;padding:0;transition:.3s}
 .hero-dots button.on{background:var(--creme)}
-#heroPhoto,.pg-main.arrastavel{cursor:grab;user-select:none}
-#heroPhoto.dragging,.pg-main.arrastavel.dragging{cursor:grabbing}
-#heroPhoto:focus-visible,.pg-main:focus-visible{outline:3px solid color-mix(in srgb, var(--azul) 55%, transparent);outline-offset:-3px}
+#heroPhoto{cursor:grab;user-select:none}
+#heroPhoto.dragging{cursor:grabbing}
+#heroPhoto:focus-visible{outline:3px solid color-mix(in srgb, var(--azul) 55%, transparent);outline-offset:-3px}
 
 /* ---------- 3 frentes de negócio ---------- */
 .bizline-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--linha);border:1px solid var(--linha)}
@@ -52,20 +52,12 @@
 .prop-card .specs{display:flex;gap:14px;font-size:12.5px;color:var(--tinta-35);margin-top:10px;padding-top:10px}
 .prop-empty{padding:60px 0;text-align:center;color:var(--tinta-35)}
 
-/* ---------- página de detalhe do imóvel: carrossel de fotos ---------- */
-.pg-main{position:relative;aspect-ratio:16/9;max-height:560px;border-radius:20px;overflow:hidden;background:var(--creme-2)}
-.pg-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity .5s ease}
-.pg-slide.on{opacity:1}
-.pg-dots{display:flex;gap:6px;justify-content:center;margin-top:14px}
-.pg-dots button{width:22px;height:4px;border-radius:100px;border:none;background:rgba(21,24,28,.18);padding:0;cursor:pointer;transition:background .3s,width .3s}
-.pg-dots button.on{width:32px;background:var(--azul)}
 .prop-detail-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:60px;align-items:start;margin-top:44px}
 .prop-ficha{border:1px solid var(--linha);padding:26px}
 .prop-ficha .row{display:flex;justify-content:space-between;padding:9px 0;font-size:14px}
 .prop-ficha .row span:first-child{color:var(--tinta-60)}
 .prop-ficha .row b{font-weight:600}
 @media(max-width:960px){
-  .pg-main{aspect-ratio:4/3;max-height:none}
   .prop-detail-grid{grid-template-columns:1fr;gap:32px}
   .prop-grid,.prop-grid.wide{grid-template-columns:1fr 1fr}
 }
@@ -271,3 +263,64 @@ header.solid .search-trigger,.blue .search-trigger{border-color:rgba(21,24,28,.2
   .imf-grid{grid-template-columns:1fr}
   .imf-faixa{grid-template-columns:1fr 1fr}
 }
+
+/* ---------- detalhe do imóvel: mosaico de fotos + galeria ---------- */
+.pd-bread{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:15px;margin:4px 0 22px}
+.pd-bread a{color:var(--tinta-60);text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(21,24,28,.25)}
+.pd-bread a:hover{color:var(--azul)}
+.pd-bread span{color:var(--tinta-35);font-size:12px}
+.pd-mosaico{display:grid;grid-template-columns:2.45fr 1fr;grid-template-rows:1fr 1fr;gap:16px;height:clamp(340px,46vw,620px)}
+.pd-n2{grid-template-columns:1fr 1fr;grid-template-rows:1fr}
+.pd-n1{grid-template-columns:1fr;grid-template-rows:1fr}
+.pd-m{position:relative;border-radius:18px;background:var(--creme-2) center/cover no-repeat;cursor:pointer;overflow:hidden;outline:none}
+.pd-m:after{content:"";position:absolute;inset:0;background:rgba(21,24,28,0);transition:background .3s;pointer-events:none}
+.pd-m:hover:after{background:rgba(21,24,28,.08)}
+.pd-m:focus-visible{box-shadow:0 0 0 3px var(--azul)}
+.pd-mosaico:not(.pd-n1):not(.pd-n2) .pd-m1{grid-row:1/3}
+.pd-chip{position:absolute;left:22px;bottom:22px;z-index:1;display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--tinta);border:none;border-radius:12px;padding:12px 20px;font:inherit;font-size:16px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.12);transition:background .2s}
+.pd-chip svg{width:20px;height:20px}
+.pd-chip:hover{background:var(--creme)}
+.pd-chip-dir{left:auto;right:22px}
+.pd-m:not(.pd-m1) .pd-chip{left:22px;right:auto}
+.pd-cont{position:absolute;top:14px;right:14px;z-index:1;background:rgba(21,24,28,.62);color:#fff;font-size:12px;padding:5px 10px;border-radius:100px;display:none}
+.pd-so-cel{display:none}
+@media(max-width:760px){
+  .pd-mosaico,.pd-n2,.pd-n1{grid-template-columns:1fr;grid-template-rows:auto;height:auto}
+  .pd-mosaico .pd-m1{grid-row:auto!important;aspect-ratio:4/3}
+  .pd-m:not(.pd-m1){display:none}
+  .pd-cont{display:block}
+  .pd-so-cel{display:inline-flex}
+  .pd-chip{left:14px;bottom:14px;padding:10px 14px;font-size:14px;border-radius:10px}
+  .pd-chip-dir{left:auto;right:14px}
+}
+html.pd-travado{overflow:hidden}
+.pd-gal{position:fixed;inset:0;z-index:300;background:#fff;overflow-y:auto;display:none;animation:pdIn .2s ease}
+.pd-gal.on{display:block}
+@keyframes pdIn{from{opacity:0}to{opacity:1}}
+.pd-gal-topo{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:10px;padding:14px clamp(16px,3vw,40px);background:rgba(255,255,255,.94);backdrop-filter:blur(8px)}
+.pd-gal-topo > div{flex:1;min-width:0}
+.pd-gal-topo b{display:block;font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pd-gal-topo small{font-size:13px;color:var(--tinta-60)}
+.pd-gal-btn{display:inline-flex;align-items:center;gap:8px;border:none;background:none;font:inherit;font-size:14.5px;color:var(--tinta);padding:10px 14px;border-radius:100px;cursor:pointer;flex:none}
+.pd-gal-btn:hover{background:var(--creme)}
+.pd-gal-btn svg{width:20px;height:20px}
+.pd-gal-x{width:44px;height:44px;justify-content:center;padding:0;background:var(--creme)}
+.pd-gal-grade{max-width:1440px;margin:0 auto;padding:8px clamp(16px,3vw,40px) 60px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pd-gal-it{border:none;padding:0;background:var(--creme-2);border-radius:16px;overflow:hidden;cursor:zoom-in;aspect-ratio:4/3}
+.pd-gal-it.larga{grid-column:1/-1;aspect-ratio:16/7}
+.pd-gal-it img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.pd-gal-it:hover img{transform:scale(1.02)}
+.pd-gal-it:focus-visible{outline:3px solid var(--azul);outline-offset:2px}
+.pd-gal-video{grid-column:1/-1;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000}
+.pd-gal-video iframe{width:100%;height:100%;border:0;display:block}
+.pd-gal-video-link{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:10px;padding:22px;border-radius:16px;background:var(--creme);font-size:15px;color:var(--tinta)}
+.pd-gal-video-link svg{width:22px;height:22px}
+.pd-zoom{position:fixed;inset:0;z-index:310;background:rgba(10,12,14,.96);display:none;flex-direction:column}
+.pd-zoom.on{display:flex}
+.pd-zoom-topo{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;color:#fff;font-size:14px}
+.pd-zoom .pd-gal-x{background:rgba(255,255,255,.12);color:#fff}
+.pd-zoom .pd-gal-x:hover{background:rgba(255,255,255,.22)}
+.pd-zoom-palco{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:0 16px 24px;outline:none;cursor:grab;user-select:none}
+.pd-zoom-palco.dragging{cursor:grabbing}
+.pd-zoom-palco img{max-width:100%;max-height:100%;object-fit:contain;border-radius:10px;pointer-events:none}
+@media(max-width:760px){ .pd-gal-grade{grid-template-columns:1fr;gap:10px} .pd-gal-it.larga{aspect-ratio:4/3} .pd-gal-btn span{display:none} }
