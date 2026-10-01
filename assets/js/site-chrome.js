@@ -255,5 +255,34 @@ function renderGapCard(opts){
   return `<div class="wrap"><div class="gap-band ${align}">${renderFloatCard(opts)}</div></div>`;
 }
 
-window.SoluaChrome = { observeReveals, animateCounters, page, renderFloatCard, renderGapCard, refreshHeaderLogo, mapaUrl };
+// Carrosséis sem setas: arrastar com o mouse ou deslizar o dedo troca o
+// slide. Só conta movimento horizontal acima de 40px (rolagem vertical e
+// cliques curtos passam direto); setas do teclado também funcionam.
+function arrastar(el, o){
+  let x0 = null, y0 = null;
+  el.style.touchAction = "pan-y";
+  el.addEventListener("pointerdown", e=>{
+    if(e.button>0 || (o.ignorar && e.target.closest(o.ignorar))) return;
+    x0 = e.clientX; y0 = e.clientY; el.classList.add("dragging");
+  });
+  const soltar = e=>{
+    el.classList.remove("dragging");
+    if(x0==null) return;
+    const dx = e.clientX - x0, dy = e.clientY - y0;
+    x0 = null;
+    if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) (dx < 0 ? o.proxima : o.anterior)();
+  };
+  el.addEventListener("pointerup", soltar);
+  el.addEventListener("pointerleave", e=>{ if(x0!=null && e.pointerType==="mouse") soltar(e); });
+  el.addEventListener("pointercancel", ()=>{ x0 = null; el.classList.remove("dragging"); });
+  el.addEventListener("dragstart", e=> e.preventDefault());
+  if(!el.hasAttribute("tabindex")) el.tabIndex = 0;
+  el.addEventListener("keydown", e=>{
+    if(e.target!==el) return;
+    if(e.key==="ArrowRight"){ e.preventDefault(); o.proxima(); }
+    if(e.key==="ArrowLeft"){ e.preventDefault(); o.anterior(); }
+  });
+}
+
+window.SoluaChrome = { observeReveals, animateCounters, page, renderFloatCard, renderGapCard, refreshHeaderLogo, mapaUrl, arrastar };
 })();

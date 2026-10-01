@@ -80,18 +80,26 @@ function galleryHtml(){
 }
 
 function ligarGaleria(){
-  const slides = document.querySelectorAll("#pgMain .pg-slide");
+  const main = document.getElementById("pgMain");
+  const slides = main.querySelectorAll(".pg-slide");
   const dots = document.querySelectorAll("#pgDots button");
   if(slides.length<2) return;
-  let idx = 0;
-  function ir(n){
-    idx = n;
-    slides.forEach((s,i)=> s.classList.toggle("on", i===idx));
-    dots.forEach((d,i)=> d.classList.toggle("on", i===idx));
+  let idx = 0, auto = null, pausado = false;
+  function ir(i){
+    idx = (i + slides.length) % slides.length;
+    slides.forEach((s,j)=> s.classList.toggle("on", j===idx));
+    dots.forEach((d,j)=>{ d.classList.toggle("on", j===idx); d.setAttribute("aria-current", j===idx ? "true" : "false"); });
   }
-  dots.forEach(d=> d.onclick = ()=> ir(+d.dataset.i));
-  let auto = setInterval(()=> ir((idx+1)%slides.length), 6000);
-  document.getElementById("pgMain").addEventListener("mouseenter", ()=> clearInterval(auto));
+  function reiniciar(){ clearInterval(auto); if(!pausado) auto = setInterval(()=> ir(idx+1), 6000); }
+  dots.forEach(d=> d.onclick = ()=>{ ir(+d.dataset.i); reiniciar(); });
+  // sem setas: arrastar/deslizar (ou setas do teclado) troca a foto
+  main.classList.add("arrastavel");
+  main.setAttribute("aria-roledescription","carrossel");
+  main.setAttribute("aria-label", `Fotos do imóvel (${slides.length}) — arraste ou use as setas do teclado`);
+  window.SoluaChrome.arrastar(main, {anterior:()=>{ ir(idx-1); reiniciar(); }, proxima:()=>{ ir(idx+1); reiniciar(); }});
+  main.addEventListener("mouseenter", ()=>{ pausado = true; clearInterval(auto); });
+  main.addEventListener("mouseleave", ()=>{ pausado = false; reiniciar(); });
+  reiniciar();
 }
 
 function fichaHtml(){

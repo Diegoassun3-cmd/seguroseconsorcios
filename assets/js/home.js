@@ -42,31 +42,12 @@ if(heroEl){
   }
   reiniciarAuto();
 
-  const prevBtn = document.getElementById("heroPrev");
-  const nextBtn = document.getElementById("heroNext");
-  if(prevBtn) prevBtn.onclick = ()=> { go(idx-1); reiniciarAuto(); };
-  if(nextBtn) nextBtn.onclick = ()=> { go(idx+1); reiniciarAuto(); };
-
-  // arrastar (mouse) ou passar o dedo (touch) também troca a foto/vídeo —
-  // só conta como arraste acima de um limite mínimo, senão deixa o clique
-  // normal (num botão/link do hero) acontecer sem interferência
-  let dragStartX = null;
-  heroEl.addEventListener("pointerdown", e=>{
-    if(e.target.closest(".hero-arrow, .hero-dots, a, button")) return;
-    dragStartX = e.clientX;
-    heroEl.classList.add("dragging");
+  // sem setas: arrastar/deslizar (ou setas do teclado) troca a foto/vídeo
+  window.SoluaChrome.arrastar(heroEl, {
+    anterior: ()=>{ go(idx-1); reiniciarAuto(); },
+    proxima:  ()=>{ go(idx+1); reiniciarAuto(); },
+    ignorar: ".hero-dots, a, button, input"
   });
-  heroEl.addEventListener("pointerup", e=>{
-    heroEl.classList.remove("dragging");
-    if(dragStartX == null) return;
-    const delta = e.clientX - dragStartX;
-    dragStartX = null;
-    if(Math.abs(delta) > 40){
-      go(delta < 0 ? idx+1 : idx-1);
-      reiniciarAuto();
-    }
-  });
-  heroEl.addEventListener("pointerleave", ()=>{ dragStartX = null; heroEl.classList.remove("dragging"); });
 }
 
 /* IMÓVEIS EM DESTAQUE */

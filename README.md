@@ -677,6 +677,12 @@ O item **Imóveis** da barra superior virou um menu com setinha:
   selos de destaque, comodidades, plantas, links de vídeo/tour e mapa
   (exato ou só do bairro, conforme a opção).
 
+**Carrosséis de fotos (topo da Home e galeria do imóvel)**: sem setas —
+troca arrastando com o mouse, deslizando o dedo no celular ou com as setas
+do teclado; as "retinhas" embaixo continuam clicáveis e a troca automática
+recomeça depois de cada troca manual (na galeria, pausa com o mouse em
+cima). A lógica é uma só, `SoluaChrome.arrastar` em `site-chrome.js`.
+
 **Página pública de Imóveis** (`imoveis.html`): topo com foto, "Comprar |
 Alugar" e uma busca por bairro ou código (com sugestões enquanto digita;
 código completo, ex. `SOL-0008`, abre o imóvel direto). Abaixo, a barra
