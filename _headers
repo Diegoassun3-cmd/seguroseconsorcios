@@ -1,0 +1,6 @@
+# Cloudflare (Workers Static Assets): CSS e JS sempre revalidados, para que
+# uma atualização do site apareça na hora, sem precisar limpar o cache.
+/assets/css/*
+  Cache-Control: no-cache
+/assets/js/*
+  Cache-Control: no-cache

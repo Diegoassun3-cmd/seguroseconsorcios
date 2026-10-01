@@ -744,6 +744,14 @@ parceiras aparecem numa linha ao lado do simulador.
   sublinhados, botões no formato pílula do site e máscara `R$ 300.000` nos
   campos de valor.
 
+### Atualizações aparecendo na hora (cache)
+
+O arquivo `_headers` faz a Cloudflare mandar `Cache-Control: no-cache` para
+`/assets/css/*` e `/assets/js/*`: o navegador sempre confere se há versão
+nova antes de reaproveitar o arquivo. Os links de CSS/JS nas páginas também
+levam `?v=AAAAMMDDx`, o que força quem ainda tinha a versão antiga guardada
+a baixar a nova.
+
 ## Para produção (multiusuário completo)
 
 ### 1. Migrar leads/equipe/templates/campanhas/catálogo de imóveis para D1
