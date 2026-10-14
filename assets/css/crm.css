@@ -33,7 +33,7 @@ img{max-width:100%;display:block}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 ::selection{background:var(--azul);color:#fff}
-h1,h2,h3,h4{font-family:var(--font-display);font-weight:400;letter-spacing:-.02em;line-height:1.1}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;letter-spacing:-.02em;line-height:1.1}
 
 /* ---------- LOGIN ---------- */
 .auth-shell{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;background:#fff}
@@ -52,6 +52,7 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:400;letter-spacing:-.02e
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
 .field label{font-size:12.5px;color:var(--tinta-60);font-weight:600}
 .field input,.field select,.field textarea{border:1px solid var(--linha-forte);border-radius:var(--raio-sm);padding:11px 14px;font-size:14.5px;outline:none;background:#fff;transition:border-color .2s,box-shadow .2s}
+.field select{appearance:none;-webkit-appearance:none;padding-right:38px;cursor:pointer;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2315181C' stroke-width='1.6'%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 12px center/16px}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--azul);box-shadow:0 0 0 3px var(--azul-fundo)}
 .field.err input{border-color:var(--vermelho)}
 .field .errmsg{font-size:12px;color:var(--vermelho);display:none}
@@ -178,7 +179,9 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:400;letter-spacing:-.02e
 
 /* ---------- DASHBOARD (grade no estilo do painel de referência) ---------- */
 .dash-row1{display:grid;grid-template-columns:1fr 1.05fr 1.05fr;gap:16px;margin-bottom:16px;align-items:stretch}
-.dash-row2{display:grid;grid-template-columns:1fr 2.1fr;gap:16px;margin-bottom:16px;align-items:start}
+.dash-row2{display:grid;grid-template-columns:1fr 2.1fr;gap:16px;margin-bottom:16px;align-items:stretch}
+.dash-row2 > .card{display:flex;flex-direction:column}
+.dash-row2 > .card > .card-bd{flex:1}
 .dash-col{display:flex;flex-direction:column;gap:16px}
 .dash-row1 > *,.dash-row2 > *,.dash-col > *,.two-col > *{min-width:0}
 .saldo .lbl{font-size:14px;color:var(--tinta-60)}
@@ -322,6 +325,9 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:400;letter-spacing:-.02e
 
 /* ---------- FILTER BAR ---------- */
 .filterbar{display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+/* barra de filtros: busca e seletores com a mesma altura e o mesmo formato */
+.filterbar .tb-search{height:44px;width:auto;min-width:min(300px,100%);flex:0 1 300px}
+.filterbar select.pill{height:44px;padding:0 38px 0 16px;font-size:13px;color:var(--tinta);appearance:none;-webkit-appearance:none;cursor:pointer;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2315181C' stroke-width='1.6'%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 14px center/16px}
 .pill{font-size:12.5px;padding:8px 16px;border:1px solid transparent;border-radius:100px;background:#fff;color:var(--tinta-60);transition:.2s}
 .pill:hover{color:var(--tinta);border-color:var(--linha-forte)}
 .pill.on{background:var(--azul);color:#fff;border-color:var(--azul)}
@@ -447,7 +453,7 @@ td.rowactions .btn + .btn{margin-left:6px}
   .dash-row1 > :last-child{grid-column:1/-1}
 }
 @media(max-width:1180px){
-  .tb-search{display:none}
+  .tb-actions .tb-search{display:none}
   .kpis{grid-template-columns:repeat(2,1fr)!important}
   .two-col,.dash-row2{grid-template-columns:1fr}
 }
@@ -710,6 +716,7 @@ button.link:hover{text-decoration:underline}
 .gi-filtros h5{font-size:12px;font-weight:700;color:var(--tinta);margin:18px 0 8px;letter-spacing:.01em}
 .gi-filtros .field{margin-bottom:12px}
 .gi-filtros .field select,.gi-filtros .field input{padding:10px 12px;font-size:13.5px}
+.gi-filtros .field select{padding-right:36px}
 .gi-ajuda{font-size:12px;color:var(--tinta-45);margin:-4px 0 10px}
 .gi-seg{margin-bottom:12px}
 .gi-seg button{padding:7px 13px;font-size:12.5px}
@@ -859,3 +866,10 @@ button.link:hover{text-decoration:underline}
 .gi-acoes{align-items:center}
 @media(max-width:1380px){ .gi-lado{flex-direction:row;flex-wrap:wrap;align-items:flex-start} .gi-precos{flex:1 1 240px} .gi-meta{flex:2 1 320px;grid-template-columns:repeat(4,minmax(0,1fr))} .gi-inat,.gi-rodape{flex-basis:100%} }
 @media(max-width:900px){ .neg-cards{grid-template-columns:1fr} .motivos{grid-template-columns:1fr} .gi-meta{grid-template-columns:1fr 1fr} .ed-acoes{width:100%} }
+
+/* envio de arquivo no padrão dos botões do CRM */
+input[type=file]{font:inherit;font-size:13px;color:var(--tinta-60);max-width:100%}
+input[type=file]::file-selector-button{font:inherit;font-size:13px;font-weight:700;border:1px solid var(--linha-forte);background:#fff;color:var(--tinta);border-radius:100px;padding:9px 16px;margin-right:12px;cursor:pointer;transition:border-color .2s}
+input[type=file]::file-selector-button:hover{border-color:var(--tinta)}
+.field input[type=file]{border:none;padding:4px 0;background:none}
+@media(max-width:700px){ .filterbar .tb-search,.filterbar select.pill{flex:1 1 100%;min-width:0} .filterbar .spacer{display:none} }

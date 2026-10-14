@@ -271,14 +271,14 @@ function fichaHtml(){
 function formHtml(){
   return `
   <div style="background:var(--papel);border-radius:18px;padding:24px;margin-top:20px">
-    <h4 style="font-size:17px;margin-bottom:14px">Tenho interesse neste imóvel</h4>
+    <h4 style="font-size:22px;margin-bottom:18px">Tenho interesse neste imóvel</h4>
     <div class="fields" id="propFormFields" style="grid-template-columns:1fr">
       <div class="f"><label>Nome completo *</label><input id="piNome" placeholder="Seu nome"></div>
       <div class="f"><label>WhatsApp *</label><input id="piFone" placeholder="(19) 90000-0000" inputmode="tel"></div>
       <div class="f"><label>E-mail</label><input id="piEmail" type="email" placeholder="voce@email.com"></div>
       <div class="f"><label>Mensagem (opcional)</label><textarea id="piMsg" rows="3" placeholder="Quero agendar uma visita, por exemplo."></textarea></div>
     </div>
-    <button class="btn block" id="piSend" style="margin-top:16px">Quero visitar / saber mais</button>
+    <button class="btn block" id="piSend" style="margin-top:20px">Quero saber mais</button>
     <p id="piOk" style="display:none;color:var(--azul);font-size:13.5px;margin-top:12px">Recebemos seu interesse! Um consultor entra em contato em até 1 dia útil. <a id="piWpp" target="_blank" rel="noopener" style="color:var(--azul);text-decoration:underline">Ou fale agora no WhatsApp.</a></p>
   </div>`;
 }
@@ -330,7 +330,7 @@ body.innerHTML = `
       <span class="num">${DB.esc(imovel.tipo)}${imovel.codigo?` · ${DB.esc(imovel.codigo)}`:""}</span>
       <h1 style="font-size:clamp(30px,4.4vw,50px);letter-spacing:-.03em;margin:10px 0 6px">${DB.esc(imovel.titulo)}</h1>
       <p style="color:var(--tinta-60);margin-bottom:22px">${DB.esc(imovel.bairro)}, ${DB.esc(imovel.cidade)}</p>
-      <div style="font-family:var(--font-display);font-size:32px;color:var(--azul);margin-bottom:26px">${DB.esc(DB.precoImovelTexto(imovel))}</div>
+      <div style="font-family:var(--font-display);font-weight:700;font-size:clamp(28px,3vw,36px);color:var(--azul);margin-bottom:26px">${DB.esc(DB.precoImovelTexto(imovel))}</div>
       ${destaquesHtml()}
       <p style="font-size:15.5px;line-height:1.7;color:var(--tinta-60);white-space:pre-line">${DB.esc(imovel.descricao||"")}</p>
       ${midiasExtrasHtml()}

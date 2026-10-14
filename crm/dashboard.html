@@ -7,9 +7,9 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23004BA5'/></svg>">
 <link rel="preload" href="../assets/fonts/Nyata-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../assets/css/fonts.css?v=20261001b">
-<link rel="stylesheet" href="../assets/css/crm.css?v=20261001b">
-<script defer src="../assets/js/branding.js?v=20261001b"></script>
+<link rel="stylesheet" href="../assets/css/fonts.css?v=20261014a">
+<link rel="stylesheet" href="../assets/css/crm.css?v=20261014a">
+<script defer src="../assets/js/branding.js?v=20261014a"></script>
 </head>
 <body data-base="./" data-active="dashboard" data-title="Dashboard" data-crumbs="CRM Solua">
 
@@ -25,7 +25,7 @@
         <div class="card saldo"><div class="card-bd" style="padding-top:20px" id="saldo"></div></div>
         <div class="card kpi-wrap"><div class="kpis no-card" id="kpis"></div></div>
         <div class="card fill">
-          <div class="card-hd"><div><h3>Novos leads</h3><p class="sub">Entrada por produto nos últimos 14 dias</p></div></div>
+          <div class="card-hd"><div><h3>Novos leads</h3><p class="sub">Últimos 14 dias</p></div></div>
           <div class="card-bd"><div class="inner-box" id="trendChart"></div></div>
         </div>
       </div>
@@ -74,7 +74,7 @@
 
       <div class="card">
         <div class="card-hd">
-          <div><h3>Mural de avisos</h3><p class="sub">Visível pra toda a equipe</p></div>
+          <div><h3>Mural de avisos</h3></div>
         </div>
         <div class="card-bd">
           <div class="mural-form" id="muralForm"></div>
@@ -86,9 +86,9 @@
   </div>
 </div>
 
-<script src="../assets/js/crm-data.js?v=20261001b"></script>
-<script src="../assets/js/crm-ui.js?v=20261001b"></script>
-<script src="../assets/js/crm-leaddrawer.js?v=20261001b"></script>
+<script src="../assets/js/crm-data.js?v=20261014a"></script>
+<script src="../assets/js/crm-ui.js?v=20261014a"></script>
+<script src="../assets/js/crm-leaddrawer.js?v=20261014a"></script>
 <script>
 const DB = window.SoluaDB;
 const iconFor = t=>({lead_criado:"👤",estagio_alterado:"↗️",nota:"📝",campanha_enviada:"📣",usuario_login:"🔑",automacao:"🤖"}[t]||"•");
@@ -139,7 +139,7 @@ function renderMuralForm(){
   const me = DB.currentUser();
   document.getElementById("muralForm").innerHTML = `
     <div class="field" style="margin-bottom:10px">
-      <textarea id="muralTexto" rows="2" placeholder="Escreva um aviso ou anotação pra equipe…"></textarea>
+      <textarea id="muralTexto" rows="2" placeholder="Escreva um aviso para a equipe…"></textarea>
     </div>
     <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
       <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tinta-60);cursor:pointer">
@@ -156,7 +156,7 @@ function renderMuralForm(){
     campo.value = "";
     document.getElementById("muralFixar").checked = false;
     renderMuralList();
-    window.SoluaUI.toast("Aviso publicado pra equipe.","ok");
+    window.SoluaUI.toast("Aviso publicado.","ok");
   };
 }
 function renderMuralList(){
@@ -164,7 +164,7 @@ function renderMuralList(){
   const avisos = DB.getAvisos();
   const el = document.getElementById("muralList");
   if(!avisos.length){
-    el.innerHTML = `<div class="empty" style="padding:16px 10px">${window.SoluaUI.emptyState("Nenhum aviso ainda — seja o primeiro a publicar algo pra equipe.")}</div>`;
+    el.innerHTML = `<div class="empty" style="padding:16px 10px">${window.SoluaUI.emptyState("Nenhum aviso ainda.")}</div>`;
     return;
   }
   el.innerHTML = avisos.map(a=>{
@@ -200,8 +200,7 @@ function renderDashboard(){
   const me = DB.currentUser();
   const primeiroNome = (me && me.nome ? me.nome.split(" ")[0] : "");
   document.getElementById("pageHd").innerHTML = `
-    <h1>${saudacao()}${primeiroNome?`, ${DB.esc(primeiroNome)}`:""}</h1>
-    <p>Acompanhe o funil, os próximos contatos e a atividade da equipe.</p>`;
+    <h1>${saudacao()}${primeiroNome?`, ${DB.esc(primeiroNome)}`:""}</h1>`;
 
   renderMuralForm();
   renderMuralList();
@@ -308,7 +307,7 @@ function agendaRotulo(dateStr){
 function renderAgenda(){
   const itens = DB.getProximosContatos(8);
   const el = document.getElementById("agenda");
-  if(!itens.length){ el.innerHTML = `<div class="empty" style="padding:20px 10px">${window.SoluaUI.emptyState("Nenhum contato agendado. Marque a data em “Próximo contato” no lead.")}</div>`; return; }
+  if(!itens.length){ el.innerHTML = `<div class="empty" style="padding:20px 10px">${window.SoluaUI.emptyState("Nenhum contato agendado.")}</div>`; return; }
   el.innerHTML = itens.map(l=>{
     const r = agendaRotulo(l.proximoContato);
     return `<div class="agenda-row" data-leadid="${l.id}">
@@ -429,6 +428,6 @@ const btnNovo = document.getElementById("btnNovoLead");
 if(btnNovo) btnNovo.onclick = ()=> window.SoluaNewLead.open({onCreated: renderDashboard});
 
 </script>
-<script src="../assets/js/crm-newlead.js?v=20261001b"></script>
+<script src="../assets/js/crm-newlead.js?v=20261014a"></script>
 </body>
 </html>

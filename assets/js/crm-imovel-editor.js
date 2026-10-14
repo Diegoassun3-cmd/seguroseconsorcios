@@ -67,7 +67,7 @@ function novoRascunho(){
 
 if(id && !original){
   document.getElementById("pageHd").innerHTML = `<div><a class="voltar" href="imoveis-cadastro.html">← Cadastro de imóveis</a><h1>Imóvel não encontrado</h1></div>`;
-  document.querySelector(".ed-layout").innerHTML = `<div class="card"><div class="empty">${UI.emptyState("Ele pode ter sido excluído. Volte ao cadastro para ver o catálogo.")}</div></div>`;
+  document.querySelector(".ed-layout").innerHTML = `<div class="card"><div class="empty">${UI.emptyState("Imóvel não encontrado.")}</div></div>`;
   return;
 }
 
@@ -130,8 +130,9 @@ function seg(label, path, opcoes, o){
   return `<div class="field ${o.span||""}"><label>${label}${o.req?`<span class="req">*</span>`:""}</label>
     <div class="seg" role="radiogroup" aria-label="${esc(label)}">${opcoes.map(([val,lab])=>`<button type="button" role="radio" aria-checked="${v===val}" data-seg="${path}" data-v="${esc(val)}" class="${v===val?"on":""}">${esc(lab)}</button>`).join("")}</div></div>`;
 }
+// o 3º argumento (texto de apoio) não é mais exibido: o CRM fica sem textos explicativos
 function secao(icone, titulo, sub, corpo){
-  return `<section class="card ed-sec"><div class="ed-sec-hd"><span class="ico">${ico(icone)}</span><div><h3>${titulo}</h3>${sub?`<p>${sub}</p>`:""}</div></div>${corpo}</section>`;
+  return `<section class="card ed-sec"><div class="ed-sec-hd"><span class="ico">${ico(icone)}</span><div><h3>${titulo}</h3></div></div>${corpo}</section>`;
 }
 
 // ------------------------------------------------ obrigatórios p/ publicar
@@ -186,7 +187,7 @@ function abaSobre(){
       ${campo("Ano de construção","anoConstrucao",{tipo:"num", opc:true, ph:"Ex.: 2015"})}
       ${campo("Padrão do imóvel","padraoImovel",{tipo:"select", opc:true, opcoes:["Econômico","Médio","Alto","Luxo"]})}
       ${campo("Padrão da localização","padraoLocalizacao",{tipo:"select", opc:true, opcoes:["Popular","Médio","Nobre"]})}
-      ${campo("Status comercial","statusComercial",{tipo:"select", opc:true, opcoes:["Disponível","Reservado","Em negociação"], ajuda:"Vendido ou locado? Use “Inativar imóvel” no topo."})}
+      ${campo("Status comercial","statusComercial",{tipo:"select", opc:true, opcoes:["Disponível","Reservado","Em negociação"]})}
     </div>`)
   + secao("pin","Localização","O mapa atualiza conforme você preenche o endereço.",`
     <div class="loc-grid">
@@ -246,7 +247,7 @@ function negocioHtml(){
       ${loc ? campo("Tipo de locação","tipoLocacao",{tipo:"select", opcoes:["Residencial","Comercial","Temporada"]}) : ""}
       ${campo("Condomínio (mês)","valorCondominio",{tipo:"money", opc:true})}
       ${campo("IPTU (ano)","valorIptu",{tipo:"money", opc:true})}
-      ${toggle("Ocultar preço no site","ocultarPreco",{opc:true, span:"s2", texto: d.ocultarPreco ? "Sim — mostra “preço sob consulta”" : "Não — mostra o valor"})}
+      ${toggle("Ocultar preço no site","ocultarPreco",{opc:true, span:"s2", texto: d.ocultarPreco ? "Sim" : "Não"})}
     </div>`);
 }
 
@@ -307,7 +308,7 @@ function abaDetalhes(){
       ${campo("Situação da escritura","confidencial.situacaoEscritura",{tipo:"select", opc:true, opcoes:["Escriturado e registrado","Escriturado","Contrato de gaveta","Em inventário","Financiado / alienado","Usucapião em andamento"]})}
       ${campo("Cartório de registro","confidencial.cartorio",{opc:true, span:"s2"})}
       ${campo("Habite-se","confidencial.habitese",{tipo:"select", opc:true, opcoes:["Sim","Não","Em andamento"]})}
-      ${campo("CIB","confidencial.cib",{opc:true, ajuda:"Cadastro Imobiliário Brasileiro."})}
+      ${campo("CIB","confidencial.cib",{opc:true})}
       <div></div><div></div>
       ${campo("Comentário interno","confidencial.comentarioInterno",{tipo:"textarea", opc:true, span:"s4", rows:3, ph:"Visível apenas para a imobiliária."})}
     </div>`);
@@ -358,11 +359,11 @@ function abaAnuncio(){
     </div>`)
   + secao("globo","Publicação no site","",`
     <div class="fgrid">
-      ${IM.inativo(d) ? `<div class="demo-hint s4" style="margin:0">Este imóvel está <b>inativo</b> (${esc(IM.rotuloInativacao(d)||"inativado")}). Reative no topo da página para voltar a publicar.</div>` : ""}
-      ${IM.inativo(d) ? "" : toggle("Publicado","publicado",{texto: pub ? "Sim — aparece no catálogo do site" : "Não — fica só no CRM"})}
-      ${toggle("Destaque na home","destaque",{texto: d.destaque ? "Sim — entra na vitrine da página inicial" : "Não"})}
+      ${IM.inativo(d) ? `<div class="demo-hint s4" style="margin:0">Imóvel <b>inativo</b> · ${esc(IM.rotuloInativacao(d)||"inativado")}</div>` : ""}
+      ${IM.inativo(d) ? "" : toggle("Publicado","publicado",{texto: pub ? "Sim" : "Não"})}
+      ${toggle("Destaque na home","destaque",{texto: d.destaque ? "Sim" : "Não"})}
       ${toggle("Mostrar mapa no site","mostrarMapa",{texto: d.mostrarMapa ? "Sim" : "Não"})}
-      ${toggle("Ocultar rua e número","ocultarEndereco",{texto: d.ocultarEndereco ? "Sim — mapa mostra só o bairro" : "Não"})}
+      ${toggle("Ocultar rua e número","ocultarEndereco",{texto: d.ocultarEndereco ? "Sim" : "Não"})}
       ${campo("Comentário da despublicação / inativação","motivoDespublicacao",{tipo:"textarea", span:"s4", disabled:pub, ph: pub ? "Disponível quando o imóvel não estiver publicado." : "Descreva o motivo (vendido, proprietário desistiu…)"})}
     </div>`);
 }
@@ -455,7 +456,7 @@ function abaAngariadores(){
     <div class="fgrid">
       ${campo("Data da captação","captacao.data",{tipo:"date"})}
       ${campo("Origem da captação","captacao.origem",{tipo:"select", opcoes:["Indicação","Placa","Portal","Prospecção ativa","Cliente da casa","Redes sociais","Outro"]})}
-      ${toggle("Exclusividade","exclusividade.ativa",{texto: d.exclusividade.ativa ? "Sim — contrato de exclusividade" : "Não"})}
+      ${toggle("Exclusividade","exclusividade.ativa",{texto: d.exclusividade.ativa ? "Sim" : "Não"})}
       ${d.exclusividade.ativa ? campo("Exclusividade válida até","exclusividade.validade",{tipo:"date"}) : "<div></div>"}
     </div>`);
 }
@@ -496,7 +497,7 @@ function abaArquivos(){
 
 // ------------------------------------------------------------- aba: Leads
 function abaLeads(){
-  if(!id) return secao("lead","Leads interessados","",`<div class="empty" style="padding:26px">${UI.emptyState("Salve o imóvel primeiro — depois os leads interessados aparecem aqui.")}</div>`);
+  if(!id) return secao("lead","Leads interessados","",`<div class="empty" style="padding:26px">${UI.emptyState("Nenhum lead ainda.")}</div>`);
   const leads = DB.leadsDoImovel(id);
   const livres = DB.getLeadsByProduto("imovel").filter(l=> !l.imovelId);
   return secao("lead","Leads interessados","Quem pede informações deste imóvel no site entra aqui automaticamente. Clique para abrir o lead.",`
@@ -525,7 +526,7 @@ function renderLateral(){
   if(!IM.SEM_COMODOS.has(d.tipo) && n(d.quartos)) specs.push(`${n(d.quartos)} dorm.`);
   if(n(d.vagas)) specs.push(`${n(d.vagas)} vaga${n(d.vagas)===1?"":"s"}`);
   if(n(d.areaM2)) specs.push(`${n(d.areaM2)} m²`);
-  const rot = q.pct>=80 ? "Ótimo anúncio" : q.pct>=50 ? "Bom, dá pra melhorar" : "Precisa de atenção";
+  const rot = q.pct>=80 ? "Ótimo anúncio" : q.pct>=50 ? "Bom anúncio" : "Precisa de atenção";
   document.getElementById("edSide").innerHTML = `
     <div class="card" style="padding:14px">
       <div style="font-size:12.5px;color:var(--tinta-45);margin:2px 4px 10px">Prévia no catálogo do site</div>
@@ -548,7 +549,7 @@ function renderLateral(){
     <div class="card" style="padding:18px">
       <div class="qualidade">
         <div class="anel" style="--p:${q.pct};--cor:${q.cor}"><span>${q.pct}%</span></div>
-        <div><b style="font-size:15px">${rot}</b><p style="font-size:12.5px;color:var(--tinta-45);margin-top:2px">Anúncios completos recebem mais contatos.</p></div>
+        <div><b style="font-size:15px">${rot}</b></div>
       </div>
       <div class="qlista">${q.itens.map(it=>`<button type="button" class="${it.ok?"ok":"nao"}" data-ir="${it.aba}"><span class="ic">${it.ok?"✓":""}</span><span>${it.texto}</span></button>`).join("")}</div>
     </div>`;
@@ -928,7 +929,7 @@ document.addEventListener("click", e=>{
   }
   if(alvo.id==="btnReativar" || alvo.id==="btnReativar2"){
     Object.assign(d, IM.patchReativar()); gravar();
-    UI.toast("Imóvel reativado. Ele está pausado — publique na aba Anúncio quando quiser.","ok");
+    UI.toast("Imóvel reativado como pausado.","ok");
   }
   if(alvo.id==="btnMaisEd"){
     e.stopPropagation();

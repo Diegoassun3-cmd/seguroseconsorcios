@@ -125,7 +125,6 @@ function abrirInativar(i, aoConfirmar){
   ov.innerHTML = `<div class="modal" style="width:min(560px,94vw)" role="dialog" aria-modal="true" aria-labelledby="inatTit">
     <div class="modal-hd"><div><h3 style="font-size:19px" id="inatTit">Inativar imóvel</h3><p style="font-size:13px;color:var(--tinta-45);margin-top:3px">${esc(i.codigo||"")} · ${esc(i.titulo||"Sem título")}</p></div><button class="x" data-close-overlay="inatOverlay" aria-label="Fechar"></button></div>
     <div class="modal-bd">
-      <p style="font-size:13.5px;color:var(--tinta-60);margin-bottom:14px">O imóvel sai do site e da vitrine, mas continua no CRM com todo o histórico. Dá pra reativar quando quiser.</p>
       <div class="motivos" role="radiogroup" aria-label="Motivo">${MOTIVOS.map(m=>`
         <label class="motivo"><input type="radio" name="inatMot" value="${m.id}" ${m.id===sugerido?"checked":""}><span><b>${m.label}</b><small>${m.desc}</small></span></label>`).join("")}</div>
       <div class="grid2" style="margin-top:16px">

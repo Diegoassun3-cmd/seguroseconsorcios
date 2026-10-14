@@ -752,6 +752,20 @@ nova antes de reaproveitar o arquivo. Os links de CSS/JS nas páginas também
 levam `?v=AAAAMMDDx`, o que força quem ainda tinha a versão antiga guardada
 a baixar a nova.
 
+### Padrão visual (tipografia e textos)
+
+- **Dois pesos só:** negrito (700) para títulos, números e destaques; normal
+  (400) para textos. As fontes da marca têm um arquivo cada (Nyata Regular e
+  Satoshi Medium); `fonts.css` declara esses arquivos para 400–500 e o
+  navegador gera o negrito. Se a Solua conseguir os arquivos Bold oficiais,
+  basta incluir um `@font-face` com `font-weight:700`.
+- **Escala única de títulos no site** (`site.css`, `:root`): `--t-hero` (topo
+  das páginas), `--t-h2` (títulos de seção) e `--t-h3`, todos com o mesmo
+  espaçamento entre letras (`--ls-tit`). Evite `font-size` solto em títulos.
+- **CRM sem textos explicativos:** telas sem subtítulo, sem caixas de dica,
+  seções do cadastro de imóvel sem texto de apoio e mensagens de lista vazia
+  curtas ("Nenhum lead ainda."). Ao criar telas novas, siga o mesmo padrão.
+
 ## Para produção (multiusuário completo)
 
 ### 1. Migrar leads/equipe/templates/campanhas/catálogo de imóveis para D1

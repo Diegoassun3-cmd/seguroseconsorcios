@@ -160,7 +160,7 @@ function renderContaForm(){
       <div class="field"><label>Vencimento</label><input id="cfVencimento" type="date"></div>
     </div>
     <div class="field">
-      <label>Anexo (comprovante, boleto, nota fiscal — opcional)</label>
+      <label>Anexo (opcional)</label>
       <input type="file" id="cfAnexo" accept="image/*,.pdf">
       <span id="cfAnexoInfo" style="font-size:12px;color:var(--tinta-45)"></span>
     </div>
@@ -217,7 +217,7 @@ function renderContas(){
   const ordenadas = contas.slice().sort((a,b)=> (a.vencimento||"9999").localeCompare(b.vencimento||"9999"));
   const el = document.getElementById("contaList");
   if(!ordenadas.length){
-    el.innerHTML = `<div class="empty">${UI.emptyState("Nenhum lançamento ainda. Use o formulário acima para adicionar contas a pagar ou a receber.")}</div>`;
+    el.innerHTML = `<div class="empty">${UI.emptyState("Nenhum lançamento ainda.")}</div>`;
     return;
   }
   el.innerHTML = `<div class="tbl-wrap"><table class="tbl">

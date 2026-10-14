@@ -47,7 +47,7 @@ function cardHtml(p){
 function render(){
   const posts = DB.getPosts();
   document.getElementById("grid").innerHTML = posts.map(cardHtml).join("") ||
-    `<div class="empty" style="grid-column:1/-1">${UI.emptyState("Nenhum artigo ainda — clique em “+ Novo artigo”.")}</div>`;
+    `<div class="empty" style="grid-column:1/-1">${UI.emptyState("Nenhum artigo ainda.")}</div>`;
   document.querySelectorAll("[data-post]").forEach(c=> c.onclick = ()=> openEditor(c.dataset.post));
 }
 
@@ -176,7 +176,7 @@ function desenharBlocos(){
         </div>
       </div>
       <div class="bloco-campos">${blocoCamposHtml(b)}</div>
-    </div>`).join("") || `<p style="font-size:12.5px;color:var(--tinta-45);padding:10px 0">Nenhum bloco ainda — adicione um abaixo.</p>`;
+    </div>`).join("") || `<p style="font-size:12.5px;color:var(--tinta-45);padding:10px 0">Nenhum bloco ainda.</p>`;
 
   lista.forEach((b,i)=>{
     const card = document.querySelector(`[data-bloco="${i}"]`);

@@ -33,7 +33,7 @@
 
 const SCHEMA = [
   { id:"home", label:"Home", grupos:[
-    { titulo:"Hero (topo)", campos:[
+    { titulo:"Topo", campos:[
       {key:"home.hero.titulo", label:"Título principal", tipo:"texto", placeholder:"25 anos ao seu lado."},
       {key:"home.hero.subtitulo", label:"Subtítulo", tipo:"textarea", placeholder:"Imóveis, seguros e consórcios para cada etapa da sua vida…"},
       {key:"home.hero.alinhamento", label:"Alinhamento do texto", tipo:"alinhamento"},
@@ -85,7 +85,7 @@ const SCHEMA = [
       {key:"home.consorcios.texto", label:"Texto", tipo:"textarea"},
       {key:"home.consorcios.botao", label:"Botão — texto", tipo:"texto", placeholder:"Simular consórcio"}
     ]},
-    { titulo:"Bloco institucional (teaser)", campos:[
+    { titulo:"Bloco institucional", campos:[
       {key:"home.institucional.visivel", label:"Mostrar este bloco na Home", tipo:"toggle"},
       {key:"home.institucional.alinhamento", label:"Alinhamento do texto", tipo:"alinhamento"},
       {key:"home.institucional.fundo", label:"Fundo da seção", tipo:"midia"},
@@ -94,7 +94,7 @@ const SCHEMA = [
       {key:"home.institucional.texto", label:"Texto", tipo:"textarea"},
       {key:"home.institucional.botao", label:"Botão — texto", tipo:"texto", placeholder:"Conhecer nossa história"}
     ]},
-    { titulo:"Seção de Conteúdo (blog)", campos:[
+    { titulo:"Seção de Conteúdo", campos:[
       {key:"home.blog.visivel", label:"Mostrar esta seção na Home", tipo:"toggle"}
     ]},
     { titulo:"Chamada final", campos:[
@@ -107,7 +107,7 @@ const SCHEMA = [
     ]}
   ]},
   { id:"seguros", label:"Seguros", grupos:[
-    { titulo:"Hero", campos:[
+    { titulo:"Topo", campos:[
       {key:"seguros.hero.titulo", label:"Título", tipo:"texto"},
       {key:"seguros.hero.subtitulo", label:"Subtítulo", tipo:"textarea"},
       {key:"seguros.hero.alinhamento", label:"Alinhamento do texto", tipo:"alinhamento"},
@@ -130,7 +130,7 @@ const SCHEMA = [
     ]}
   ]},
   { id:"consorcios", label:"Consórcios", grupos:[
-    { titulo:"Hero", campos:[
+    { titulo:"Topo", campos:[
       {key:"consorcios.hero.titulo", label:"Título", tipo:"texto"},
       {key:"consorcios.hero.subtitulo", label:"Subtítulo", tipo:"textarea"},
       {key:"consorcios.hero.alinhamento", label:"Alinhamento do texto", tipo:"alinhamento"},
@@ -153,18 +153,18 @@ const SCHEMA = [
       {key:"consorcios.administradoras.ademicon.titulo", label:"Administradora 2", tipo:"texto", placeholder:"Ademicon"}
     ]},
     { titulo:"Banner de campanha", campos:[
-      {key:"consorcios.banner.texto", label:"Texto do banner (vazio = não mostrar)", tipo:"texto", placeholder:"Ex.: Condições especiais de parcela até o fim do mês."}
+      {key:"consorcios.banner.texto", label:"Texto do banner", tipo:"texto", placeholder:"Ex.: Condições especiais de parcela até o fim do mês."}
     ]}
   ]},
   { id:"imoveis", label:"Imóveis", grupos:[
-    { titulo:"Topo (busca)", campos:[
+    { titulo:"Topo", campos:[
       {key:"imoveis.hero.titulo", label:"Título", tipo:"texto", placeholder:"Encontre seu próximo endereço."},
       {key:"imoveis.hero.midia", label:"Foto ou vídeo de fundo", tipo:"midia"},
       {key:"imoveis.hero.placeholder", label:"Texto dentro da busca", tipo:"texto", placeholder:"Digite o bairro ou código do imóvel"}
     ]}
   ]},
   { id:"sobre", label:"Sobre", grupos:[
-    { titulo:"Hero", campos:[
+    { titulo:"Topo", campos:[
       {key:"sobre.hero.titulo", label:"Título", tipo:"texto"},
       {key:"sobre.hero.alinhamento", label:"Alinhamento do texto", tipo:"alinhamento"},
       {key:"sobre.hero.midia", label:"Foto ou vídeo de fundo", tipo:"midia"}
@@ -205,12 +205,12 @@ const SCHEMA = [
     { titulo:"Topo", campos:[
       {key:"contato.hero.titulo", label:"Título", tipo:"texto", placeholder:"Dúvidas ou sugestões?"},
       {key:"contato.info.chamada", label:"Texto ao lado da foto", tipo:"textarea", placeholder:"Converse com a gente ou faça uma visita — estamos em Campinas."},
-      {key:"contato.foto", label:"Foto (escritório, fachada…)", tipo:"imagem"}
+      {key:"contato.foto", label:"Foto", tipo:"imagem"}
     ]},
     { titulo:"Informações de contato", campos:[
       {key:"contato.info.endereco", label:"Endereço", tipo:"texto"},
       {key:"contato.info.horario", label:"Horário de atendimento", tipo:"texto"},
-      {key:"contato.info.telefone", label:"Telefone fixo (vazio = não mostrar)", tipo:"texto", placeholder:"(19) 3000-0000"}
+      {key:"contato.info.telefone", label:"Telefone fixo", tipo:"texto", placeholder:"(19) 3000-0000"}
     ]},
     { titulo:"Formulário", campos:[
       {key:"contato.form.titulo", label:"Título ao lado do formulário", tipo:"texto", placeholder:"Caso prefira, envie uma mensagem diretamente para nós."},
@@ -242,14 +242,14 @@ const SCHEMA = [
       {key:"footer.col.produtos", label:"Coluna 1 — título", tipo:"texto", placeholder:"Produtos"},
       {key:"footer.col.institucional", label:"Coluna 2 — título", tipo:"texto", placeholder:"Institucional"},
       {key:"footer.col.contato", label:"Coluna 3 — título", tipo:"texto", placeholder:"Contato"},
-      {key:"footer.copyright", label:"Linha de rodapé (depois do © e do ano)", tipo:"texto", placeholder:"Solua Corretora e Imobiliária — CRECI e SUSEP conforme legislação vigente."}
+      {key:"footer.copyright", label:"Linha de rodapé", tipo:"texto", placeholder:"Solua Corretora e Imobiliária — CRECI e SUSEP conforme legislação vigente."}
     ]},
-    { titulo:"Redes sociais (rodapé)", campos:[
-      {key:"footer.social.instagram", label:"Instagram — link (vazio = não mostrar)", tipo:"texto", placeholder:"https://instagram.com/solua"},
-      {key:"footer.social.facebook", label:"Facebook — link (vazio = não mostrar)", tipo:"texto", placeholder:"https://facebook.com/solua"},
-      {key:"footer.social.linkedin", label:"Linkedin — link (vazio = não mostrar)", tipo:"texto", placeholder:"https://linkedin.com/company/solua"}
+    { titulo:"Redes sociais", campos:[
+      {key:"footer.social.instagram", label:"Instagram", tipo:"texto", placeholder:"https://instagram.com/solua"},
+      {key:"footer.social.facebook", label:"Facebook", tipo:"texto", placeholder:"https://facebook.com/solua"},
+      {key:"footer.social.linkedin", label:"LinkedIn", tipo:"texto", placeholder:"https://linkedin.com/company/solua"}
     ]},
-    { titulo:"Localização (Contato + mapa do rodapé)", campos:[
+    { titulo:"Localização", campos:[
       {key:"contato.info.endereco", label:"Endereço mostrado e usado no mapa", tipo:"texto", placeholder:"Campinas — SP"}
     ]}
   ]}

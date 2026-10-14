@@ -102,7 +102,7 @@ function openDetail(id){
       <div><b>${c.metrics.abertos}</b><span>Abertos</span></div>
       ${c.canal==="email"?`<div><b>${c.metrics.cliques}</b><span>Cliques</span></div>`:`<div><b>—</b><span>Cliques</span></div>`}
       <div><b>${c.metrics.respostas}</b><span>Respostas</span></div>
-    </div>` : `<p style="font-size:13px;color:var(--tinta-45);margin-bottom:18px">Esta campanha ainda não foi enviada — as métricas aparecem aqui após o disparo.</p>`}
+    </div>` : `<p style="font-size:13px;color:var(--tinta-45);margin-bottom:18px">Campanha ainda não enviada.</p>`}
     ${t ? previewHtml(c.canal, t) : ""}
   `;
   UI.openOverlay("detailOverlay");
@@ -149,7 +149,7 @@ function stepHtml(){
         ${tpls.map(tp=>`<div class="tplcard ${tp.id===wizard.templateId?"sel":""}" data-tpl="${tp.id}"><b>${DB.esc(tp.nome)}</b><span>${({seguro:"Seguros",consorcio:"Consórcios",imovel:"Imóveis"})[tp.categoria]||"Geral"}</span></div>`).join("") || `<p style="font-size:13px;color:var(--tinta-45)">Nenhum modelo para este canal ainda.</p>`}
         <a class="btn ghost sm block" href="modelos.html" style="margin-top:8px">+ Criar novo modelo</a>
       </div>
-      <div>${t ? previewHtml(wizard.canal, t) : `<p style="font-size:13px;color:var(--tinta-45)">Selecione um modelo para pré-visualizar.</p>`}</div>
+      <div>${t ? previewHtml(wizard.canal, t) : `<p style="font-size:13px;color:var(--tinta-45)">Nenhum modelo selecionado.</p>`}</div>
     </div>`;
   }
   // step 4
@@ -246,7 +246,7 @@ async function renderAutomacoes(){
         <time>${DB.formatDateTime(i.criado_em)}</time></div>
       </div>`).join("")}</div>`;
   }catch(e){
-    el.innerHTML = `<p class="empty" style="padding:20px 0">Sem conexão com a API (<code>/api/dispatch-log</code>) — normal antes do primeiro deploy do Worker com D1.</p>`;
+    el.innerHTML = `<p class="empty" style="padding:20px 0">Sem conexão com o servidor.</p>`;
   }
 }
 

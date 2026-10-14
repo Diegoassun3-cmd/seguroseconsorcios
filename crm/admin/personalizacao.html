@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Personalização — CRM Solua</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23004BA5'/></svg>">
-<link rel="stylesheet" href="../../assets/css/fonts.css?v=20261001b">
-<link rel="stylesheet" href="../../assets/css/crm.css?v=20261001b">
-<script defer src="../../assets/js/branding.js?v=20261001b"></script>
+<link rel="stylesheet" href="../../assets/css/fonts.css?v=20261014a">
+<link rel="stylesheet" href="../../assets/css/crm.css?v=20261014a">
+<script defer src="../../assets/js/branding.js?v=20261014a"></script>
 </head>
 <body data-base="../" data-active="admin-personalizacao" data-title="Personalização" data-crumbs="CRM Solua / Administração">
 
@@ -19,7 +19,6 @@
 
       <div class="card" style="margin-bottom:16px">
         <div class="card-bd" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <span style="font-size:13px;color:var(--tinta-60)">Estas configurações valem para <b>todo mundo</b> que acessa o site — não é algo salvo só no seu navegador.</span>
           <span class="spacer"></span>
           <span id="apiStatus"></span>
         </div>
@@ -36,7 +35,7 @@
                 <input type="file" id="fLogoFile" accept="image/png,image/svg+xml,image/jpeg,image/webp" style="min-width:0;width:100%;box-sizing:border-box">
                 <button class="btn ghost sm" id="btnRemoverLogo" type="button">Remover</button>
               </div>
-              <p style="font-size:12px;color:var(--tinta-45);margin-top:6px">PNG ou SVG com fundo transparente, até 250KB. Usada quando o cabeçalho está sobre fundo branco/claro.</p>
+              <p style="font-size:12px;color:var(--tinta-45);margin-top:6px">PNG ou SVG · até 250KB</p>
             </div>
             <div class="field">
               <label>Logo para fundo escuro</label>
@@ -45,7 +44,7 @@
                 <input type="file" id="fLogoEscuroFile" accept="image/png,image/svg+xml,image/jpeg,image/webp" style="min-width:0;width:100%;box-sizing:border-box">
                 <button class="btn ghost sm" id="btnRemoverLogoEscuro" type="button">Remover</button>
               </div>
-              <p style="font-size:12px;color:var(--tinta-45);margin-top:6px">Versão clara/branca da logo, até 250KB. Usada no cabeçalho sobre foto/vídeo e no rodapé escuro.</p>
+              <p style="font-size:12px;color:var(--tinta-45);margin-top:6px">PNG ou SVG · até 250KB</p>
             </div>
             <div class="field">
               <label>Ícone do site (favicon)</label>
@@ -54,7 +53,7 @@
                 <input type="file" id="fFaviconFile" accept="image/png,image/svg+xml,image/x-icon" style="min-width:0;width:100%;box-sizing:border-box">
                 <button class="btn ghost sm" id="btnRemoverFavicon" type="button">Remover</button>
               </div>
-              <p style="font-size:12px;color:var(--tinta-45);margin-top:6px">Ícone quadrado (PNG ou SVG), até 100KB. Aparece na aba do navegador.</p>
+              <p style="font-size:12px;color:var(--tinta-45);margin-top:6px">Quadrado · até 100KB</p>
             </div>
             <div class="field">
               <label>Cor principal da marca</label>
@@ -63,7 +62,6 @@
                 <input type="text" id="fCorPrimariaHex" value="#004BA5" style="width:110px;min-width:0" placeholder="#004BA5">
                 <button type="button" id="corPreviewBtn" class="btn sm" style="pointer-events:none">Botão de exemplo</button>
               </div>
-              <p style="font-size:12px;color:var(--tinta-45);margin-top:6px">Usada em botões, links e destaques no site e no CRM.</p>
             </div>
           </div>
         </div>
@@ -73,8 +71,8 @@
         <div class="card-hd"><h3>SEO e título do site</h3></div>
         <div class="card-bd">
           <div class="grid2">
-            <div class="field"><label>Título do site (aba do navegador e buscadores)</label><input id="fSiteTitulo" maxlength="160" placeholder="Solua — Imóveis, Seguros e Consórcios"></div>
-            <div class="field full"><label>Descrição do site (buscadores e compartilhamento)</label><textarea id="fSiteDescricao" maxlength="320" rows="2" placeholder="Imobiliária, corretora de seguros e consórcios em Campinas há 25 anos."></textarea></div>
+            <div class="field"><label>Título do site</label><input id="fSiteTitulo" maxlength="160" placeholder="Solua — Imóveis, Seguros e Consórcios"></div>
+            <div class="field full"><label>Descrição do site</label><textarea id="fSiteDescricao" maxlength="320" rows="2" placeholder="Imobiliária, corretora de seguros e consórcios em Campinas há 25 anos."></textarea></div>
           </div>
         </div>
       </div>
@@ -84,7 +82,7 @@
         <div class="card-bd">
           <label style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;font-size:13.5px">
             <input type="checkbox" id="fManutencaoAtiva" style="width:16px;height:16px;margin-top:2px;accent-color:var(--azul)">
-            <span><b>Colocar o site em manutenção</b><br><span style="color:var(--tinta-45);font-size:12.5px">Desativa o site público inteiro para os visitantes, mostrando uma página de aviso. O CRM continua acessível normalmente para você, sempre.</span></span>
+            <span><b>Colocar o site em manutenção</b></span>
           </label>
           <div class="field"><label>Mensagem exibida aos visitantes</label><textarea id="fManutencaoMsg" maxlength="500" rows="2" placeholder="Voltamos já. Estamos com o site em manutenção rápida — tente novamente em alguns minutos."></textarea></div>
         </div>
@@ -94,9 +92,9 @@
         <div class="card-hd"><h3>Contato e remetente</h3></div>
         <div class="card-bd">
           <div class="grid2">
-            <div class="field"><label>WhatsApp do site (com DDI+DDD, só números)</label><input id="fWhats" placeholder="5519999999999"></div>
-            <div class="field"><label>Nome do remetente (e-mails automáticos)</label><input id="fNomeRem" placeholder="Solua"></div>
-            <div class="field full"><label>E-mail remetente (precisa ser de um domínio verificado no Resend)</label><input id="fEmailRem" type="email" placeholder="contato@solua.com.br"></div>
+            <div class="field"><label>WhatsApp do site</label><input id="fWhats" placeholder="5519999999999"></div>
+            <div class="field"><label>Nome do remetente</label><input id="fNomeRem" placeholder="Solua"></div>
+            <div class="field full"><label>E-mail remetente</label><input id="fEmailRem" type="email" placeholder="contato@solua.com.br"></div>
           </div>
         </div>
       </div>
@@ -106,21 +104,19 @@
         <div class="card-bd">
           <label style="display:flex;gap:10px;align-items:flex-start;margin-bottom:16px;font-size:13.5px">
             <input type="checkbox" id="fAutoEmail" style="width:16px;height:16px;margin-top:2px;accent-color:var(--azul)">
-            <span><b>E-mail automático de boas-vindas</b><br><span style="color:var(--tinta-45);font-size:12.5px">Assim que um lead chega pelo formulário do site, envia um e-mail de boas-vindas na hora, via Resend. Exige o segredo <code>RESEND_API_KEY</code> configurado no Worker.</span></span>
+            <span><b>E-mail automático de boas-vindas</b></span>
           </label>
           <label style="display:flex;gap:10px;align-items:flex-start;margin-bottom:6px;font-size:13.5px">
             <input type="checkbox" id="fAutoWhats" style="width:16px;height:16px;margin-top:2px;accent-color:var(--azul)">
-            <span><b>WhatsApp automático de boas-vindas</b><br><span style="color:var(--tinta-45);font-size:12.5px">Envia uma mensagem de template aprovada via WhatsApp Cloud API (Meta). Exige os segredos <code>WHATSAPP_TOKEN</code>, <code>WHATSAPP_PHONE_ID</code> e <code>WHATSAPP_TEMPLATE</code> configurados no Worker, além do template já aprovado no WhatsApp Manager.</span></span>
+            <span><b>WhatsApp automático de boas-vindas</b></span>
           </label>
-          <div class="demo-hint">Segredos ficam em <b>Settings → Variables and Secrets</b> do Worker no painel do Cloudflare — nunca aqui. Veja o README do projeto ("Ligando os disparos") para o passo a passo completo.</div>
         </div>
       </div>
 
       <div class="card" style="margin-bottom:16px">
         <div class="card-hd"><h3>Chave de administrador</h3></div>
         <div class="card-bd">
-          <div class="field"><label>Admin key (a mesma que você configurou como segredo ADMIN_KEY no Worker)</label><input id="fAdminKey" type="password" placeholder="••••••••"></div>
-          <p style="font-size:12px;color:var(--tinta-45)">Protege quem pode alterar essas configurações pela API. Fica salva só neste navegador.</p>
+          <div class="field"><label>Chave de administrador</label><input id="fAdminKey" type="password" placeholder="••••••••"></div>
         </div>
       </div>
 
@@ -130,11 +126,11 @@
   </div>
 </div>
 
-<script src="../../assets/js/crm-data.js?v=20261001b"></script>
-<script src="../../assets/js/crm-ui.js?v=20261001b"></script>
+<script src="../../assets/js/crm-data.js?v=20261014a"></script>
+<script src="../../assets/js/crm-ui.js?v=20261014a"></script>
 <script>
 window.SoluaUI.requirePermission("admin-personalizacao");
 </script>
-<script src="../../assets/js/crm-personalizacao.js?v=20261001b"></script>
+<script src="../../assets/js/crm-personalizacao.js?v=20261014a"></script>
 </body>
 </html>

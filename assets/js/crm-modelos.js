@@ -181,7 +181,7 @@ function blocoCamposHtml(b){
         <div class="field"><label>Link do botão</label><input data-bf="url" value="${esc(b.url||"")}" placeholder="https://… ou https://wa.me/{{telefone_solua_link}}"></div>
       </div>`;
     case "espaco": return `<div class="field"><label>Altura (px)</label><input data-bf="altura" type="number" value="${b.altura||20}" style="max-width:110px"></div>`;
-    default: return `<p style="font-size:12px;color:var(--tinta-45)">Uma linha divisória — sem campos.</p>`;
+    default: return `<p style="font-size:12px;color:var(--tinta-45)">Linha divisória.</p>`;
   }
 }
 
@@ -198,7 +198,7 @@ function desenharBlocos(){
         </div>
       </div>
       <div class="bloco-campos">${blocoCamposHtml(b)}</div>
-    </div>`).join("") || `<p style="font-size:12.5px;color:var(--tinta-45);padding:10px 0">Nenhum bloco ainda — adicione um abaixo.</p>`;
+    </div>`).join("") || `<p style="font-size:12.5px;color:var(--tinta-45);padding:10px 0">Nenhum bloco ainda.</p>`;
 
   lista.forEach((b,i)=>{
     const card = document.querySelector(`[data-bloco="${i}"]`);
@@ -238,7 +238,6 @@ function desenharEditorWhatsapp(){
     <div class="field"><label>Botões (até 3)</label><div id="botoesLista"></div>
       <button type="button" class="btn ghost sm" id="btnAddBotao" style="margin-top:8px">+ Adicionar botão</button>
     </div>
-    <div class="demo-hint">A Meta exige que este mesmo conteúdo (cabeçalho, corpo, rodapé e botões) também seja cadastrado e aprovado no <b>WhatsApp Manager</b> antes de ser usado no disparo automático — este editor é a referência de design e conteúdo do template.</div>
   `;
   document.getElementById("fHeaderType").onchange = e=>{ editando.headerType = e.target.value; desenharHeaderCampo(); preview(); };
   document.getElementById("fCorpoWpp").oninput = e=>{ editando.corpo = e.target.value; preview(); };
@@ -281,7 +280,7 @@ function desenharBotoes(){
       <input data-btf="texto" value="${esc(b.texto||"")}" placeholder="Texto do botão" style="flex:1">
       ${b.tipo!=="resposta_rapida" ? `<input data-btf="valor" value="${esc(b.valor||"")}" placeholder="${b.tipo==="url"?"https://…":"(19) 99999-9999"}" style="flex:1">` : ""}
       <button type="button" class="btn icon ghost sm" data-rmbotao="${i}" title="Remover">✕</button>
-    </div>`).join("") || `<p style="font-size:12.5px;color:var(--tinta-45)">Nenhum botão — a mensagem fica só com texto.</p>`;
+    </div>`).join("") || `<p style="font-size:12.5px;color:var(--tinta-45)">Nenhum botão.</p>`;
 
   lista.forEach((b,i)=>{
     const row = document.querySelector(`[data-botao="${i}"]`);

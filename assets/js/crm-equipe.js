@@ -122,8 +122,7 @@ function openEditor(id){
     <div class="field"><label>Cor do avatar</label><div style="display:flex;gap:8px">
       ${CORES.map(c=>`<button type="button" class="avatar" data-cor="${c}" style="background:${c};border:2px solid ${c===u.avatarBg?"var(--tinta)":"transparent"};width:28px;height:28px"></button>`).join("")}
     </div></div>
-    <label style="display:flex;align-items:center;gap:8px;margin-top:6px;font-size:13.5px"><input type="checkbox" id="fAtivo" ${u.ativo?"checked":""} style="width:16px;height:16px;accent-color:var(--azul)"> Usuário ativo (recebe novos leads automaticamente)</label>
-    <div class="demo-hint" style="margin-top:16px">Login de demonstração: qualquer e-mail cadastrado aqui entra no CRM com a senha <b>solua2026</b>.</div>
+    <label style="display:flex;align-items:center;gap:8px;margin-top:6px;font-size:13.5px"><input type="checkbox" id="fAtivo" ${u.ativo?"checked":""} style="width:16px;height:16px;accent-color:var(--azul)"> Usuário ativo</label>
   `;
   let corEscolhida = u.avatarBg;
   document.querySelectorAll("[data-cor]").forEach(b=> b.onclick = ()=>{

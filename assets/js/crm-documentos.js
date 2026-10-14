@@ -40,7 +40,7 @@ async function carregar(){
     document.getElementById("docApiStatus").innerHTML = `<span class="badge ganho">${docs.length} documento(s) no banco (D1)</span>`;
   }catch(e){
     docs = [];
-    document.getElementById("docApiStatus").innerHTML = `<span class="badge perdido">API /api/documentos não respondeu</span> <span style="font-size:12px;color:var(--tinta-45)">— publique o Worker com D1 para usar este módulo de verdade.</span>`;
+    document.getElementById("docApiStatus").innerHTML = `<span class="badge perdido">Sem conexão com o servidor</span>`;
   }
   renderTabs();
   renderRows();
@@ -48,7 +48,7 @@ async function carregar(){
 
 function renderTabs(){
   const categorias = ["Todos", ...new Set(docs.map(d=>d.categoria))];
-  document.getElementById("catTabs").innerHTML = categorias.map(c=>`<button class="filt${c===categoriaAtiva?" on":""}" data-cat="${DB.esc(c)}">${DB.esc(c)}</button>`).join("");
+  document.getElementById("catTabs").innerHTML = categorias.map(c=>`<button class="tab${c===categoriaAtiva?" on":""}" data-cat="${DB.esc(c)}">${DB.esc(c)}</button>`).join("");
   document.querySelectorAll("[data-cat]").forEach(b=> b.onclick = ()=>{ categoriaAtiva = b.dataset.cat; renderTabs(); renderRows(); });
 }
 
@@ -104,7 +104,7 @@ async function excluir(id){
     const data = await r.json().catch(()=>({}));
     if(r.ok && data.ok){ UI.toast("Documento excluído.","err"); carregar(); }
     else UI.toast(data.erro || "Não foi possível excluir.","err");
-  }catch(e){ UI.toast("Não deu pra falar com a API agora.","err"); }
+  }catch(e){ UI.toast("Sem conexão com o servidor.","err"); }
 }
 
 /* MODAL DE ENVIO */
@@ -161,7 +161,7 @@ document.getElementById("btnEnviarDoc").onclick = async ()=>{
     const data = await r.json().catch(()=>({}));
     if(r.ok && data.ok){ UI.toast("Documento enviado.","ok"); UI.closeOverlay("docOverlay"); carregar(); }
     else UI.toast(data.erro || "Não foi possível enviar.","err");
-  }catch(e){ UI.toast("Não deu pra falar com a API agora.","err"); }
+  }catch(e){ UI.toast("Sem conexão com o servidor.","err"); }
   btn.textContent = "Enviar"; btn.style.pointerEvents = "";
 };
 

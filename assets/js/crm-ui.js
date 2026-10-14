@@ -132,10 +132,9 @@ function renderPageTitle(){
   if(!main || document.getElementById("pageHd")) return;
   const title = document.body.dataset.title || "";
   if(!title) return;
-  const crumbs = document.body.dataset.crumbs || "";
   const el = document.createElement("div");
   el.className = "pg-title";
-  el.innerHTML = `<h1>${DB.esc(title)}</h1>${crumbs?`<p>${DB.esc(crumbs)}</p>`:""}`;
+  el.innerHTML = `<h1>${DB.esc(title)}</h1>`;
   main.insertBefore(el, main.firstChild);
 }
 
@@ -170,7 +169,7 @@ function ligarSubmenus(){
       const menu = document.createElement("div");
       menu.className = "tb-menu"; menu.setAttribute("role","menu");
       menu.innerHTML = item.children.map(c=>`<a role="menuitem" class="${activeKey()===c.key?"on":""}" href="${b}${c.href}">
-        <span class="mi-ico">${svg(c.ico)}</span><span><b>${c.label}</b><small>${c.desc||""}</small></span></a>`).join("");
+        <span class="mi-ico">${svg(c.ico)}</span><span><b>${c.label}</b></span></a>`).join("");
       document.body.appendChild(menu);
       const r = btn.getBoundingClientRect();
       menu.style.top = (r.bottom + 10) + "px";
@@ -281,7 +280,7 @@ function emptyState(text){ return `${svg("empty")}<span>${text}</span>`; }
 // chave marcada no checklist de Equipe; os outros voltam pro Dashboard.
 function requirePermission(chave){
   if(DB.temPermissao(ME, chave)) return true;
-  toast("Você não tem acesso a esta tela — peça a um Administrador para liberar em Equipe.","err");
+  toast("Sem acesso a esta tela.","err");
   location.replace(base()+"dashboard.html");
   return false;
 }

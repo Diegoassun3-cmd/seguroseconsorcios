@@ -1,2 +1,2 @@
-Solua — versão publicada: 2026-10-01b
-Inclui: rodapé novo (Endereço/Contato/Produtos/Institucional), sem linhas finas, botões azuis.
+Solua — versão publicada: 2026-10-14a
+Inclui: padrão de negrito nos títulos, escala única de títulos, CRM sem textos explicativos, revisão de alinhamentos no computador e no celular.

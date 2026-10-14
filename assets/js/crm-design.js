@@ -61,7 +61,7 @@ function midiaCardHtml(key, val, aceitaVideo){
         <input type="file" id="${fileId}" accept="${accept}" data-fileinput="${key}" style="display:none">
         <button type="button" class="midia-clear" data-clearmidia="${key}" style="${val?"":"display:none"}">Remover</button>
       </div>
-      <label class="midia-link-label">ou cole um link (${aceitaVideo?"imagem, .mp4 ou YouTube/Vimeo":"imagem"})
+      <label class="midia-link-label">ou cole um link
         <input data-key="${key}" data-tipo="${aceitaVideo?"midia":"imagem"}" placeholder="https://…" value="${DB.esc(val||"")}">
       </label>
     </div>
@@ -232,7 +232,7 @@ function ligarCampos(){
       const file = input.files[0];
       if(!file) return;
       if(file.size > MAX_ARQUIVO){
-        UI.toast("Arquivo grande demais (limite de ~200KB para upload direto). Cole um link em vez disso.","err");
+        UI.toast("Arquivo acima de 200KB. Use um link.","err");
         input.value = "";
         return;
       }
@@ -352,10 +352,10 @@ async function carregar(){
     if(!r.ok) throw new Error("offline");
     atual = await r.json();
     if(!atual.conteudo) atual.conteudo = {};
-    document.getElementById("apiStatus").innerHTML = `<span class="badge ganho">Conectado ao banco real (D1)</span>`;
+    document.getElementById("apiStatus").innerHTML = `<span class="badge ganho">Conectado</span>`;
   }catch(e){
     atual = { corPrimaria:"#004BA5", whatsappNumero:"5519999999999", emailRemetente:"contato@solua.com.br", nomeRemetente:"Solua", conteudo:{} };
-    document.getElementById("apiStatus").innerHTML = `<span class="badge perdido">API /api/settings não respondeu</span> <span style="font-size:12px;color:var(--tinta-45)">— isso é esperado antes do primeiro deploy do Worker com D1, ou testando localmente sem o Cloudflare.</span>`;
+    document.getElementById("apiStatus").innerHTML = `<span class="badge perdido">Sem conexão com o servidor</span>`;
   }
   renderTabs();
   renderForms();
@@ -392,7 +392,7 @@ document.getElementById("btnSalvarConteudo").onclick = async ()=>{
       UI.toast(data.erro || `Não foi possível salvar (HTTP ${r.status}).`, "err");
     }
   }catch(e){
-    UI.toast("Não deu pra falar com a API agora (Worker ainda não publicado?).","err");
+    UI.toast("Sem conexão com o servidor.","err");
   }
   btn.textContent = "Salvar conteúdo"; btn.style.pointerEvents="";
 };

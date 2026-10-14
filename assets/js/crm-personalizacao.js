@@ -29,11 +29,11 @@ async function carregar(){
     if(!r.ok) throw new Error("offline");
     atual = await r.json();
     preencher(atual);
-    document.getElementById("apiStatus").innerHTML = `<span class="badge ganho">Conectado ao banco real (D1)</span>`;
+    document.getElementById("apiStatus").innerHTML = `<span class="badge ganho">Conectado</span>`;
   }catch(e){
     atual = { corPrimaria:"#004BA5", whatsappNumero:"5519999999999", emailRemetente:"contato@solua.com.br", nomeRemetente:"Solua", automacaoEmailAtiva:false, automacaoWhatsappAtiva:false, siteTitulo:"", siteDescricao:"", manutencaoAtiva:false, manutencaoMensagem:"" };
     preencher(atual);
-    document.getElementById("apiStatus").innerHTML = `<span class="badge perdido">API /api/settings não respondeu</span> <span style="font-size:12px;color:var(--tinta-45)">— isso é esperado antes do primeiro deploy do Worker com D1, ou testando localmente sem o Cloudflare.</span>`;
+    document.getElementById("apiStatus").innerHTML = `<span class="badge perdido">Sem conexão com o servidor</span>`;
   }
 }
 
@@ -86,7 +86,7 @@ document.getElementById("fCorPrimariaHex").oninput = e=>{
 document.getElementById("fLogoFile").onchange = async e=>{
   const file = e.target.files[0];
   if(!file) return;
-  if(file.size > 250*1024){ UI.toast("Escolha uma imagem menor que 250KB (de preferência um SVG ou PNG leve).","err"); e.target.value=""; return; }
+  if(file.size > 250*1024){ UI.toast("Imagem acima de 250KB.","err"); e.target.value=""; return; }
   const dataUrl = await fileParaDataUrl(file);
   atual.logoUrl = dataUrl;
   logoPreview(dataUrl);
@@ -96,7 +96,7 @@ document.getElementById("btnRemoverLogo").onclick = ()=>{ atual.logoUrl = null; 
 document.getElementById("fLogoEscuroFile").onchange = async e=>{
   const file = e.target.files[0];
   if(!file) return;
-  if(file.size > 250*1024){ UI.toast("Escolha uma imagem menor que 250KB (de preferência um SVG ou PNG leve).","err"); e.target.value=""; return; }
+  if(file.size > 250*1024){ UI.toast("Imagem acima de 250KB.","err"); e.target.value=""; return; }
   const dataUrl = await fileParaDataUrl(file);
   atual.logoUrlEscuro = dataUrl;
   logoEscuroPreview(dataUrl);
@@ -147,7 +147,7 @@ document.getElementById("btnSalvar").onclick = async ()=>{
       UI.toast(data.erro || `Não foi possível salvar (HTTP ${r.status}).`, "err");
     }
   }catch(e){
-    UI.toast("Não deu pra falar com a API agora (Worker ainda não publicado?).","err");
+    UI.toast("Sem conexão com o servidor.","err");
   }
   btn.textContent = "Salvar personalização"; btn.style.pointerEvents="";
 };

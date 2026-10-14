@@ -3,18 +3,24 @@
    Nyata FTR Regular  → títulos e destaques (--font-display)
    Satoshi Medium     → texto corrido e UI (--font-body)
    Carregado uma única vez por todas as páginas do site e do CRM.
+
+   Padrão de pesos (site e CRM): 400 = normal, 700 = negrito.
+   Cada família tem um arquivo só; os faces abaixo cobrem 400–500, então
+   pedidos de 600/700 ganham o negrito gerado pelo navegador, que fica
+   bom nessas duas fontes. Quando houver os arquivos Bold oficiais, basta
+   acrescentar um @font-face com font-weight:700 apontando para eles.
    =========================================================== */
 @font-face{
   font-family:'Nyata';
   src:url('../fonts/Nyata-Regular.woff2') format('woff2');
-  font-weight:400;
+  font-weight:400 500;
   font-style:normal;
   font-display:swap;
 }
 @font-face{
   font-family:'Satoshi';
   src:url('../fonts/Satoshi-Medium.woff2') format('woff2');
-  font-weight:400 700;
+  font-weight:400 500;
   font-style:normal;
   font-display:swap;
 }

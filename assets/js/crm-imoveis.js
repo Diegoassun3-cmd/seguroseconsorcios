@@ -130,7 +130,7 @@ function renderFiltros(){
     <div class="gi-bloco">
       <div class="gi-bloco-hd"><span class="gi-est">${ICO.estrela}</span><b>Favoritos</b></div>
       ${favs.length ? `<div class="gi-favs">${favs.map((f,ix)=>`<span class="gi-fav"><button type="button" data-fav="${ix}" title="Aplicar este filtro">${esc(f.nome)}</button><button type="button" class="rm" data-rmfav="${ix}" aria-label="Remover favorito ${esc(f.nome)}">×</button></span>`).join("")}</div>`
-        : `<p class="gi-vazio">Você não tem filtros favoritos. Salve os que usa mais para agilizar sua busca.</p>`}
+        : `<p class="gi-vazio">Nenhum filtro favorito.</p>`}
       ${salvandoFav ? `<div class="inline-btn gi-favform"><input id="giFavNome" placeholder="Nome do filtro (ex.: Casas até 500 mil)" maxlength="40"><button type="button" class="btn dark sm" id="giFavSalvar">Salvar</button></div>`
         : `<button type="button" class="btn ghost sm" id="giFavAdd" style="margin-top:10px">+ Salvar filtro atual</button>`}
     </div>
@@ -143,7 +143,6 @@ function renderFiltros(){
       <div class="field"><label for="giTipo">Tipo do imóvel</label><select id="giTipo" data-f="tipo">${opts(DB.TIPOS.imovel.map(t=>[t,t]), F.tipo, "Todos os tipos")}</select></div>
 
       <h5>Responsáveis</h5>
-      <p class="gi-ajuda">Quem está vinculado ao imóvel</p>
       <div class="field"><label for="giAng">Angariador</label><select id="giAng" data-f="angariador">${opts(eq.map(u=>[u.id,u.nome]), F.angariador, "Qualquer angariador")}</select></div>
       <div class="field"><label for="giProp">Proprietário</label><select id="giProp" data-f="proprietario">${opts([["__sem","— Sem proprietário vinculado —"], ...DB.getProprietarios().map(p=>[p.id,p.nome])], F.proprietario, "Qualquer proprietário")}</select></div>
 
@@ -336,10 +335,10 @@ function abrirMenuSituacao(btn, id){
   menu.className = "tb-menu sit-menu"; menu.setAttribute("role","menu");
   const DESC = {em_anuncio:"Aparece no site", pausado:"Sai do site, continua no CRM", reservado:"Negócio encaminhado", em_negociacao:"Proposta em andamento"};
   menu.innerHTML = IM.inativo(i)
-    ? `<a href="#" role="menuitem" data-set-sit="reativar"><span class="mi-ico">${IM.ico("power")}</span><span><b>Reativar imóvel</b><small>Volta como pausado, pronto pra publicar</small></span></a>`
+    ? `<a href="#" role="menuitem" data-set-sit="reativar"><span class="mi-ico">${IM.ico("power")}</span><span><b>Reativar imóvel</b></span></a>`
     : IM.SITUACOES.filter(s=> DESC[s.id]).map(s=>
-      `<a href="#" role="menuitem" data-set-sit="${s.id}" class="${s.id===atual?"on":""}"><span class="sit-dot" style="background:${s.cor}"></span><span><b>${s.label}</b><small>${DESC[s.id]}</small></span></a>`).join("")
-      + `<div class="menu-sep"></div><a href="#" role="menuitem" data-set-sit="inativar"><span class="mi-ico">${IM.ico("power")}</span><span><b>Inativar…</b><small>Vendido, locado ou retirado</small></span></a>`;
+      `<a href="#" role="menuitem" data-set-sit="${s.id}" class="${s.id===atual?"on":""}"><span class="sit-dot" style="background:${s.cor}"></span><span><b>${s.label}</b></span></a>`).join("")
+      + `<div class="menu-sep"></div><a href="#" role="menuitem" data-set-sit="inativar"><span class="mi-ico">${IM.ico("power")}</span><span><b>Inativar…</b></span></a>`;
   document.body.appendChild(menu);
   const r = btn.getBoundingClientRect();
   menu.style.top = Math.min(r.bottom + 8, innerHeight - menu.offsetHeight - 10) + "px";
@@ -385,7 +384,7 @@ function abrirMenuMais(btn, id){
     <a href="#" role="menuitem" data-m="dup"><span class="mi-ico">${IM.ico("duplicar")}</span><span><b>Duplicar</b><small>Cópia como rascunho</small></span></a>
     ${IM.inativo(i)
       ? `<a href="#" role="menuitem" data-m="reativar"><span class="mi-ico">${IM.ico("power")}</span><span><b>Reativar</b><small>Volta como pausado</small></span></a>`
-      : `<a href="#" role="menuitem" data-m="inativar"><span class="mi-ico">${IM.ico("power")}</span><span><b>Inativar</b><small>Vendido, locado ou retirado</small></span></a>`}
+      : `<a href="#" role="menuitem" data-m="inativar"><span class="mi-ico">${IM.ico("power")}</span><span><b>Inativar</b></span></a>`}
     <div class="menu-sep"></div>
     <a href="#" role="menuitem" data-m="del"><span class="mi-ico" style="color:var(--vermelho)">${IM.ico("lixeira")}</span><span><b>Excluir</b><small>Apaga o cadastro</small></span></a>`;
   document.body.appendChild(menu);
@@ -412,7 +411,7 @@ function compartilhar(){
   if(!ov){ ov = document.createElement("div"); ov.className = "overlay modal-center"; ov.id = "shareOverlay"; document.body.appendChild(ov); }
   if(!lista.length){
     ov.innerHTML = `<div class="modal"><div class="modal-hd"><h3 style="font-size:18px">Compartilhar imóveis</h3><button class="x" data-close-overlay="shareOverlay" aria-label="Fechar"></button></div>
-      <div class="modal-bd"><p style="font-size:14px;color:var(--tinta-60)">Nenhum imóvel em anúncio nos resultados atuais. Só imóveis publicados têm link no site para enviar ao cliente.</p></div></div>`;
+      <div class="modal-bd"><p style="font-size:14px;color:var(--tinta-60)">Nenhum imóvel em anúncio nestes resultados.</p></div></div>`;
     UI.openOverlay("shareOverlay"); return;
   }
   const marcados = new Set(lista.slice(0,5).map(i=>i.id));
@@ -426,7 +425,6 @@ function compartilhar(){
     ov.innerHTML = `<div class="modal" style="width:min(620px,94vw)" role="dialog" aria-modal="true" aria-labelledby="shareTit">
       <div class="modal-hd"><h3 style="font-size:18px" id="shareTit">Compartilhar imóveis</h3><button class="x" data-close-overlay="shareOverlay" aria-label="Fechar"></button></div>
       <div class="modal-bd">
-        <p style="font-size:13px;color:var(--tinta-45);margin-bottom:12px">Imóveis em anúncio dos resultados atuais. Marque os que quer enviar.</p>
         <div class="share-lista">${lista.map(i=>`<label><input type="checkbox" data-share="${i.id}" ${marcados.has(i.id)?"checked":""}><span><b>${esc(i.codigo)}</b> · ${esc(i.titulo||"Sem título")}</span><em>${esc(DB.precoImovelTexto(i))}</em></label>`).join("")}</div>
         <div class="field" style="margin:16px 0 0"><label for="shareTxt">Mensagem</label><textarea id="shareTxt" rows="7">${esc(texto())}</textarea></div>
       </div>

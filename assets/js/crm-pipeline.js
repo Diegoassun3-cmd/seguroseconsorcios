@@ -94,11 +94,10 @@ function renderFilters(){
   const bar = document.getElementById("filterbar");
   bar.innerHTML = `
     <label class="tb-search" style="min-width:220px"><span>${window.SoluaUI.svg("search")}</span><input id="fq" placeholder="Buscar por nome, e-mail, telefone…"></label>
-    <select class="pill" id="fConsultor" style="border-radius:8px"><option value="">Todos os consultores</option>${equipe.map(u=>`<option value="${u.id}">${DB.esc(u.nome)}</option>`).join("")}</select>
-    <select class="pill" id="fTipo" style="border-radius:8px"><option value="">Todos os tipos</option>${tipos.map(t=>`<option>${t}</option>`).join("")}</select>
+    <select class="pill" id="fConsultor"><option value="">Todos os consultores</option>${equipe.map(u=>`<option value="${u.id}">${DB.esc(u.nome)}</option>`).join("")}</select>
+    <select class="pill" id="fTipo"><option value="">Todos os tipos</option>${tipos.map(t=>`<option>${t}</option>`).join("")}</select>
     <span class="spacer"></span>
-    <span id="fCount" style="font-size:12.5px;color:var(--tinta-45)"></span>
-    <span style="font-size:12.5px;color:var(--tinta-35)">· arraste um card ou clique nele para mudar a etapa</span>`;
+    <span id="fCount" style="font-size:12.5px;color:var(--tinta-45)"></span>`;
   document.getElementById("fq").oninput = e=>{ filtro.q = e.target.value; renderBoard(); updateCount(); };
   document.getElementById("fConsultor").onchange = e=>{ filtro.consultor = e.target.value; renderBoard(); updateCount(); };
   document.getElementById("fTipo").onchange = e=>{ filtro.tipo = e.target.value; renderBoard(); updateCount(); };

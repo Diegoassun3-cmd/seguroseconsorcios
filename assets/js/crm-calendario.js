@@ -96,7 +96,7 @@ function renderDetalheDia(){
   const el = document.getElementById("calDetalhe");
   if(!diaSelecionado){
     titulo.textContent = "Selecione um dia";
-    el.innerHTML = `<div class="empty">${UI.emptyState("Clique num dia do calendário pra ver os contatos e compromissos.")}</div>`;
+    el.innerHTML = `<div class="empty">${UI.emptyState("Nenhum dia selecionado.")}</div>`;
     return;
   }
   const d = parseDataLocal(diaSelecionado);
@@ -106,7 +106,7 @@ function renderDetalheDia(){
   compromissos.sort((a,b)=> (a.hora||"99:99").localeCompare(b.hora||"99:99"));
 
   if(!leads.length && !compromissos.length){
-    el.innerHTML = `<div class="empty">${UI.emptyState("Nada agendado pra este dia ainda.")}</div>`;
+    el.innerHTML = `<div class="empty">${UI.emptyState("Nada agendado neste dia.")}</div>`;
     return;
   }
 
